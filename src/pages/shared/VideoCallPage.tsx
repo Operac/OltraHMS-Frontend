@@ -89,13 +89,11 @@ const VideoCallPage = () => {
         };
 
         newSocket.on('connect', () => {
-            console.log("Connected to Signal Server");
             newSocket.emit('join-room', appointmentId);
         });
 
         // Initiator
         newSocket.on('user-connected', async (userId) => {
-            console.log("User Connected:", userId);
             setRemotePeerId(userId);
 
             const pc = createPeerConnection();

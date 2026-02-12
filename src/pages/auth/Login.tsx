@@ -210,16 +210,7 @@ const Login = () => {
                             )}
                         </motion.button>
                         
-                         <motion.div 
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.8 }}
-                            className="mt-6 text-center"
-                        >
-                            <p className="text-sm text-gray-500 bg-gray-50 py-3 rounded-lg border border-dashed border-gray-200">
-                                <span className="font-semibold">Demo Access:</span> admin@hms.com / password123
-                            </p>
-                        </motion.div>
+
                     </form>
                 </motion.div>
             </div>
