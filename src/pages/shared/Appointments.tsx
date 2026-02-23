@@ -41,7 +41,8 @@ const Appointments = () => {
     useEffect(() => {
         const fetchAppointments = async () => {
             try {
-                let query = `http://localhost:3000/api/appointments?date=${currentDate.toISOString()}`;
+                const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+                let query = `${API_URL}/appointments?date=${currentDate.toISOString()}`;
                 
                 if (user?.role === 'DOCTOR' && user.staffId) {
                     query += `&doctorId=${user.staffId}`;
@@ -70,12 +71,13 @@ const Appointments = () => {
     const handleCancelAppointment = async (id: string) => {
         if (!confirm('Are you sure you want to cancel this appointment?')) return;
         try {
-            await axios.patch(`http://localhost:3000/api/appointments/${id}/status`, 
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+            await axios.patch(`${API_URL}/appointments/${id}/status`, 
                 { status: 'CANCELLED' },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             // Refresh
-            const res = await axios.get(`http://localhost:3000/api/appointments?date=${currentDate.toISOString()}`, {
+            const res = await axios.get(`${API_URL}/appointments?date=${currentDate.toISOString()}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setAppointments(res.data);

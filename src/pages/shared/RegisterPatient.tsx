@@ -52,7 +52,8 @@ const RegisterPatient = () => {
                 }
             };
 
-            await axios.post('http://localhost:3000/api/patients', payload, {
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+            await axios.post(`${API_URL}/patients`, payload, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 

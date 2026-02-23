@@ -14,9 +14,10 @@ const Doctors = () => {
     useEffect(() => {
         const fetchDoctors = async () => {
             try {
+                const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
                 // Using the receptionist endpoint as it likely returns the format we need, 
                 // or we can use /api/staff/doctors
-                const res = await axios.get('http://localhost:3000/api/staff/doctors', {
+                const res = await axios.get(`${API_URL}/staff/doctors`, {
                      headers: { Authorization: `Bearer ${token}` }
                 });
                 setDoctors(res.data);

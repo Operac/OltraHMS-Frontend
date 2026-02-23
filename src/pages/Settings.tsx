@@ -43,7 +43,8 @@ const Settings = () => {
         setMessage(null);
 
         try {
-            const res = await axios.patch('http://localhost:3000/api/auth/profile', formData, {
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+            const res = await axios.patch(`${API_URL}/auth/profile`, formData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 

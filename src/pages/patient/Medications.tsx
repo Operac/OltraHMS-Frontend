@@ -12,8 +12,9 @@ const Medications = () => {
     useEffect(() => {
         const fetchMeds = async () => {
             try {
+                const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
                 // Determine API endpoint based on role via headers (backend handles `patientId` deduction)
-                const res = await axios.get('http://localhost:3000/api/prescriptions', {
+                const res = await axios.get(`${API_URL}/prescriptions`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setPrescriptions(res.data);
@@ -102,7 +103,8 @@ const Medications = () => {
                                      onClick={async () => {
                                          if(!confirm('Request refill for ' + med.medicationName + '?')) return;
                                          try {
-                                             await axios.post(`http://localhost:3000/api/prescriptions/${med.id}/refill`, {}, {
+                                             const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+                                             await axios.post(`${API_URL}/prescriptions/${med.id}/refill`, {}, {
                                                  headers: { Authorization: `Bearer ${token}` }
                                              });
                                              // Refresh locally or reload
@@ -127,7 +129,8 @@ const Medications = () => {
                                  <button
                                      onClick={async () => {
                                          try {
-                                             const res = await axios.get(`http://localhost:3000/api/medical-records/${med.medicalRecordId}/download`, {
+                                             const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+                                             const res = await axios.get(`${API_URL}/medical-records/${med.medicalRecordId}/download`, {
                                                  headers: { Authorization: `Bearer ${token}` },
                                                  responseType: 'blob'
                                              });

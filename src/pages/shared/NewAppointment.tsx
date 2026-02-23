@@ -51,8 +51,9 @@ const NewAppointment = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
+                const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
                 // Fetch doctors initially
-                const docRes = await axios.get('http://localhost:3000/api/staff/doctors', {
+                const docRes = await axios.get(`${API_URL}/staff/doctors`, {
                      headers: { Authorization: `Bearer ${token}` }
                 });
                 setDoctors(docRes.data);
@@ -86,7 +87,8 @@ const NewAppointment = () => {
         if (preSelectedPatientId && !isPatient) {
             const fetchPatient = async () => {
                 try {
-                    const res = await axios.get(`http://localhost:3000/api/patients/${preSelectedPatientId}`, {
+                    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+                    const res = await axios.get(`${API_URL}/patients/${preSelectedPatientId}`, {
                          headers: { Authorization: `Bearer ${token}` }
                     });
                     setSelectedPatient(res.data);
@@ -113,9 +115,10 @@ const NewAppointment = () => {
 
         const searchPatients = async () => {
             try {
+                const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
                 const url = searchQuery 
-                    ? `http://localhost:3000/api/patients?search=${searchQuery}`
-                    : `http://localhost:3000/api/patients?limit=10`; 
+                    ? `${API_URL}/patients?search=${searchQuery}`
+                    : `${API_URL}/patients?limit=10`; 
                 
                 const res = await axios.get(url, {
                     headers: { Authorization: `Bearer ${token}` }
@@ -177,7 +180,8 @@ const NewAppointment = () => {
              const startTime = new Date(`${selectedDate}T${selectedTime}`);
              const endTime = addMinutes(startTime, 30); 
 
-             await axios.post('http://localhost:3000/api/appointments', {
+             const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+             await axios.post(`${API_URL}/appointments`, {
                  patientId: isPatient ? undefined : selectedPatient.id, // Optional for patient
                  doctorId: selectedDoctor.id, 
                  startTime: startTime.toISOString(),

@@ -23,10 +23,11 @@ const MedicalRecords = () => {
 
     const fetchRecords = async () => {
         try {
-            const pid = searchParams.get('patientId');
+        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+        const pid = searchParams.get('patientId');
             const url = pid 
-                ? `http://localhost:3000/api/medical-records?patientId=${pid}`
-                : 'http://localhost:3000/api/medical-records';
+                ? `${API_URL}/medical-records?patientId=${pid}`
+                : `${API_URL}/medical-records`;
                 
             const res = await axios.get(url, {
                 headers: { Authorization: `Bearer ${token}` }
@@ -44,7 +45,8 @@ const MedicalRecords = () => {
 
     const fetchRecordDetails = async (id: string) => {
         try {
-            const res = await axios.get(`http://localhost:3000/api/medical-records/${id}`, {
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+            const res = await axios.get(`${API_URL}/medical-records/${id}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setSelectedRecord(res.data);

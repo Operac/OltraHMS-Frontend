@@ -37,7 +37,8 @@ const Patients = () => {
     const fetchPatients = async () => {
         setLoading(true);
         try {
-            let query = `http://localhost:3000/api/patients?page=${page}&limit=10&search=${search}`;
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+            let query = `${API_URL}/patients?page=${page}&limit=10&search=${search}`;
             
             if (user?.role === 'DOCTOR' && user.staffId) {
                 query += `&doctorId=${user.staffId}`;

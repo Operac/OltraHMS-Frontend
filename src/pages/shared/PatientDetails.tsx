@@ -58,9 +58,10 @@ const PatientDetails = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
+                const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
                 const [patientRes, recordsRes] = await Promise.all([
-                    axios.get(`http://localhost:3000/api/patients/${id}`, { headers: { Authorization: `Bearer ${token}` } }),
-                    axios.get(`http://localhost:3000/api/medical-records?patientId=${id}`, { headers: { Authorization: `Bearer ${token}` } })
+                    axios.get(`${API_URL}/patients/${id}`, { headers: { Authorization: `Bearer ${token}` } }),
+                    axios.get(`${API_URL}/medical-records?patientId=${id}`, { headers: { Authorization: `Bearer ${token}` } })
                 ]);
                 setPatient(patientRes.data);
                 setRecords(recordsRes.data);
@@ -79,7 +80,8 @@ const PatientDetails = () => {
         e.preventDefault();
         setSubmittingVitals(true);
         try {
-            await axios.post(`http://localhost:3000/api/vitals`, {
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+            await axios.post(`${API_URL}/vitals`, {
                 patientId: id,
                 bpSystolic: vitalsForm.bpSystolic ? parseInt(vitalsForm.bpSystolic) : undefined,
                 bpDiastolic: vitalsForm.bpDiastolic ? parseInt(vitalsForm.bpDiastolic) : undefined,

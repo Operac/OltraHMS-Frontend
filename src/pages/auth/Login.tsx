@@ -3,8 +3,8 @@ import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Lock, Eye, EyeOff, Activity, ArrowRight, CheckCircle, AlertCircle } from 'lucide-react';
-import axios from 'axios';
 import toast from 'react-hot-toast';
+import api from '../../services/api';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -24,7 +24,7 @@ const Login = () => {
 
         try {
             const [response] = await Promise.all([
-                axios.post('http://localhost:3000/api/auth/login', { email, password }),
+                api.post('/auth/login', { email, password }),
                 minLoadTime
             ]);
             
