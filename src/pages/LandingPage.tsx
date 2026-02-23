@@ -21,7 +21,7 @@ const LandingPage = () => {
         e.preventDefault();
         setStatus('loading');
         try {
-            await axios.post(`${import.meta.env.VITE_API_URL}/api/public/waitlist`, formData);
+            await axios.post(`${import.meta.env.VITE_API_URL}/public/waitlist`, formData);
             setStatus('success');
             setFormData({ name: '', email: '', organization: '', role: 'Administrator' });
         } catch (err) {
