@@ -3,8 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Play, CheckCircle2, Video, Activity, Pill, FlaskConical, Stethoscope, BarChart3, User, ShieldCheck } from 'lucide-react';
 
+import { useAuth } from '../context/AuthContext';
+
 const LandingPage = () => {
     const navigate = useNavigate();
+    const { isAuthenticated, user, logout } = useAuth();
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -49,7 +52,32 @@ const LandingPage = () => {
                     <div className="hidden md:flex items-center gap-10">
                         <a href="#features" className="text-md font-bold text-slate-600 hover:text-primary transition-colors">Features</a>
                         <a href="#onboarding" className="text-md font-bold text-slate-600 hover:text-primary transition-colors">Trust</a>
-                        <button onClick={() => navigate('/login')} className="text-md font-bold text-slate-600 hover:text-primary transition-colors">Login</button>
+                        {isAuthenticated ? (
+                            <div className="flex items-center gap-6">
+                            <button 
+                                onClick={() => {
+                                    if (user?.role === 'ADMIN') navigate('/admin');
+                                    else if (user?.role === 'DOCTOR') navigate('/doctor');
+                                    else if (user?.role === 'RECEPTIONIST') navigate('/receptionist');
+                                    else if (user?.role === 'PHARMACIST') navigate('/pharmacy');
+                                    else if (user?.role === 'LAB_TECH') navigate('/lab-tech');
+                                    else if (user?.role === 'NURSE') navigate('/inpatient');
+                                    else navigate('/app');
+                                }} 
+                                className="text-md font-bold text-slate-600 hover:text-primary transition-colors"
+                            >
+                                Dashboard
+                            </button>
+                            <button 
+                                onClick={logout} 
+                                className="text-md font-bold text-red-500 hover:text-red-600 transition-colors"
+                            >
+                                Logout
+                            </button>
+                        </div>
+                        ) : (
+                            <button onClick={() => navigate('/login')} className="text-md font-bold text-slate-600 hover:text-primary transition-colors">Login</button>
+                        )}
                     </div>
                     
                     <div>
@@ -89,12 +117,29 @@ const LandingPage = () => {
                                 >
                                     Join Waitlist
                                 </button>
-                                <button 
-                                    onClick={() => navigate('/login')}
-                                    className="bg-white border-2 border-slate-200 hover:border-primary/50 hover:bg-slate-50 px-8 py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-2 text-slate-700 shadow-sm hover:text-primary"
-                                >
-                                    Login
-                                </button>
+                                {isAuthenticated ? (
+                                    <button 
+                                        onClick={() => {
+                                            if (user?.role === 'ADMIN') navigate('/admin');
+                                            else if (user?.role === 'DOCTOR') navigate('/doctor');
+                                            else if (user?.role === 'RECEPTIONIST') navigate('/receptionist');
+                                            else if (user?.role === 'PHARMACIST') navigate('/pharmacy');
+                                            else if (user?.role === 'LAB_TECH') navigate('/lab-tech');
+                                            else if (user?.role === 'NURSE') navigate('/inpatient');
+                                            else navigate('/app');
+                                        }}
+                                        className="bg-white border-2 border-slate-200 hover:border-primary/50 hover:bg-slate-50 px-8 py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-2 text-slate-700 shadow-sm hover:text-primary"
+                                    >
+                                        Go to Dashboard
+                                    </button>
+                                ) : (
+                                    <button 
+                                        onClick={() => navigate('/login')}
+                                        className="bg-white border-2 border-slate-200 hover:border-primary/50 hover:bg-slate-50 px-8 py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-2 text-slate-700 shadow-sm hover:text-primary"
+                                    >
+                                        Login
+                                    </button>
+                                )}
                             </div>
                             <p className="text-sm text-slate-500 italic flex items-center gap-1.5">
                                 <CheckCircle2 className="w-4 h-4 text-green-500 inline" /> 

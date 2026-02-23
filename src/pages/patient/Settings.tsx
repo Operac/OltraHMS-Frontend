@@ -135,10 +135,10 @@ const PatientSettings = () => {
                 </button>
                 <button 
                     onClick={() => setActiveTab('family')}
-                    className={`pb-4 px-6 font-medium text-sm transition-colors relative ${activeTab === 'family' ? 'text-purple-600' : 'text-gray-500 hover:text-gray-700'}`}
+                    className={`pb-4 px-6 font-medium text-sm transition-colors relative ${activeTab === 'family' ? 'text-teal-600' : 'text-gray-500 hover:text-gray-700'}`}
                 >
                     <span className="flex items-center gap-2"><Users className="w-4 h-4" /> Family & Dependents</span>
-                    {activeTab === 'family' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-purple-600 rounded-t-full"></div>}
+                    {activeTab === 'family' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-teal-600 rounded-t-full"></div>}
                 </button>
             </div>
 
@@ -243,18 +243,18 @@ const PatientSettings = () => {
                             <h3 className="font-bold text-gray-900">Registered Dependents</h3>
                             <p className="text-gray-500 text-sm">Family members linked to your insurance/account.</p>
                         </div>
-                        <button onClick={() => setShowAddDependent(!showAddDependent)} className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 font-medium text-sm flex items-center gap-2 transition-colors">
+                        <button onClick={() => setShowAddDependent(!showAddDependent)} className="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700 font-medium text-sm flex items-center gap-2 transition-colors">
                             <Plus className="w-4 h-4" /> Add Member
                         </button>
                     </div>
 
                     {showAddDependent && (
-                        <div className="bg-purple-50 p-6 rounded-xl border border-purple-100 animate-slideDown">
-                            <h4 className="font-bold text-purple-900 mb-4">Add New Dependent</h4>
+                        <div className="bg-teal-50 p-6 rounded-xl border border-teal-100 animate-slideDown">
+                            <h4 className="font-bold text-teal-900 mb-4">Add New Dependent</h4>
                             <form onSubmit={handleAddDependent} className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <input required type="text" placeholder="First Name" value={newDependent.firstName} onChange={e => setNewDependent({...newDependent, firstName: e.target.value})} className="px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-purple-500" />
-                                <input required type="text" placeholder="Last Name" value={newDependent.lastName} onChange={e => setNewDependent({...newDependent, lastName: e.target.value})} className="px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-purple-500" />
-                                <select required value={newDependent.relationship} onChange={e => setNewDependent({...newDependent, relationship: e.target.value})} className="px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white">
+                                <input required type="text" placeholder="First Name" value={newDependent.firstName} onChange={e => setNewDependent({...newDependent, firstName: e.target.value})} className="px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-teal-500" />
+                                <input required type="text" placeholder="Last Name" value={newDependent.lastName} onChange={e => setNewDependent({...newDependent, lastName: e.target.value})} className="px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-teal-500" />
+                                <select required value={newDependent.relationship} onChange={e => setNewDependent({...newDependent, relationship: e.target.value})} className="px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white">
                                     <option value="">Relationship</option>
                                     <option value="SPOUSE">Spouse</option>
                                     <option value="CHILD">Child</option>
@@ -262,15 +262,15 @@ const PatientSettings = () => {
                                     <option value="SIBLING">Sibling</option>
                                     <option value="OTHER">Other</option>
                                 </select>
-                                <select value={newDependent.gender} onChange={e => setNewDependent({...newDependent, gender: e.target.value})} className="px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white">
+                                <select value={newDependent.gender} onChange={e => setNewDependent({...newDependent, gender: e.target.value})} className="px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white">
                                     <option value="MALE">Male</option>
                                     <option value="FEMALE">Female</option>
                                 </select>
-                                <input required type="date" value={newDependent.dob} onChange={e => setNewDependent({...newDependent, dob: e.target.value})} className="px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-purple-500" />
+                                <input required type="date" value={newDependent.dob} onChange={e => setNewDependent({...newDependent, dob: e.target.value})} className="px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-teal-500" />
                                 
                                 <div className="md:col-span-3 flex justify-end gap-2 pt-2">
                                     <button type="button" onClick={() => setShowAddDependent(false)} className="text-gray-600 px-4 py-2 rounded-lg hover:bg-gray-100 text-sm font-medium">Cancel</button>
-                                    <button type="submit" className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 text-sm font-medium">Add Dependent</button>
+                                    <button type="submit" className="bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-700 text-sm font-medium">Add Dependent</button>
                                 </div>
                             </form>
                         </div>
@@ -281,7 +281,7 @@ const PatientSettings = () => {
                             dependents.map((dep) => (
                                 <div key={dep.id} className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between">
                                     <div className="flex items-center gap-4">
-                                        <div className="w-12 h-12 bg-purple-50 rounded-full flex items-center justify-center text-purple-600 font-bold text-lg">
+                                        <div className="w-12 h-12 bg-teal-50 rounded-full flex items-center justify-center text-teal-600 font-bold text-lg">
                                             {dep.firstName[0]}
                                         </div>
                                         <div>

@@ -2,6 +2,11 @@ import { useAuth } from '../context/AuthContext';
 import AdminDashboard from './admin/Dashboard';
 import DoctorDashboard from './doctor/Dashboard';
 import PatientDashboard from './patient/Dashboard';
+import ReceptionistDashboard from './receptionist/Dashboard';
+import InpatientDashboard from './inpatient/Dashboard';
+import FinanceDashboard from './finance/Dashboard';
+import LabDashboard from './lab/LabDashboard';
+import PharmacyDashboard from './pharmacy/Dashboard';
 
 
 const Dashboard = () => {
@@ -22,9 +27,15 @@ const Dashboard = () => {
         case 'PATIENT':
             return <PatientDashboard />;
         case 'NURSE':
-            return <div className="p-6">Nurse Dashboard (Coming Soon)</div>; // Placeholder
+            return <InpatientDashboard />;
         case 'RECEPTIONIST':
-            return <div className="p-6">Receptionist Dashboard (Coming Soon)</div>;
+            return <ReceptionistDashboard />;
+        case 'ACCOUNTANT':
+            return <FinanceDashboard />;
+        case 'LAB_TECH':
+            return <LabDashboard />;
+        case 'PHARMACIST':
+            return <PharmacyDashboard />;
         default:
             return (
                 <div className="p-6 text-center">

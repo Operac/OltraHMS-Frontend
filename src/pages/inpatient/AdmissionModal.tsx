@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Search, X, User } from 'lucide-react';
-import { InpatientService } from '../../services/inpatient.service';
+import { AdmissionService } from '../../services/admission.service';
 import * as ReceptionistService from '../../services/receptionist.service'; // Re-use search
+import toast from 'react-hot-toast';
 
 interface AdmissionModalProps {
     bed: any;
@@ -43,15 +44,17 @@ const AdmissionModal = ({ bed, onClose, onSuccess }: AdmissionModalProps) => {
 
         setLoading(true);
         try {
-            await InpatientService.admitPatient({
+            await AdmissionService.admitPatient({
                 patientId: selectedPatient.id,
+                wardId: bed.wardId,
                 bedId: bed.id,
                 reason,
-                estimatedDischargeDate: undefined // Optional for now
+                estimatedDuration: undefined 
             });
+            toast.success('Patient admitted successfully');
             onSuccess();
         } catch (error) {
-            alert("Failed to admit patient");
+            toast.error("Failed to admit patient");
             setLoading(false);
         }
     };

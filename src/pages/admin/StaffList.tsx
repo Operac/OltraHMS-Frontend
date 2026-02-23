@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, UserX, UserCheck, Shield } from 'lucide-react';
+import { Plus, UserX, UserCheck, Shield, Banknote } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { AdminService } from '../../services/admin.service';
 
@@ -11,6 +11,17 @@ const StaffList = () => {
     // Form State
     const [formData, setFormData] = useState({
         firstName: '', lastName: '', email: '', password: '', role: 'DOCTOR', departmentId: '', specialization: ''
+    });
+
+    // HR Form State
+    const [showHRModal, setShowHRModal] = useState(false);
+    const [selectedStaff, setSelectedStaff] = useState<any>(null);
+    const [hrFormData, setHrFormData] = useState({
+        baseSalary: '',
+        leaveBalance: '20',
+        bankName: '',
+        accountNumber: '',
+        accountName: ''
     });
 
     useEffect(() => {
@@ -54,6 +65,49 @@ const StaffList = () => {
         try {
             await AdminService.updateStaffStatus(userId, newStatus);
             toast.success(`User status updated to ${newStatus}`);
+            loadStaff();
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const openHRModal = (s: any) => {
+        setSelectedStaff(s);
+        setHrFormData({
+            baseSalary: s.staff?.baseSalary || '',
+            leaveBalance: s.staff?.leaveBalance?.toString() || '20',
+            bankName: s.staff?.bankDetails?.bankName || '',
+            accountNumber: s.staff?.bankDetails?.accountNumber || '',
+            accountName: s.staff?.bankDetails?.accountName || ''
+        });
+        setShowHRModal(true);
+    };
+
+    const handleSaveHR = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!selectedStaff?.staff?.id) {
+            toast.error("Staff profile not found");
+            return;
+        }
+
+        try {
+            await toast.promise(
+                AdminService.updateStaffHRDetails(selectedStaff.staff.id, {
+                    baseSalary: hrFormData.baseSalary,
+                    leaveBalance: hrFormData.leaveBalance,
+                    bankDetails: {
+                        bankName: hrFormData.bankName,
+                        accountNumber: hrFormData.accountNumber,
+                        accountName: hrFormData.accountName
+                    }
+                }),
+                {
+                    loading: 'Updating HR details...',
+                    success: 'HR details updated!',
+                    error: 'Failed to update'
+                }
+            );
+            setShowHRModal(false);
             loadStaff();
         } catch (error) {
             console.error(error);
@@ -115,6 +169,12 @@ const StaffList = () => {
                                     >
                                         {s.status === 'ACTIVE' ? <UserX className="w-5 h-5 text-red-400" /> : <UserCheck className="w-5 h-5 text-green-400" />}
                                     </button>
+                                    <button
+                                        onClick={() => openHRModal(s)}
+                                        className="text-gray-400 hover:text-blue-600 ml-2" title="Edit HR Details"
+                                    >
+                                        <Banknote className="w-5 h-5" />
+                                    </button>
                                 </td>
                             </tr>
                         ))}
@@ -150,6 +210,41 @@ const StaffList = () => {
                             <div className="flex justify-end gap-2 mt-6">
                                 <button type="button" onClick={() => setShowModal(false)} className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">Cancel</button>
                                 <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Create Staff</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* HR Modal */}
+            {showHRModal && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+                    <div className="bg-white rounded-xl shadow-xl max-w-lg w-full p-6">
+                        <h2 className="text-lg font-bold mb-4">Edit HR Details - {selectedStaff?.firstName} {selectedStaff?.lastName}</h2>
+                        <form onSubmit={handleSaveHR} className="space-y-4">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Base Salary</label>
+                                    <input type="number" className="w-full p-2 border rounded" value={hrFormData.baseSalary} onChange={e => setHrFormData({...hrFormData, baseSalary: e.target.value})} />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Annual Leave Balance</label>
+                                    <input type="number" className="w-full p-2 border rounded" value={hrFormData.leaveBalance} onChange={e => setHrFormData({...hrFormData, leaveBalance: e.target.value})} />
+                                </div>
+                            </div>
+
+                            <div className="border-t pt-4">
+                                <h3 className="text-sm font-semibold mb-2">Bank Details</h3>
+                                <div className="space-y-2">
+                                    <input placeholder="Bank Name" className="w-full p-2 border rounded" value={hrFormData.bankName} onChange={e => setHrFormData({...hrFormData, bankName: e.target.value})} />
+                                    <input placeholder="Account Number" className="w-full p-2 border rounded" value={hrFormData.accountNumber} onChange={e => setHrFormData({...hrFormData, accountNumber: e.target.value})} />
+                                    <input placeholder="Account Name" className="w-full p-2 border rounded" value={hrFormData.accountName} onChange={e => setHrFormData({...hrFormData, accountName: e.target.value})} />
+                                </div>
+                            </div>
+
+                            <div className="flex justify-end gap-2 mt-6">
+                                <button type="button" onClick={() => setShowHRModal(false)} className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">Cancel</button>
+                                <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Save Changes</button>
                             </div>
                         </form>
                     </div>

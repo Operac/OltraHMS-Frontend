@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import { 
   Check, ChevronRight, ChevronLeft, Search 
@@ -11,11 +11,18 @@ const steps = ['Select Patient', 'Select Doctor', 'Select Time', 'Confirm'];
 
 const NewAppointment = () => {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const preSelectedDoctorId = searchParams.get('doctorId');
+    const preSelectedPatientId = searchParams.get('patientId');
     const { token, user } = useAuth(); // Get user
+
     
     // If patient, start at step 1 (Doctor Selection)
+    // If patient, start at step 1 (Doctor Selection)
     const isPatient = user?.role === 'PATIENT';
+    const isDoctor = user?.role === 'DOCTOR';
     const [currentStep, setCurrentStep] = useState(isPatient ? 1 : 0);
+
     
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -36,7 +43,9 @@ const NewAppointment = () => {
     const [selectedDoctor, setSelectedDoctor] = useState<any>(null);
     const [selectedDate, setSelectedDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'));
     const [selectedTime, setSelectedTime] = useState<string>('');
+    const [appointmentType, setAppointmentType] = useState<string>('');
     const [reason, setReason] = useState('');
+
 
     // Fetch Initial Data
     useEffect(() => {
@@ -47,12 +56,56 @@ const NewAppointment = () => {
                      headers: { Authorization: `Bearer ${token}` }
                 });
                 setDoctors(docRes.data);
+                
+                // Pre-select doctor if ID is in URL
+                // Pre-select doctor if ID is in URL
+                if (preSelectedDoctorId) {
+                    const foundDoc = docRes.data.find((d: any) => d.id === preSelectedDoctorId);
+                    if (foundDoc) {
+                        setSelectedDoctor(foundDoc);
+                        // Skip to time selection if patient
+                        if (isPatient) setCurrentStep(2);
+                    }
+                } else if (isDoctor && user?.staffId) {
+                    // Auto-select self if Doctor
+                    const myProfile = docRes.data.find((d: any) => d.id === user.staffId);
+                    if (myProfile) {
+                        setSelectedDoctor(myProfile);
+                    }
+                }
+
             } catch (err) {
                 console.error('Failed to load doctors');
             }
         };
         fetchData();
     }, [token]);
+
+    // Fetch Pre-selected Patient
+    useEffect(() => {
+        if (preSelectedPatientId && !isPatient) {
+            const fetchPatient = async () => {
+                try {
+                    const res = await axios.get(`http://localhost:3000/api/patients/${preSelectedPatientId}`, {
+                         headers: { Authorization: `Bearer ${token}` }
+                    });
+                    setSelectedPatient(res.data);
+                    
+                    // If Doctor is also selected (or self), go to step 2
+                    if (isDoctor || (preSelectedDoctorId && selectedDoctor)) {
+                         setCurrentStep(2);
+                    } else {
+                         setCurrentStep(1); // Go to select doctor
+                    }
+
+                } catch (err) {
+                    console.error("Failed to fetch pre-selected patient");
+                }
+            };
+            fetchPatient();
+        }
+    }, [preSelectedPatientId, token, isPatient, isDoctor, selectedDoctor, preSelectedDoctorId]);
+
 
     // Search Patients (Only for staff)
     useEffect(() => {
@@ -81,13 +134,42 @@ const NewAppointment = () => {
     const handleNext = () => {
         if (currentStep === 0 && !selectedPatient && !isPatient) return setError('Please select a patient');
         if (currentStep === 1 && !selectedDoctor) return setError('Please select a doctor');
-        if (currentStep === 2 && !selectedTime) return setError('Please select a time slot');
+        if (currentStep === 2) {
+             if (!selectedTime) return setError('Please select a time slot');
+             if (!appointmentType) return setError('Please select an appointment type');
+        }
+
         
         setError('');
-        setCurrentStep(prev => prev + 1);
+        
+        let nextStep = currentStep + 1;
+
+        
+        // Skip Step 1 (Doctor Selection) if Doctor or pre-selected
+        if (nextStep === 1 && (isDoctor || (preSelectedDoctorId && selectedDoctor))) {
+            nextStep = 2;
+        }
+
+        
+        setCurrentStep(nextStep);
     };
 
-    const handleBack = () => setCurrentStep(prev => prev - 1);
+
+    const handleBack = () => {
+        let prevStep = currentStep - 1;
+        
+        if (prevStep === 1 && (isDoctor || (preSelectedDoctorId && selectedDoctor))) {
+            prevStep = 0;
+        }
+
+        // If patient was pre-selected, we might want to prevent going back to 0? 
+        // Or just let them go back to see/change it? 
+        // For now, standard behavior. 
+        
+        setCurrentStep(prevStep);
+    };
+
+
 
     const handleSubmit = async () => {
         setLoading(true);
@@ -100,8 +182,9 @@ const NewAppointment = () => {
                  doctorId: selectedDoctor.id, 
                  startTime: startTime.toISOString(),
                  endTime: endTime.toISOString(),
-                 type: 'FIRST_VISIT', 
+                 type: appointmentType, 
                  reason
+
              }, {
                  headers: { Authorization: `Bearer ${token}` }
              });
@@ -200,7 +283,22 @@ const NewAppointment = () => {
                             </div>
                         </div>
                         <div>
+                             <label className="block text-sm font-medium text-gray-700 mb-2">Appointment Type</label>
+                             <select
+                                className="w-full p-2 border rounded-lg bg-white"
+                                value={appointmentType}
+                                onChange={e => setAppointmentType(e.target.value)}
+                             >
+                                <option value="">Select Type</option>
+                                <option value="FIRST_VISIT">First Visit</option>
+                                <option value="FOLLOW_UP">Follow-up</option>
+                                <option value="EMERGENCY">Emergency</option>
+                                <option value="TELEMEDICINE">Telemedicine</option>
+                             </select>
+                        </div>
+                        <div>
                              <label className="block text-sm font-medium text-gray-700 mb-2">Reason (Optional)</label>
+
                              <textarea 
                                 className="w-full p-2 border rounded-lg"
                                 rows={3}
@@ -226,10 +324,11 @@ const NewAppointment = () => {
                             <span className="text-gray-500">Date & Time</span>
                             <span className="font-bold">{selectedDate} at {selectedTime}</span>
                         </div>
-                         <div className="flex justify-between">
+                        <div className="flex justify-between">
                             <span className="text-gray-500">Type</span>
-                            <span className="font-bold">First Visit (30 min)</span>
+                            <span className="font-bold">{appointmentType.replace('_', ' ')}</span>
                         </div>
+
                     </div>
                 );
             default: return null;
@@ -244,7 +343,8 @@ const NewAppointment = () => {
             <div className="flex justify-between mb-8 relative">
                  <div className="absolute top-1/2 left-0 w-full h-1 bg-gray-200 -z-10 translate-y-[-50%]" />
                  {steps.map((step, idx) => (
-                     <div key={idx} className={`flex flex-col items-center gap-2 bg-white px-2 ${(isPatient && idx === 0) ? 'hidden' : ''}`}>
+                     <div key={idx} className={`flex flex-col items-center gap-2 bg-white px-2 ${(isPatient && idx === 0) ? 'hidden' : ''} ${(isDoctor && idx === 1) ? 'hidden' : ''}`}>
+
                          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${idx <= currentStep ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-400'}`}>
                              {idx < currentStep ? <Check className="w-4 h-4" /> : idx + 1}
                          </div>
@@ -269,6 +369,8 @@ const NewAppointment = () => {
                     disabled={currentStep === 0 || (isPatient && currentStep === 1)}
                     className={`px-6 py-2 rounded-lg flex items-center gap-2 ${currentStep === 0 || (isPatient && currentStep === 1) ? 'opacity-0' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'}`}
                 >
+
+
                     <ChevronLeft className="w-4 h-4" /> Back
                 </button>
                 

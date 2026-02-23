@@ -18,7 +18,11 @@ export interface LabOrder {
                 firstName: string;
                 lastName: string;
             }
-        }
+        };
+        invoice?: {
+            status: string;
+            invoiceNumber: string;
+        };
     };
 }
 
@@ -37,6 +41,11 @@ export const labService = {
         const response = await api.post(`/labs/orders/${id}/result`, formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
         });
+        return response.data;
+    },
+
+    createInvoice: async (id: string, amount: number) => {
+        const response = await api.post(`/labs/orders/${id}/invoice`, { amount });
         return response.data;
     }
 };

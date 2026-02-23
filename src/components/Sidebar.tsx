@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, UserPlus, Calendar, FileText, Settings, LogOut, Pill, CreditCard, Activity } from 'lucide-react';
+import { LayoutDashboard, Users, UserPlus, Calendar, FileText, Settings, LogOut, Pill, CreditCard, Activity, Building2, BarChart, Video, DollarSign, Bed, BedDouble, Stethoscope, Heart } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
 import { useAuth } from '../context/AuthContext';
@@ -10,7 +10,7 @@ const Sidebar = () => {
 
   const getNavItems = (role?: string) => {
     const common = [
-      { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
+      { icon: LayoutDashboard, label: 'Dashboard', path: '/app' },
     ];
 
     if (role === 'ADMIN') {
@@ -20,6 +20,16 @@ const Sidebar = () => {
         { icon: UserPlus, label: 'Staff', path: '/staff' },
         { icon: Calendar, label: 'Appointments', path: '/appointments' },
         { icon: FileText, label: 'Records', path: '/records' },
+        { icon: Building2, label: 'Departments', path: '/departments' },
+        { icon: BarChart, label: 'Reports', path: '/reports' },
+        { icon: DollarSign, label: 'Finance', path: '/finance' },
+        { icon: Bed, label: 'Admissions', path: '/admissions' },
+        { icon: BedDouble, label: 'Facility & Wards', path: '/admin/facility' },
+        { icon: DollarSign, label: 'Payroll', path: '/admin/payroll' },
+        { icon: Calendar, label: 'Leaves', path: '/admin/leaves' },
+        { icon: Settings, label: 'Leave Settings', path: '/admin/leaves/settings' },
+        { icon: Activity, label: 'Radiology', path: '/radiology' },
+        { icon: Activity, label: 'Surgery & OT', path: '/surgery' },
         { icon: Settings, label: 'Settings', path: '/settings' },
       ];
     }
@@ -29,6 +39,9 @@ const Sidebar = () => {
         ...common,
         { icon: Users, label: 'My Patients', path: '/patients' }, // Maybe filter patients?
         { icon: Calendar, label: 'Schedule', path: '/appointments' },
+        { icon: Video, label: 'Telemedicine', path: '/doctor/telemedicine' },
+        { icon: Activity, label: 'Radiology', path: '/radiology' },
+        { icon: Activity, label: 'Surgery & OT', path: '/surgery' },
         { icon: FileText, label: 'Medical Records', path: '/records' },
         { icon: Settings, label: 'Settings', path: '/settings' },
       ];
@@ -41,13 +54,53 @@ const Sidebar = () => {
           { icon: FileText, label: 'My Records', path: '/records' },
           { icon: Pill, label: 'My Medications', path: '/medications' },
           { icon: CreditCard, label: 'My Bills', path: '/billing' },
+          { icon: Users, label: 'Find a Doctor', path: '/patient/doctors' },
+          { icon: Heart, label: 'Wellness Tracker', path: '/wellness' },
           { icon: Settings, label: 'Profile', path: '/settings' },
+
+        ];
+    }
+
+    if (role === 'RECEPTIONIST') {
+      return [
+        ...common,
+        { icon: Users, label: 'Patients', path: '/patients' },
+        { icon: Calendar, label: 'Appointments', path: '/appointments' },
+        { icon: Settings, label: 'Settings', path: '/settings' },
+      ];
+    }
+
+    if (role === 'NURSE') {
+      return [
+        ...common,
+        { icon: Users, label: 'Patients', path: '/patients' },
+        { icon: Activity, label: 'Inpatients', path: '/inpatient' }, // Access to wards
+        { icon: Stethoscope, label: 'Treatments', path: '/treatments' },
+        { icon: Activity, label: 'Surgery & OT', path: '/surgery' },
+        { icon: Calendar, label: 'Schedule', path: '/appointments' },
+        { icon: Settings, label: 'Settings', path: '/settings' },
+      ];
+    }
+
+    if (role === 'ACCOUNTANT') {
+        return [
+          { icon: DollarSign, label: 'Finance Dashboard', path: '/finance' },
+          { icon: DollarSign, label: 'Payroll', path: '/admin/payroll' },
+          { icon: Settings, label: 'Settings', path: '/settings' },
         ];
     }
 
     if (role === 'LAB_TECH') {
         return [
           { icon: Activity, label: 'Lab Dashboard', path: '/lab-tech' },
+          { icon: Activity, label: 'Radiology', path: '/radiology' },
+          { icon: Settings, label: 'Profile', path: '/settings' },
+        ];
+    }
+
+    if (role === 'PHARMACIST') {
+        return [
+          { icon: Pill, label: 'Pharmacy Dashboard', path: '/pharmacy' },
           { icon: Settings, label: 'Profile', path: '/settings' },
         ];
     }

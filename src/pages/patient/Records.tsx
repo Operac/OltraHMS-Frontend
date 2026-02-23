@@ -177,7 +177,7 @@ const Records = () => {
                         filteredData.map((lab: any, idx: number) => (
                             <div key={idx} className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex items-start justify-between">
                                 <div className="flex items-start gap-4">
-                                    <div className="w-12 h-12 bg-purple-50 rounded-lg flex items-center justify-center text-purple-600 flex-shrink-0">
+                                    <div className="w-12 h-12 bg-teal-50 rounded-lg flex items-center justify-center text-teal-600 flex-shrink-0">
                                         <Beaker className="w-6 h-6" />
                                     </div>
                                     <div>

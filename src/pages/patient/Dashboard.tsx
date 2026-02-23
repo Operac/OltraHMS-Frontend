@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { PatientService } from '../../services/patient.service';
 import api from '../../services/api';
-import { Calendar, Activity, Pill, CreditCard, ChevronRight, Video, Truck, TestTube } from 'lucide-react';
+import { Calendar, Activity, Pill, CreditCard, ChevronRight, Video, TestTube } from 'lucide-react';
 
 interface DashboardStats {
     nextAppointment: any | null;
@@ -12,6 +12,10 @@ interface DashboardStats {
     recentActivity: any[];
     vitals: any | null;
     queueStatus: any | null;
+    medicationSchedule: {
+        prescriptions: any[];
+        administrations: any[];
+    } | null;
 }
 
 const PatientDashboard = () => {
@@ -29,30 +33,23 @@ const PatientDashboard = () => {
         }
     };
 
-    const handleBookLab = async (labRequestId: string) => {
-        if (!confirm("Book appointment for this Lab Test?")) return;
-        try {
-            await api.post('/appointments', { 
-                type: 'LAB', 
-                reason: 'Lab Request Fulfillment ' + labRequestId,
-                labRequestId 
-            });
-            alert("Lab appointment booked! Check your notifications.");
-        } catch (error) {
-            alert("Failed to book lab.");
-        }
+    const handleBookLab = (labRequestId: string) => {
+        // Redirect to appointment booking page instead of direct POST since 
+        // full details (doctor, time) are required by the backend.
+        window.location.href = `/appointments/new?type=LAB&reason=Lab Request Fulfillment ${labRequestId}`;
     };
 
     useEffect(() => {
         const fetchStats = async () => {
             try {
                 // Fetch in parallel
-                const [queue, records, invoices, prescriptions, profile] = await Promise.all([
+                const [queue, records, invoices, prescriptions, profile, medSchedule] = await Promise.all([
                     PatientService.getQueueStatus(),
                     PatientService.getMedicalRecords().catch(() => []), // Fallback empty array
                     PatientService.getInvoices().catch(() => []),
                     PatientService.getPrescriptions().catch(() => []), 
-                    PatientService.getEmergencyProfile().catch(() => null)
+                    PatientService.getEmergencyProfile().catch(() => null),
+                    PatientService.getMedicationSchedule().catch(() => null)
                 ]);
 
                 // Calculate Outstanding Balance
@@ -70,7 +67,8 @@ const PatientDashboard = () => {
                     activeMedications: activeMeds,
                     outstandingBalance: balance,
                     recentActivity: sortedRecords,
-                    vitals: profile // Using profile which contains emergency info often including vitals/allergies
+                    vitals: profile,
+                    medicationSchedule: medSchedule
                 });
             } catch (error) {
                 console.error('Failed to fetch dashboard data', error);
@@ -205,10 +203,10 @@ const PatientDashboard = () => {
                  {/* Billing Card */}
                  <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 group">
                      <div className="flex items-center justify-between mb-4">
-                        <div className="w-10 h-10 bg-purple-50 rounded-full flex items-center justify-center text-purple-600 group-hover:bg-purple-100 transition-colors">
+                        <div className="w-10 h-10 bg-teal-50 rounded-full flex items-center justify-center text-teal-600 group-hover:bg-teal-100 transition-colors">
                             <CreditCard className="w-5 h-5" />
                         </div>
-                        <span className="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-1 rounded-full uppercase tracking-wider"> Billing </span>
+                        <span className="text-xs font-bold text-teal-600 bg-teal-50 px-2 py-1 rounded-full uppercase tracking-wider"> Billing </span>
                     </div>
                      <div className="mt-2">
                         <div className="flex items-baseline gap-1">
@@ -218,7 +216,7 @@ const PatientDashboard = () => {
                          <p className="text-xs text-gray-400 mt-1">
                            Total Outstanding
                         </p>
-                        <Link to="/billing" className="mt-6 block w-full py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium text-sm transition-colors shadow-sm text-center">
+                        <Link to="/billing" className="mt-6 block w-full py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 font-medium text-sm transition-colors shadow-sm text-center">
                             Pay Now
                         </Link>
                     </div>
@@ -232,39 +230,73 @@ const PatientDashboard = () => {
                     <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
                         <Pill className="w-5 h-5 text-emerald-600" /> My Prescriptions
                     </h3>
-                    {stats?.queueStatus?.prescriptions?.length ? (
-                    <div className="space-y-3">
-                        {stats.queueStatus.prescriptions.map((p:any) => (
-                            <div key={p.id} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                                <div>
-                                    <p className="font-medium text-gray-900">{p.medication}</p>
-                                    <p className="text-xs text-gray-500">{p.dosage} • {p.frequency}</p>
+                    {/* Revised Medication Schedule Section */}
+                    {stats?.medicationSchedule?.prescriptions?.length ? (
+                    <div className="space-y-4">
+                        {stats.medicationSchedule.prescriptions.map((p:any) => {
+                             // Check if taken today
+                            const isTaken = stats.medicationSchedule?.administrations.some((a: any) => a.prescriptionId === p.id && a.status === 'GIVEN');
+                            
+                            // Simple frequency mapper
+                            const frequencyMap: Record<string, string> = {
+                                'OD': 'Once Daily',
+                                'BD': 'Twice Daily',
+                                'TDS': '3 Times Daily',
+                                'QDS': '4 Times Daily'
+                            };
+
+                            return (
+                                <div key={p.id} className="flex justify-between items-center p-4 bg-gray-50 rounded-lg border border-gray-100">
+                                    <div className="flex items-center gap-3">
+                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isTaken ? 'bg-green-100 text-green-600' : 'bg-blue-100 text-blue-600'}`}>
+                                            <Pill className="w-5 h-5" />
+                                        </div>
+                                        <div>
+                                            <p className="font-semibold text-gray-900">{p.medicationName}</p>
+                                            <p className="text-xs text-gray-500 font-medium">
+                                                {p.dosage} • {frequencyMap[p.frequency] || p.frequency} 
+                                            </p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="text-right">
+                                        {isTaken ? (
+                                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">
+                                                Taken Today
+                                            </span>
+                                        ) : (
+                                            <div className="flex flex-col items-end">
+                                                <span className="text-xs font-bold text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full mb-1">Due Today</span>
+                                                 {/* Delivery button if needed */}
+                                                <button 
+                                                    onClick={() => handleOrderDelivery(p.id)}
+                                                    className="text-[10px] text-gray-400 hover:text-blue-600 underline"
+                                                >
+                                                    Order Refill
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
-                                <button 
-                                    onClick={() => handleOrderDelivery(p.id)}
-                                    className="text-xs bg-emerald-600 text-white px-3 py-1.5 rounded-md hover:bg-emerald-700 flex items-center gap-1 transition-colors"
-                                >
-                                    <Truck className="w-3 h-3" /> Order Delivery
-                                </button>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                     ) : (
-                        <p className="text-sm text-gray-400">No active prescriptions.</p>
+                        <p className="text-sm text-gray-400 italic">No scheduled medications.</p>
                     )}
                 </div>
 
                 {/* Pending Lab Requests */}
                 <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
                     <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                        <TestTube className="w-5 h-5 text-purple-600" /> Pending Lab Tests
+                        <TestTube className="w-5 h-5 text-teal-600" /> Pending Lab Tests
                     </h3>
                     {/* Placeholder for Lab Data - assuming it comes in similar stats object */}
-                    <div className="bg-purple-50 p-4 rounded-lg text-center">
-                        <p className="text-sm text-purple-800 font-medium mb-2">You have 1 pending lab test.</p>
+                    <div className="bg-teal-50 p-4 rounded-lg text-center">
+                        <p className="text-sm text-teal-800 font-medium mb-2">You have 1 pending lab test.</p>
                         <button 
                             onClick={() => handleBookLab('mock-id')}
-                            className="text-xs bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors"
+                            className="text-xs bg-teal-600 text-white px-4 py-2 rounded-md hover:bg-teal-700 transition-colors"
                         >
                             Book Lab Test
                         </button>

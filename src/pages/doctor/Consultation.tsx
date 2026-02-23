@@ -4,8 +4,9 @@ import toast from 'react-hot-toast';
 import api from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { getPatientHistory, saveConsultation, updateAppointmentStatus } from '../../services/doctor.service';
+import { FinanceService } from '../../services/finance.service';
 import { 
-  User, Activity, Pill, FlaskConical, CheckCircle, Video, History 
+  User, Activity, Pill, FlaskConical, CheckCircle, Video, History, Building2 
 } from 'lucide-react';
 
 const Consultation = () => {
@@ -13,11 +14,15 @@ const Consultation = () => {
     const navigate = useNavigate();
     const { token, user } = useAuth();
     
+    const [appointment, setAppointment] = useState<any>(null);
     const [patient, setPatient] = useState<any>(null);
     const [history, setHistory] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     
+    // Services List
+    const [availableTests, setAvailableTests] = useState<any[]>([]);
+
     const [soap, setSoap] = useState({
         subjective: '',
         objective: '',
@@ -39,7 +44,7 @@ const Consultation = () => {
     const [labOrders, setLabOrders] = useState<any[]>([]);
 
     const [newRx, setNewRx] = useState({ name: '', dosage: '', frequency: '', duration: '' });
-    const [newLab, setNewLab] = useState({ test: '', priority: 'ROUTINE' });
+    const [newLab, setNewLab] = useState({ test: '', priority: 'ROUTINE', isExternal: false });
 
     useEffect(() => {
         const fetchContext = async () => {
@@ -47,6 +52,7 @@ const Consultation = () => {
             try {
                 const res = await api.get(`/appointments/${appointmentId}`);
                 setPatient(res.data.patient);
+                setAppointment(res.data);
 
                 if (res.data.status === 'CONFIRMED' || res.data.status === 'CHECKED_IN') {
                     await updateAppointmentStatus(appointmentId!, 'IN_PROGRESS');
@@ -56,6 +62,10 @@ const Consultation = () => {
                     const historyData = await getPatientHistory(res.data.patientId);
                     setHistory(historyData.history || []);
                 }
+
+                // Fetch Lab Services
+                const services = await FinanceService.getServices({ type: 'LAB' });
+                setAvailableTests(services);
 
             } catch (err) {
                 console.error("Failed to load consultation context", err);
@@ -76,7 +86,7 @@ const Consultation = () => {
     const addLabOrder = () => {
         if(!newLab.test) return;
         setLabOrders([...labOrders, { ...newLab, id: Date.now() }]);
-        setNewLab({ test: '', priority: 'ROUTINE' });
+        setNewLab({ test: '', priority: 'ROUTINE', isExternal: false });
         setShowLabModal(false);
     };
 
@@ -138,12 +148,14 @@ const Consultation = () => {
                     </div>
                 </div>
                 <div className="flex gap-2">
-                     <button 
-                        onClick={() => navigate(`/consultation/video/${appointmentId}`)}
-                        className="px-3 py-2 text-blue-700 bg-blue-50 rounded-lg hover:bg-blue-100 font-medium flex items-center gap-2 text-sm"
-                    >
-                        <Video className="w-4 h-4" /> Video Call
-                    </button>
+                    {appointment?.type === 'TELEMEDICINE' && (
+                        <button 
+                            onClick={() => navigate(`/consultation/video/${appointmentId}`)}
+                            className="px-3 py-2 text-blue-700 bg-blue-50 rounded-lg hover:bg-blue-100 font-medium flex items-center gap-2 text-sm"
+                        >
+                            <Video className="w-4 h-4" /> Video Call
+                        </button>
+                    )}
                     <button 
                         onClick={() => handleSave('COMPLETED')}
                         disabled={saving}
@@ -228,15 +240,15 @@ const Consultation = () => {
                 <div className="col-span-3 space-y-4">
                     <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
                         <div className="flex items-center justify-between mb-4">
-                            <h3 className="font-bold text-gray-900 flex items-center gap-2"><Pill className="w-4 h-4 text-purple-600" /> Prescriptions</h3>
-                            <button onClick={() => setShowRxModal(true)} className="text-xs bg-purple-50 text-purple-700 px-2 py-1 rounded hover:bg-purple-100 font-bold">+ Add</button>
+                            <h3 className="font-bold text-gray-900 flex items-center gap-2"><Pill className="w-4 h-4 text-teal-600" /> Prescriptions</h3>
+                            <button onClick={() => setShowRxModal(true)} className="text-xs bg-teal-50 text-teal-700 px-2 py-1 rounded hover:bg-teal-100 font-bold">+ Add</button>
                         </div>
                         {prescriptions.length === 0 ? (
                             <div className="text-sm text-gray-400 italic">No prescriptions added</div>
                         ) : (
                             <ul className="space-y-2">
                                 {prescriptions.map(p => (
-                                    <li key={p.id} className="text-sm bg-purple-50 p-2 rounded border border-purple-100 text-purple-900">
+                                    <li key={p.id} className="text-sm bg-teal-50 p-2 rounded border border-teal-100 text-teal-900">
                                         <div className="font-bold">{p.name}</div>
                                         <div className="text-xs opacity-75">{p.dosage} • {p.frequency}</div>
                                     </li>
@@ -255,9 +267,12 @@ const Consultation = () => {
                         ) : (
                             <ul className="space-y-2">
                                 {labOrders.map(l => (
-                                    <li key={l.id} className="text-sm bg-blue-50 p-2 rounded border border-blue-100 text-blue-900">
-                                        <div className="font-bold">{l.test}</div>
-                                        <div className="text-xs opacity-75 uppercase">{l.priority}</div>
+                                    <li key={l.id} className={`text-sm p-2 rounded border border-blue-100 ${l.isExternal ? 'bg-orange-50 text-orange-900 border-orange-100' : 'bg-blue-50 text-blue-900'}`}>
+                                        <div className="font-bold flex items-center gap-2">
+                                            {l.test}
+                                            {l.isExternal && <Building2 className="w-3 h-3 text-orange-600" />}
+                                        </div>
+                                        <div className="text-xs opacity-75 uppercase">{l.priority} {l.isExternal && '• Referral'}</div>
                                     </li>
                                 ))}
                             </ul>
@@ -291,15 +306,51 @@ const Consultation = () => {
                     <div className="bg-white w-full max-w-md p-6 rounded-xl shadow-xl">
                         <h3 className="text-xl font-bold mb-4">Order Lab Test</h3>
                         <div className="space-y-4">
-                            <input className="w-full p-2 border rounded" placeholder="Test Name" value={newLab.test} onChange={e=>setNewLab({...newLab, test: e.target.value})} />
-                            <select className="w-full p-2 border rounded" value={newLab.priority} onChange={e=>setNewLab({...newLab, priority: e.target.value})}>
-                                <option value="ROUTINE">Routine</option>
-                                <option value="URGENT">Urgent</option>
-                                <option value="STAT">STAT (Immediate)</option>
-                            </select>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Select Test</label>
+                                <select 
+                                    className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none"
+                                    value={newLab.test}
+                                    onChange={e => {
+                                        const selected = availableTests.find(t => t.name === e.target.value);
+                                        setNewLab({
+                                            ...newLab, 
+                                            test: e.target.value,
+                                            isExternal: selected?.isExternal || false
+                                        });
+                                    }}
+                                >
+                                    <option value="">-- Select Lab Test --</option>
+                                    {availableTests.map(test => (
+                                        <option key={test.id} value={test.name}>
+                                            {test.name} {test.isExternal ? '(External)' : ''}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+                                <select 
+                                    className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none" 
+                                    value={newLab.priority} 
+                                    onChange={e=>setNewLab({...newLab, priority: e.target.value})}
+                                >
+                                    <option value="ROUTINE">Routine</option>
+                                    <option value="URGENT">Urgent</option>
+                                    <option value="STAT">STAT (Immediate)</option>
+                                </select>
+                            </div>
+
+                            {newLab.isExternal && (
+                                <div className="p-3 bg-orange-50 text-orange-700 text-sm rounded border border-orange-200">
+                                    <strong>Note:</strong> This is an external test. No invoice will be generated.
+                                </div>
+                            )}
+
                             <div className="flex justify-end gap-2 mt-4">
                                 <button onClick={()=>setShowLabModal(false)} className="px-4 py-2 text-gray-600">Cancel</button>
-                                <button onClick={addLabOrder} className="px-4 py-2 bg-purple-600 text-white rounded">Order</button>
+                                <button onClick={addLabOrder} className="px-4 py-2 bg-teal-600 text-white rounded">Order</button>
                             </div>
                         </div>
                     </div>

@@ -81,12 +81,20 @@ const LabDashboard = () => {
                                 <th className="p-4">Test Requested</th>
                                 <th className="p-4">Priority</th>
                                 <th className="p-4">Requested By</th>
+                                <th className="p-4">Payment</th>
                                 <th className="p-4">Status</th>
                                 <th className="p-4 text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
-                            {orders.map(order => (
+                            {orders.map(order => {
+                                const invoice = order.medicalRecord.invoice;
+                                const paymentStatus = invoice ? invoice.status : 'UNBILLED';
+                                const isPaid = paymentStatus === 'PAID';
+                                const isEmergency = order.priority === 'STAT';
+                                const canProcess = isPaid || isEmergency;
+
+                                return (
                                 <tr key={order.id} className="hover:bg-gray-50">
                                     <td className="p-4">
                                         <div className="font-medium">{order.patient.firstName} {order.patient.lastName}</div>
@@ -110,16 +118,47 @@ const LabDashboard = () => {
                                     </td>
                                     <td className="p-4">
                                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                            paymentStatus === 'PAID' ? 'bg-green-100 text-green-700' :
+                                            paymentStatus === 'UNBILLED' ? 'bg-gray-100 text-gray-600' :
+                                            'bg-yellow-100 text-yellow-700'
+                                        }`}>
+                                            {paymentStatus}
+                                        </span>
+                                    </td>
+                                    <td className="p-4">
+                                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                                             order.status === 'IN_PROGRESS' ? 'bg-blue-100 text-blue-700' : 'bg-yellow-100 text-yellow-700'
                                         }`}>
                                             {order.status.replace('_', ' ')}
                                         </span>
                                     </td>
-                                    <td className="p-4 text-right space-x-2">
+                                    <td className="p-4 text-right space-x-2 flex justify-end">
+                                        {paymentStatus === 'UNBILLED' && (
+                                            <button
+                                                onClick={async () => {
+                                                    if(confirm('Create invoice for this test?')) {
+                                                        try {
+                                                            await labService.createInvoice(order.id, 0);
+                                                            loadOrders();
+                                                        } catch(e) { alert('Failed to create invoice'); }
+                                                    }
+                                                }}
+                                                className="text-sm bg-teal-50 text-teal-600 px-3 py-1.5 rounded-lg hover:bg-teal-100 transition-colors"
+                                            >
+                                                Create Bill
+                                            </button>
+                                        )}
+
                                         {order.status === 'PENDING' && (
                                             <button 
                                                 onClick={() => handleStatusUpdate(order.id, 'IN_PROGRESS')}
-                                                className="text-sm bg-blue-50 text-blue-600 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-colors"
+                                                disabled={!canProcess}
+                                                title={!canProcess ? "Payment Required" : ""}
+                                                className={`text-sm px-3 py-1.5 rounded-lg transition-colors ${
+                                                    canProcess 
+                                                    ? 'bg-blue-50 text-blue-600 hover:bg-blue-100' 
+                                                    : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                                }`}
                                             >
                                                 Start
                                             </button>
@@ -127,17 +166,18 @@ const LabDashboard = () => {
                                         {order.status === 'IN_PROGRESS' && (
                                             <button 
                                                 onClick={() => setSelectedOrder(order)}
-                                                className="text-sm bg-green-50 text-green-600 px-3 py-1.5 rounded-lg hover:bg-green-100 transition-colors flex items-center gap-1 inline-flex"
+                                                className="text-sm bg-green-50 text-green-600 px-3 py-1.5 rounded-lg hover:bg-green-100 transition-colors flex items-center gap-1"
                                             >
                                                 <Upload className="w-3 h-3" /> Complete
                                             </button>
                                         )}
                                     </td>
                                 </tr>
-                            ))}
+                            );
+                            })}
                             {orders.length === 0 && (
                                 <tr>
-                                    <td colSpan={6} className="p-8 text-center text-gray-500">
+                                    <td colSpan={7} className="p-8 text-center text-gray-500">
                                         <CheckCircle className="w-8 h-8 mx-auto mb-2 text-green-500" />
                                         No pending lab requests.
                                     </td>

@@ -57,7 +57,9 @@ const MedicalRecords = () => {
     const filteredRecords = records.filter(r => {
         const term = searchTerm.toLowerCase();
         const pName = (r.patient?.firstName || '') + ' ' + (r.patient?.lastName || '');
-        const subj = r.subjective || '';
+        const subj = typeof r.subjective === 'object' && r.subjective !== null 
+            ? JSON.stringify(r.subjective) 
+            : (r.subjective || '');
         
         return pName.toLowerCase().includes(term) ||
                subj.toLowerCase().includes(term);
@@ -135,8 +137,17 @@ const MedicalRecords = () => {
                                     <td className="p-4 font-medium text-gray-900">
                                         {record.patient?.firstName} {record.patient?.lastName}
                                     </td>
-                                    <td className="p-4 text-gray-600 truncate max-w-xs">{record.subjective}</td>
-                                    <td className="p-4 text-blue-600 font-medium">{record.assessment}</td>
+                                    <td className="p-4 text-gray-600 truncate max-w-xs block">
+                                        {/* Handle both string and object JSON formats */}
+                                        {typeof record.subjective === 'object' && record.subjective !== null 
+                                            ? (record.subjective.chiefComplaint || JSON.stringify(record.subjective))
+                                            : record.subjective}
+                                    </td>
+                                    <td className="p-4 text-blue-600 font-medium">
+                                        {typeof record.assessment === 'object' && record.assessment !== null
+                                            ? (record.assessment.primaryDiagnosis || JSON.stringify(record.assessment))
+                                            : record.assessment}
+                                    </td>
                                     <td className="p-4 text-gray-500 text-sm">
                                         Dr. {record.doctor?.user?.lastName}
                                     </td>
@@ -182,7 +193,7 @@ const MedicalRecords = () => {
                         
                         {/* Printable Header for print view only (usually hidden, but we show modal content) */}
                         <div className="hidden print:block p-6 text-center border-b">
-                            <h1 className="text-3xl font-bold text-blue-900">OltraHMS Medical Report</h1>
+                            <h2 className="text-3xl font-bold text-teal-900">OltraHMS Medical Report</h2>
                             <p className="text-gray-500">Confidential Medical Record</p>
                         </div>
 
@@ -193,12 +204,21 @@ const MedicalRecords = () => {
                                 <div className="bg-blue-50 p-4 rounded-lg">
                                     <h3 className="text-xs font-bold text-blue-800 uppercase mb-2">Patient</h3>
                                     <p className="text-lg font-bold">{selectedRecord.patient?.firstName} {selectedRecord.patient?.lastName}</p>
-                                    <p className="text-sm text-blue-700">{selectedRecord.patient?.gender} • {selectedRecord.patient?.dateOfBirth && format(new Date(selectedRecord.patient.dateOfBirth), 'yyyy-MM-dd')}</p>
+                                    <p className="text-sm text-blue-700">
+                                        {selectedRecord.patient?.gender} 
+                                        {selectedRecord.patient?.dateOfBirth && (
+                                            <> • {format(new Date(selectedRecord.patient.dateOfBirth), 'yyyy-MM-dd')}</>
+                                        )}
+                                    </p>
                                 </div>
                                 <div className="bg-gray-50 p-4 rounded-lg text-right">
                                     <h3 className="text-xs font-bold text-gray-500 uppercase mb-2">Encounter Info</h3>
-                                    <p className="text-gray-900 font-medium">Date: {format(new Date(selectedRecord.visitDate), 'PPP')}</p>
-                                    <p className="text-gray-600 text-sm">Dr. {selectedRecord.doctor?.user?.firstName} {selectedRecord.doctor?.user?.lastName}</p>
+                                    <p className="text-gray-900 font-medium">
+                                        Date: {selectedRecord.visitDate ? format(new Date(selectedRecord.visitDate), 'PPP') : 'N/A'}
+                                    </p>
+                                    <p className="text-gray-600 text-sm">
+                                        Dr. {selectedRecord.doctor?.user?.firstName} {selectedRecord.doctor?.user?.lastName}
+                                    </p>
                                 </div>
                             </div>
 
@@ -206,24 +226,32 @@ const MedicalRecords = () => {
                             <div className="grid grid-cols-2 gap-6">
                                 <div className="space-y-2">
                                     <h3 className="font-bold text-gray-700 border-b pb-1">Subjective</h3>
-                                    <p className="text-gray-600 bg-gray-50 p-3 rounded-lg min-h-[100px] whitespace-pre-wrap">{selectedRecord.subjective}</p>
+                                    <p className="text-gray-600 bg-gray-50 p-3 rounded-lg min-h-[100px] whitespace-pre-wrap">
+                                        {typeof selectedRecord.subjective === 'object' ? JSON.stringify(selectedRecord.subjective, null, 2) : selectedRecord.subjective}
+                                    </p>
                                 </div>
                                 <div className="space-y-2">
                                     <h3 className="font-bold text-gray-700 border-b pb-1">Objective</h3>
-                                    <p className="text-gray-600 bg-gray-50 p-3 rounded-lg min-h-[100px] whitespace-pre-wrap">{selectedRecord.objective}</p>
+                                    <p className="text-gray-600 bg-gray-50 p-3 rounded-lg min-h-[100px] whitespace-pre-wrap">
+                                        {typeof selectedRecord.objective === 'object' ? JSON.stringify(selectedRecord.objective, null, 2) : selectedRecord.objective}
+                                    </p>
                                 </div>
                                 <div className="space-y-2">
                                     <h3 className="font-bold text-gray-700 border-b pb-1">Assessment</h3>
-                                    <p className="text-gray-600 bg-gray-50 p-3 rounded-lg min-h-[100px] whitespace-pre-wrap">{selectedRecord.assessment}</p>
+                                    <p className="text-gray-600 bg-gray-50 p-3 rounded-lg min-h-[100px] whitespace-pre-wrap">
+                                        {typeof selectedRecord.assessment === 'object' ? JSON.stringify(selectedRecord.assessment, null, 2) : selectedRecord.assessment}
+                                    </p>
                                 </div>
                                 <div className="space-y-2">
                                     <h3 className="font-bold text-gray-700 border-b pb-1">Plan</h3>
-                                    <p className="text-gray-600 bg-gray-50 p-3 rounded-lg min-h-[100px] whitespace-pre-wrap">{selectedRecord.plan}</p>
+                                    <p className="text-gray-600 bg-gray-50 p-3 rounded-lg min-h-[100px] whitespace-pre-wrap">
+                                        {typeof selectedRecord.plan === 'object' ? JSON.stringify(selectedRecord.plan, null, 2) : selectedRecord.plan}
+                                    </p>
                                 </div>
                             </div>
 
                             {/* Prescriptions */}
-                            {selectedRecord.prescriptions?.length > 0 && (
+                            {selectedRecord.prescriptions && selectedRecord.prescriptions.length > 0 && (
                                 <div>
                                     <h3 className="font-bold text-gray-900 text-lg mb-3 flex items-center gap-2">
                                         <FileText className="w-5 h-5 text-green-600" /> Prescriptions
@@ -254,10 +282,10 @@ const MedicalRecords = () => {
                             )}
 
                              {/* Lab Orders */}
-                             {selectedRecord.labOrders?.length > 0 && (
+                             {selectedRecord.labOrders && selectedRecord.labOrders.length > 0 && (
                                 <div>
                                     <h3 className="font-bold text-gray-900 text-lg mb-3 flex items-center gap-2">
-                                        <FileText className="w-5 h-5 text-purple-600" /> Lab Orders
+                                        <FileText className="w-5 h-5 text-teal-600" /> Lab Orders
                                     </h3>
                                     <div className="border rounded-lg overflow-hidden">
                                         <table className="w-full text-sm">
@@ -279,7 +307,24 @@ const MedicalRecords = () => {
                                                                 'bg-blue-100 text-blue-800'
                                                             }`}>{l.priority}</span>
                                                         </td>
-                                                        <td className="p-3 text-gray-500">{l.status}</td>
+                                                        <td className="p-3">
+                                                            <span className={`px-2 py-1 rounded text-xs ${
+                                                                l.status === 'COMPLETED' ? 'bg-green-100 text-green-800' : 'text-gray-500'
+                                                            }`}>{l.status}</span>
+                                                        </td>
+                                                        {l.result && (
+                                                            <td className="p-3 text-sm bg-gray-50">
+                                                                <div className="font-semibold text-gray-700">Result:</div>
+                                                                <pre className="whitespace-pre-wrap text-xs text-gray-600">
+                                                                    {JSON.stringify(l.result.resultData, null, 2)}
+                                                                </pre>
+                                                                {l.result.aiInterpretation && (
+                                                                    <div className="mt-1 text-xs text-teal-700">
+                                                                        <strong>AI Note:</strong> {l.result.aiInterpretation}
+                                                                    </div>
+                                                                )}
+                                                            </td>
+                                                        )}
                                                     </tr>
                                                 ))}
                                             </tbody>

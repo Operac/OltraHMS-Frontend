@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { 
   User, Phone, MapPin, Calendar, FileText, 
-  ChevronLeft, Edit, AlertCircle 
+  ChevronLeft, Edit, AlertCircle, Activity
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { format } from 'date-fns';
@@ -42,6 +42,19 @@ const PatientDetails = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
+    const [vitalsModalOpen, setVitalsModalOpen] = useState(false);
+    const [submittingVitals, setSubmittingVitals] = useState(false);
+    const [vitalsForm, setVitalsForm] = useState({
+        bpSystolic: '',
+        bpDiastolic: '',
+        heartRate: '',
+        respiratoryRate: '',
+        temperature: '',
+        oxygenSaturation: '',
+        weight: '',
+        height: ''
+    });
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -53,6 +66,7 @@ const PatientDetails = () => {
                 setRecords(recordsRes.data);
             } catch (err) {
                 setError('Failed to load patient profile');
+                console.error(err);
             } finally {
                 setLoading(false);
             }
@@ -60,6 +74,33 @@ const PatientDetails = () => {
 
         if (id) fetchData();
     }, [id, token]);
+
+    const handleRecordVitals = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setSubmittingVitals(true);
+        try {
+            await axios.post(`http://localhost:3000/api/vitals`, {
+                patientId: id,
+                bpSystolic: vitalsForm.bpSystolic ? parseInt(vitalsForm.bpSystolic) : undefined,
+                bpDiastolic: vitalsForm.bpDiastolic ? parseInt(vitalsForm.bpDiastolic) : undefined,
+                heartRate: vitalsForm.heartRate ? parseInt(vitalsForm.heartRate) : undefined,
+                respiratoryRate: vitalsForm.respiratoryRate ? parseInt(vitalsForm.respiratoryRate) : undefined,
+                temperature: vitalsForm.temperature ? parseFloat(vitalsForm.temperature) : undefined,
+                oxygenSaturation: vitalsForm.oxygenSaturation ? parseInt(vitalsForm.oxygenSaturation) : undefined,
+                weight: vitalsForm.weight ? parseFloat(vitalsForm.weight) : undefined,
+                height: vitalsForm.height ? parseFloat(vitalsForm.height) : undefined
+            }, { headers: { Authorization: `Bearer ${token}` } });
+            
+            alert('Vitals recorded successfully');
+            setVitalsModalOpen(false);
+            setVitalsForm({ bpSystolic: '', bpDiastolic: '', heartRate: '', respiratoryRate: '', temperature: '', oxygenSaturation: '', weight: '', height: '' });
+        } catch (err) {
+            console.error('Failed to record vitals', err);
+            alert('Failed to record vitals. Please check all fields.');
+        } finally {
+            setSubmittingVitals(false);
+        }
+    };
 
     if (loading) return <div className="p-6 text-center">Loading patient profile...</div>;
     if (error || !patient) return (
@@ -92,6 +133,13 @@ const PatientDetails = () => {
                     </div>
                 </div>
                 <div className="flex gap-2">
+                    <button 
+                        onClick={() => setVitalsModalOpen(true)}
+                        className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700"
+                    >
+                        <Activity className="w-4 h-4" />
+                        <span>Record Vitals</span>
+                    </button>
                     <button 
                         onClick={() => navigate(`/appointments/new?patientId=${patient.id}`)}
                         className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
@@ -270,6 +318,67 @@ const PatientDetails = () => {
                     </div>
                 </div>
              </div>
+
+            {/* Record Vitals Modal */}
+            {vitalsModalOpen && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200">
+                        <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+                            <h2 className="text-xl font-bold flex items-center gap-2">
+                                <Activity className="w-5 h-5 text-emerald-600" />
+                                Record Vitals
+                            </h2>
+                            <button onClick={() => setVitalsModalOpen(false)} className="text-gray-400 hover:text-gray-600">
+                                ✕
+                            </button>
+                        </div>
+                        <div className="p-6 overflow-y-auto max-h-[70vh]">
+                            <form id="vitals-form" onSubmit={handleRecordVitals} className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">BP Systolic</label>
+                                    <input type="number" className="w-full border p-2 rounded" placeholder="120" value={vitalsForm.bpSystolic} onChange={e => setVitalsForm({...vitalsForm, bpSystolic: e.target.value})} />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">BP Diastolic</label>
+                                    <input type="number" className="w-full border p-2 rounded" placeholder="80" value={vitalsForm.bpDiastolic} onChange={e => setVitalsForm({...vitalsForm, bpDiastolic: e.target.value})} />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Heart Rate (bpm)</label>
+                                    <input type="number" className="w-full border p-2 rounded" placeholder="75" value={vitalsForm.heartRate} onChange={e => setVitalsForm({...vitalsForm, heartRate: e.target.value})} />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Resp. Rate</label>
+                                    <input type="number" className="w-full border p-2 rounded" placeholder="16" value={vitalsForm.respiratoryRate} onChange={e => setVitalsForm({...vitalsForm, respiratoryRate: e.target.value})} />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Temperature (°C)</label>
+                                    <input type="number" step="0.1" className="w-full border p-2 rounded" placeholder="36.5" value={vitalsForm.temperature} onChange={e => setVitalsForm({...vitalsForm, temperature: e.target.value})} />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">O2 Saturation (%)</label>
+                                    <input type="number" className="w-full border p-2 rounded" placeholder="98" value={vitalsForm.oxygenSaturation} onChange={e => setVitalsForm({...vitalsForm, oxygenSaturation: e.target.value})} />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Weight (kg)</label>
+                                    <input type="number" step="0.1" className="w-full border p-2 rounded" placeholder="70.5" value={vitalsForm.weight} onChange={e => setVitalsForm({...vitalsForm, weight: e.target.value})} />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Height (cm)</label>
+                                    <input type="number" step="0.1" className="w-full border p-2 rounded" placeholder="175" value={vitalsForm.height} onChange={e => setVitalsForm({...vitalsForm, height: e.target.value})} />
+                                </div>
+                            </form>
+                        </div>
+                        <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-3">
+                            <button type="button" onClick={() => setVitalsModalOpen(false)} className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 bg-white">
+                                Cancel
+                            </button>
+                            <button form="vitals-form" type="submit" disabled={submittingVitals} className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:opacity-50 flex items-center gap-2">
+                                {submittingVitals ? 'Saving...' : 'Save Vitals'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

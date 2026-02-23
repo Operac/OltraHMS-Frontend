@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
-import { User, Mail, Save, AlertCircle, CheckCircle } from 'lucide-react';
-
+import { User, Mail, Save, AlertCircle, CheckCircle, Calendar, DollarSign } from 'lucide-react';
 import PatientSettings from './patient/Settings';
+import MyLeaves from '../components/MyLeaves';
+import MyPayslips from '../components/MyPayslips';
 
 const Settings = () => {
     const { user, token, login } = useAuth();
@@ -12,6 +13,7 @@ const Settings = () => {
         return <PatientSettings />;
     }
 
+    const [activeTab, setActiveTab] = useState('PROFILE');
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -79,6 +81,37 @@ const Settings = () => {
                     </div>
                 </div>
 
+                {/* Tabs */}
+                <div className="flex border-b border-gray-200 mb-6">
+                    <button 
+                        onClick={() => setActiveTab('PROFILE')}
+                        className={`px-4 py-2 font-medium text-sm border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'PROFILE' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+                    >
+                        <User className="w-4 h-4" /> Profile
+                    </button>
+                    {(user?.role !== 'PATIENT' && user?.role !== 'ADMIN') && (
+                        <>
+                            <button 
+                                onClick={() => setActiveTab('LEAVES')}
+                                className={`px-4 py-2 font-medium text-sm border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'LEAVES' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+                            >
+                                <Calendar className="w-4 h-4" /> My Leaves
+                            </button>
+                            <button 
+                                onClick={() => setActiveTab('PAYROLL')}
+                                className={`px-4 py-2 font-medium text-sm border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'PAYROLL' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+                            >
+                                <DollarSign className="w-4 h-4" /> My Payslips
+                            </button>
+                        </>
+                    )}
+                </div>
+
+                {activeTab === 'LEAVES' && <MyLeaves />}
+                {activeTab === 'PAYROLL' && <MyPayslips />}
+
+                {activeTab === 'PROFILE' && (
+                <>
                 {message && (
                     <div className={`p-4 rounded-lg mb-6 flex items-center gap-2 ${
                         message.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
@@ -142,7 +175,9 @@ const Settings = () => {
                             {loading ? 'Saving...' : 'Save Changes'}
                         </button>
                     </div>
-                </form>
+                    </form>
+                </>
+                )}
             </div>
         </div>
     );

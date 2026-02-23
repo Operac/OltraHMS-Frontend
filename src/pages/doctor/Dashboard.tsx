@@ -72,8 +72,14 @@ const DoctorDashboard = () => {
                                     {stats?.nextPatient ? `Scheduled for ${new Date(stats.nextPatient.startTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}` : 'You have cleared your queue!'}
                                 </p>
                             </div>
-                            {stats?.nextPatient && (
-                                <button className="bg-white text-blue-600 px-6 py-3 rounded-lg font-bold shadow-md hover:bg-blue-50 transition-colors">
+                            {stats?.nextPatient && stats.nextPatient.type === 'TELEMEDICINE' && (
+                                <button 
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        navigate(`/consultation/video/${stats.nextPatient.id}`);
+                                    }}
+                                    className="bg-white text-blue-600 px-6 py-3 rounded-lg font-bold shadow-md hover:bg-blue-50 transition-colors"
+                                >
                                     Call Patient
                                 </button>
                             )}
@@ -88,7 +94,7 @@ const DoctorDashboard = () => {
                         className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer flex items-center justify-between"
                      >
                         <div className="flex items-center gap-4">
-                            <div className="p-3 bg-purple-50 rounded-lg text-purple-600"><Calendar className="w-6 h-6" /></div>
+                            <div className="p-3 bg-teal-50 rounded-lg text-teal-600"><Calendar className="w-6 h-6" /></div>
                             <span className="font-bold text-gray-700">Full Schedule</span>
                         </div>
                      </div>

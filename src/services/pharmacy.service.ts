@@ -32,6 +32,11 @@ export const PharmacyService = {
         return response.data;
     },
 
+    createMedication: async (data: any) => {
+        const response = await api.post('/inventory/medications', data);
+        return response.data;
+    },
+
     // Pharmacy / Dispensing
     getQueue: async () => {
         const response = await api.get('/pharmacy/queue');
@@ -40,6 +45,16 @@ export const PharmacyService = {
 
     dispense: async (prescriptionId: string, items: DispenseItem[]) => {
         const response = await api.post(`/pharmacy/dispense/${prescriptionId}`, { items });
+        return response.data;
+    },
+
+    createInvoice: async (prescriptionId: string) => {
+        const response = await api.post('/pharmacy/invoice', { prescriptionId });
+        return response.data;
+    },
+
+    getReport: async () => {
+        const response = await api.get('/pharmacy/report');
         return response.data;
     }
 };

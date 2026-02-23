@@ -29,3 +29,15 @@ export const saveConsultation = async (data: any) => {
     const response = await api.post('/doctor/consultation', data);
     return response.data;
 };
+
+// Patient Lookup
+export const getPatient = async (id: string) => {
+    const response = await api.get(`/patients/${id}`);
+    return response.data;
+};
+
+export const searchPatients = async (query: string) => {
+    // Reusing receptionist search as it's efficient/exists
+    const response = await api.get(`/receptionist/patients/search?query=${query}`);
+    return response.data;
+};

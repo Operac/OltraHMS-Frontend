@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, UserPlus, LogOut, PaintBucket } from 'lucide-react';
-import { InpatientService } from '../../services/inpatient.service';
+import { inpatientService as InpatientService } from '../../services/inpatient.service';
 import AdmissionModal from './AdmissionModal';
+import InpatientCareModal from '../../components/nurse/InpatientCareModal';
 
 const WardDetails = () => {
     const { id } = useParams();
@@ -11,6 +12,8 @@ const WardDetails = () => {
     const [loading, setLoading] = useState(true);
     const [selectedBed, setSelectedBed] = useState<any>(null); // For Admission
     const [showAdmitModal, setShowAdmitModal] = useState(false);
+    const [showCareModal, setShowCareModal] = useState(false);
+    const [selectedPatient, setSelectedPatient] = useState<{id: string, name: string, admissionId: string} | null>(null);
 
     useEffect(() => {
         loadWard();
@@ -36,8 +39,16 @@ const WardDetails = () => {
              // Handle Clean Action
              handleCleanBed(bed.id);
         } else {
-             // Already occupied - show options to Discharge?
-             // Simple alert for now or direct action if clicking the discharge button
+             // Already occupied - Show Care Modal
+             if (bed.currAdmission?.[0]?.patient) {
+                 const patient = bed.currAdmission[0].patient;
+                 setSelectedPatient({
+                     id: patient.id,
+                     name: `${patient.firstName} ${patient.lastName}`,
+                     admissionId: bed.currAdmission[0].id
+                 });
+                 setShowCareModal(true);
+             }
         }
     };
 
@@ -130,6 +141,15 @@ const WardDetails = () => {
                     bed={selectedBed} 
                     onClose={() => setShowAdmitModal(false)}
                     onSuccess={() => { setShowAdmitModal(false); loadWard(); }}
+                />
+            )}
+
+            {showCareModal && selectedPatient && (
+                <InpatientCareModal
+                    patientId={selectedPatient.id}
+                    admissionId={selectedPatient.admissionId}
+                    patientName={selectedPatient.name}
+                    onClose={() => setShowCareModal(false)}
                 />
             )}
         </div>

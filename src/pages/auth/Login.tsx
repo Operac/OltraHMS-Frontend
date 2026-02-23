@@ -20,7 +20,6 @@ const Login = () => {
         setError('');
         setLoading(true);
 
-        // Simulate a minimum loading time for better UX
         const minLoadTime = new Promise(resolve => setTimeout(resolve, 800));
 
         try {
@@ -29,10 +28,50 @@ const Login = () => {
                 minLoadTime
             ]);
             
-            login(response.data.token, response.data.user);
-            toast.success(`Welcome back, ${response.data.user.firstName}!`);
-            navigate('/');
+            const userData = response.data.user;
+            
+            // Await login to ensure state is set (though standard React state update is async, 
+            // the context function itself is synchronous in execution but state update effect is next render)
+            login(response.data.token, userData);
+            toast.success(`Welcome back, ${userData.firstName}!`);
+            
+            
+            // Force a small delay to allow Context to update if needed (though navigating immediately is usually fine if not protected by "wait for auth")
+            // But if the target route is Protected, it checks "isAuthenticated"
+            // If "isAuthenticated" relies on "token" state which might lag by one render cycle...
+            
+            setTimeout(() => {
+                // Role-based redirect
+                switch(userData.role) {
+                    case 'ADMIN':
+                        // Force hard reload to ensure context is fresh and avoid race conditions
+                        window.location.href = '/admin';
+                        break;
+                    case 'DOCTOR':
+                        window.location.href = '/doctor';
+                        break;
+                    case 'PATIENT':
+                        navigate('/app'); 
+                        break;
+                    case 'RECEPTIONIST':
+                        window.location.href = '/receptionist';
+                        break;
+                    case 'PHARMACIST':
+                        window.location.href = '/pharmacy';
+                        break;
+                    case 'LAB_TECH':
+                        window.location.href = '/lab-tech';
+                        break;
+                    case 'NURSE':
+                        window.location.href = '/inpatient';
+                        break;
+                    default:
+                        navigate('/app');
+                }
+            }, 100);
+
         } catch (err: any) {
+            console.error('Login error:', err);
             setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
         } finally {
             setLoading(false);
@@ -212,6 +251,16 @@ const Login = () => {
                         
 
                     </form>
+
+                    <div className="mt-8 text-center text-sm text-gray-500">
+                        Don't have an account?{' '}
+                        <button 
+                            onClick={() => navigate('/register')}
+                            className="font-semibold text-blue-600 hover:text-blue-700 hover:underline"
+                        >
+                            Create free account
+                        </button>
+                    </div>
                 </motion.div>
             </div>
         </div>

@@ -58,7 +58,7 @@ const Billing = () => {
 
     if (loading) return (
         <div className="flex justify-center items-center h-64">
-             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
         </div>
     );
 
@@ -68,12 +68,12 @@ const Billing = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-purple-50 p-6 rounded-2xl border border-purple-100 gap-4">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-teal-50 p-6 rounded-2xl border border-teal-100 gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-purple-900">Billing & Payments</h1>
-                    <p className="text-purple-700 mt-1">Manage your health payments and view invoice history.</p>
+                    <h1 className="text-2xl font-bold text-teal-900">Billing & Payments</h1>
+                    <p className="text-teal-700 mt-1">Manage your health payments and view invoice history.</p>
                 </div>
-                <div className="bg-white p-4 rounded-xl shadow-sm md:text-right w-full md:w-auto border border-purple-100">
+                <div className="bg-white p-4 rounded-xl shadow-sm md:text-right w-full md:w-auto border border-teal-100">
                     <p className="text-xs text-gray-500 uppercase font-semibold tracking-wider">Total Outstanding</p>
                     <p className="text-3xl font-bold text-gray-900 mt-1">
                         ₦ {outstandingTotal.toLocaleString()}
@@ -91,7 +91,7 @@ const Billing = () => {
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 <div className="p-5 border-b border-gray-100 flex justify-between items-center">
                     <h3 className="font-bold text-gray-800">Invoices ({invoices.length})</h3>
-                    <button onClick={() => { setLoading(true); fetchInvoices(); }} className="text-gray-400 hover:text-purple-600 transition-colors">
+                    <button onClick={() => { setLoading(true); fetchInvoices(); }} className="text-gray-400 hover:text-teal-600 transition-colors">
                         <RefreshCw className="w-4 h-4" />
                     </button>
                 </div>
@@ -139,7 +139,7 @@ const Billing = () => {
                                                 <button
                                                     onClick={() => handlePay(invoice.id, invoice.balance ?? invoice.total)}
                                                     disabled={paymentProcessing === invoice.id}
-                                                    className="inline-flex items-center px-3 py-1.5 bg-purple-600 text-white text-xs font-bold rounded-lg hover:bg-purple-700 disabled:opacity-50 transition-all shadow-sm active:scale-95"
+                                                    className="inline-flex items-center px-3 py-1.5 bg-teal-600 text-white text-xs font-bold rounded-lg hover:bg-teal-700 disabled:opacity-50 transition-all shadow-sm active:scale-95"
                                                 >
                                                     {paymentProcessing === invoice.id ? (
                                                         <Clock className="w-3 h-3 mr-1.5 animate-spin" />

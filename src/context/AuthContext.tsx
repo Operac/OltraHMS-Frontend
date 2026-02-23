@@ -44,7 +44,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const interceptor = axios.interceptors.response.use(
       (response) => response,
       (error) => {
-        if (error.response && error.response.status === 401) {
+        const isLoginRequest = error.config?.url?.includes('/api/auth/login');
+        if (error.response && error.response.status === 401 && !isLoginRequest) {
           logout();
         }
         return Promise.reject(error);

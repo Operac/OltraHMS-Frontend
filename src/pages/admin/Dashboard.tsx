@@ -75,7 +75,7 @@ const AdminDashboard = () => {
                     title="Today's Appointments" 
                     value={loading ? '...' : stats.todayAppointments} 
                     icon={Calendar} 
-                    color="bg-purple-500" 
+                    color="bg-teal-500" 
                     trend="Now" 
                 />
                 <StatCard 

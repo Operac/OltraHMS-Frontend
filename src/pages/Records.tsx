@@ -9,7 +9,7 @@ const Records = () => {
         return <DoctorMedicalRecords />;
     }
 
-    if (user?.role === 'PATIENT') {
+    if (user?.role === 'PATIENT' || user?.role === 'ADMIN') {
         return <PatientMedicalRecords />;
     }
 

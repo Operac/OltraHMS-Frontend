@@ -56,19 +56,19 @@ export interface Dependent {
 export const PatientService = {
   // --- Profile ---
   getProfile: async () => {
-    const response = await api.get('/patient/profile');
+    const response = await api.get('/patients/profile/me');
     return response.data;
   },
 
   updateProfile: async (data: any) => {
-    const response = await api.put('/patient/profile', data);
+    const response = await api.patch('/patients/profile', data);
     return response.data;
   },
 
   // --- Medical Records ---
   getMedicalRecords: async () => {
-    const response = await api.get('/patient/records');
-    return response.data;
+    const response = await api.get('/patient/medical-records');
+    return response.data.history || response.data;
   },
   
   getLabResults: async () => {
@@ -78,6 +78,11 @@ export const PatientService = {
 
   getPrescriptions: async () => {
     const response = await api.get('/patient/prescriptions');
+    return response.data;
+  },
+
+  getMedicationSchedule: async () => {
+    const response = await api.get('/patient/medications/adherence');
     return response.data;
   },
 
@@ -93,7 +98,7 @@ export const PatientService = {
   },
 
   processPayment: async (data: { invoiceId: string; amount: number; method: string; reference?: string }) => {
-    const response = await api.post('/patient/payments', data);
+    const response = await api.post('/patient/payments/process', data);
     return response.data;
   },
 
@@ -104,7 +109,7 @@ export const PatientService = {
   },
 
   initializeVideoSession: async (appointmentId: string) => {
-    const response = await api.post('/patient/video-session', { appointmentId });
+    const response = await api.post('/patient/telemedicine/session', { appointmentId });
     return response.data;
   },
 
@@ -136,12 +141,12 @@ export const PatientService = {
 
   // --- Wellness & Misc ---
   getWellnessGoals: async () => {
-    const response = await api.get('/patient/wellness-goals');
+    const response = await api.get('/patient/wellness/goals');
     return response.data;
   },
 
   updateWellnessGoal: async (id: string, data: any) => {
-    const response = await api.put(`/patient/wellness-goals/${id}`, data);
+    const response = await api.post(`/patient/wellness/goals`, { id, ...data });
     return response.data;
   },
   

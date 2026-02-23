@@ -13,30 +13,48 @@ import Patients from './pages/shared/Patients';
 import RegisterPatient from './pages/shared/RegisterPatient';
 import PatientDetails from './pages/shared/PatientDetails';
 import NewAppointment from './pages/shared/NewAppointment';
+import Doctors from './pages/patient/Doctors';
+
 import Staff from './pages/admin/StaffList';
 import Appointments from './pages/shared/Appointments';
 import Consultation from './pages/doctor/Consultation';
-import VideoConsultation from './pages/shared/VideoConsultation';
+
 
 import Medications from './pages/patient/Medications';
 import Billing from './pages/patient/Billing';
 import Records from './pages/Records';
 // Dashboards
 import AdminDashboard from './pages/admin/Dashboard';
+import FacilityManagement from './pages/admin/FacilityManagement';
 import AuditLogs from './pages/admin/AuditLogs';
+import PayrollManagement from './pages/admin/PayrollManagement';
+import LeaveManagement from './pages/admin/LeaveManagement';
+import LeaveSettings from './pages/admin/LeaveSettings';
+import DepartmentList from './pages/admin/DepartmentList';
+import ReportsDashboard from './pages/admin/ReportsDashboard';
 import InpatientDashboard from './pages/inpatient/Dashboard';
 import WardDetails from './pages/inpatient/WardDetails';
 import VideoCallPage from './pages/shared/VideoCallPage';
 import PatientBooking from './pages/patient/Booking';
 import DoctorDashboard from './pages/doctor/Dashboard';
+import TelemedicineDashboard from './pages/doctor/TelemedicineDashboard';
 import LabDashboard from './pages/lab/LabDashboard';
 import ReceptionistDashboard from './pages/receptionist/Dashboard';
 import ReceptionistRegistration from './pages/receptionist/Registration';
 import ReceptionistBooking from './pages/receptionist/Booking';
 import PharmacyDashboard from './pages/pharmacy/Dashboard';
+import FinanceDashboard from './pages/finance/Dashboard';
+import AdmissionDashboard from './pages/admission/Dashboard';
+import TreatmentDashboard from './pages/nurse/TreatmentDashboard';
+import RadiologyDashboard from './pages/radiology/RadiologyDashboard';
+import RequestImaging from './pages/doctor/RequestImaging';
+import SurgeryDashboard from './pages/surgery/SurgeryDashboard';
+import BookSurgery from './pages/doctor/BookSurgery';
+import WellnessTracker from './pages/patient/WellnessTracker';
 
 import Settings from './pages/Settings';
 import Login from './pages/auth/Login';
+import Register from './pages/auth/Register'; // New Import
 import LandingPage from './pages/LandingPage';
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
@@ -50,6 +68,7 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} /> {/* New Route */}
           
           <Route path="/app" element={
             <ProtectedRoute>
@@ -60,7 +79,7 @@ function App() {
           } />
           
           <Route path="/patients" element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['ADMIN', 'DOCTOR', 'NURSE', 'RECEPTIONIST']}>
               <MainLayout>
                 <Patients />
               </MainLayout>
@@ -68,7 +87,7 @@ function App() {
           } />
 
           <Route path="/patients/new" element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['ADMIN', 'DOCTOR', 'NURSE', 'RECEPTIONIST']}>
               <MainLayout>
                 <RegisterPatient />
               </MainLayout>
@@ -76,7 +95,7 @@ function App() {
           } />
 
           <Route path="/patients/:id" element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['ADMIN', 'DOCTOR', 'NURSE', 'RECEPTIONIST']}>
               <MainLayout>
                 <PatientDetails />
               </MainLayout>
@@ -84,7 +103,7 @@ function App() {
           } />
 
           <Route path="/consultation/:appointmentId" element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['DOCTOR']}>
               <MainLayout>
                 <Consultation />
               </MainLayout>
@@ -99,11 +118,59 @@ function App() {
               </MainLayout>
             </ProtectedRoute>
           } />
+
+          <Route path="/admin/facility" element={
+            <ProtectedRoute allowedRoles={['ADMIN']}>
+              <MainLayout>
+                <FacilityManagement />
+              </MainLayout>
+            </ProtectedRoute>
+          } />
           
           <Route path="/admin/audit-logs" element={
             <ProtectedRoute allowedRoles={['ADMIN']}>
               <MainLayout>
                 <AuditLogs />
+              </MainLayout>
+            </ProtectedRoute>
+          } />
+
+          <Route path="/admin/payroll" element={
+            <ProtectedRoute allowedRoles={['ADMIN', 'ACCOUNTANT']}>
+              <MainLayout>
+                <PayrollManagement />
+              </MainLayout>
+            </ProtectedRoute>
+          } />
+
+          <Route path="/admin/leaves" element={
+            <ProtectedRoute allowedRoles={['ADMIN']}>
+              <MainLayout>
+                <LeaveManagement />
+              </MainLayout>
+            </ProtectedRoute>
+          } />
+
+          <Route path="/admin/leaves/settings" element={
+            <ProtectedRoute allowedRoles={['ADMIN']}>
+              <MainLayout>
+                <LeaveSettings />
+              </MainLayout>
+            </ProtectedRoute>
+          } />
+
+          <Route path="/departments" element={
+            <ProtectedRoute allowedRoles={['ADMIN']}>
+              <MainLayout>
+                <DepartmentList />
+              </MainLayout>
+            </ProtectedRoute>
+          } />
+
+          <Route path="/reports" element={
+            <ProtectedRoute allowedRoles={['ADMIN']}>
+              <MainLayout>
+                <ReportsDashboard />
               </MainLayout>
             </ProtectedRoute>
           } />
@@ -124,6 +191,14 @@ function App() {
             </ProtectedRoute>
           } />
 
+          <Route path="/treatments" element={
+            <ProtectedRoute allowedRoles={['NURSE', 'ADMIN']}>
+              <MainLayout>
+                <TreatmentDashboard />
+              </MainLayout>
+            </ProtectedRoute>
+          } />
+
           {/* Telemedicine Routes */}
           <Route path="/consultation/video/:appointmentId" element={
             <ProtectedRoute allowedRoles={['DOCTOR', 'PATIENT']}>
@@ -137,11 +212,27 @@ function App() {
               </MainLayout>
             </ProtectedRoute>
           } />
+          
+          <Route path="/patient/doctors" element={
+            <ProtectedRoute allowedRoles={['PATIENT']}>
+              <MainLayout>
+                <Doctors />
+              </MainLayout>
+            </ProtectedRoute>
+          } />
+
 
           <Route path="/doctor" element={
             <ProtectedRoute allowedRoles={['DOCTOR']}>
               <MainLayout>
                 <DoctorDashboard />
+              </MainLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/doctor/telemedicine" element={
+            <ProtectedRoute allowedRoles={['DOCTOR']}>
+              <MainLayout>
+                <TelemedicineDashboard />
               </MainLayout>
             </ProtectedRoute>
           } />
@@ -181,15 +272,63 @@ function App() {
               </MainLayout>
             </ProtectedRoute>
           } />
+          <Route path="/finance" element={
+            <ProtectedRoute allowedRoles={['ACCOUNTANT', 'ADMIN']}>
+              <MainLayout>
+                <FinanceDashboard />
+              </MainLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/admissions" element={
+            <ProtectedRoute allowedRoles={['NURSE', 'ADMIN', 'DOCTOR']}>
+              <MainLayout>
+                <AdmissionDashboard />
+              </MainLayout>
+            </ProtectedRoute>
+          } />
 
-          <Route path="/consultation/video/:appointmentId" element={
-            <ProtectedRoute>
-              <VideoConsultation />
+          {/* Radiology Routes */}
+          <Route path="/radiology" element={
+            <ProtectedRoute allowedRoles={['DOCTOR', 'ADMIN', 'LAB_TECH']}>
+              <MainLayout>
+                <RadiologyDashboard />
+              </MainLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/radiology/request" element={
+            <ProtectedRoute allowedRoles={['DOCTOR', 'ADMIN']}>
+              <MainLayout>
+                <RequestImaging />
+              </MainLayout>
+            </ProtectedRoute>
+          } />
+
+          {/* Surgery Routes */}
+          <Route path="/surgery" element={
+            <ProtectedRoute allowedRoles={['DOCTOR', 'ADMIN', 'NURSE']}>
+              <MainLayout>
+                <SurgeryDashboard />
+              </MainLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/surgery/book" element={
+            <ProtectedRoute allowedRoles={['DOCTOR', 'ADMIN']}>
+              <MainLayout>
+                <BookSurgery />
+              </MainLayout>
+            </ProtectedRoute>
+          } />
+
+          <Route path="/wellness" element={
+            <ProtectedRoute allowedRoles={['PATIENT']}>
+              <MainLayout>
+                <WellnessTracker />
+              </MainLayout>
             </ProtectedRoute>
           } />
 
           <Route path="/staff" element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['ADMIN', 'DOCTOR', 'NURSE', 'RECEPTIONIST']}>
               <MainLayout>
                 <Staff />
               </MainLayout>
@@ -198,7 +337,7 @@ function App() {
 
 
           <Route path="/appointments" element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['ADMIN', 'DOCTOR', 'NURSE', 'RECEPTIONIST', 'PATIENT']}>
               <MainLayout>
                 <Appointments />
               </MainLayout>
@@ -206,7 +345,7 @@ function App() {
           } />
 
           <Route path="/appointments/new" element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['ADMIN', 'DOCTOR', 'NURSE', 'RECEPTIONIST', 'PATIENT']}>
               <MainLayout>
                 <NewAppointment />
               </MainLayout>
@@ -214,7 +353,7 @@ function App() {
           } />
           
           <Route path="/records" element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['ADMIN', 'DOCTOR', 'NURSE', 'PATIENT']}>
               <MainLayout>
                 <Records />
               </MainLayout>
@@ -222,7 +361,7 @@ function App() {
            } />
 
             <Route path="/medications" element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['PATIENT']}>
               <MainLayout>
                 <Medications />
               </MainLayout>
@@ -230,7 +369,7 @@ function App() {
            } />
 
            <Route path="/billing" element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['PATIENT']}>
               <MainLayout>
                 <Billing />
               </MainLayout>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BedDouble, Activity } from 'lucide-react';
-import { InpatientService } from '../../services/inpatient.service';
+import { inpatientService as InpatientService } from '../../services/inpatient.service';
 import { useNavigate } from 'react-router-dom';
 
 const InpatientDashboard = () => {
