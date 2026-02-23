@@ -4,7 +4,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { radiologyService } from '../../services/radiology.service';
 import type { RadiologyTest } from '../../services/radiology.service';
 import * as doctorService from '../../services/doctor.service';
-import { Activity, User, Search, AlertCircle, CheckCircle } from 'lucide-react';
+import { Activity, Search, CheckCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 interface PatientOption {

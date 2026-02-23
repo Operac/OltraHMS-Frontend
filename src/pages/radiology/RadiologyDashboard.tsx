@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { radiologyService } from '../../services/radiology.service';
 import type { RadiologyRequest } from '../../services/radiology.service';
-import { Activity, FileText, Upload, CheckCircle, Search, X } from 'lucide-react';
+import { Activity, FileText, Upload, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const RadiologyDashboard = () => {

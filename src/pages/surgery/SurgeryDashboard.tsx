@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { surgeryService } from '../../services/surgery.service';
 import type { SurgeryCase, OperatingTheater } from '../../services/surgery.service';
-import { Activity, Calendar, Clock, MapPin, User, CheckCircle, AlertTriangle } from 'lucide-react';
+import { Activity, Calendar, Clock, MapPin, AlertTriangle } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const SurgeryDashboard = () => {

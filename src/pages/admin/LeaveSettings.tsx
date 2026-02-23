@@ -206,7 +206,7 @@ const LeaveSettings = () => {
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Name (e.g., Annual, Sick)</label>
                                 <Input 
                                     value={newType.name} 
-                                    onChange={(e) => setNewType({...newType, name: e.target.value})}
+                                    onChange={(e: any) => setNewType({...newType, name: e.target.value})}
                                     placeholder="Leave Type Name"
                                 />
                             </div>
@@ -215,7 +215,7 @@ const LeaveSettings = () => {
                                 <Input 
                                     type="number"
                                     value={newType.defaultDays} 
-                                    onChange={(e) => setNewType({...newType, defaultDays: Number(e.target.value)})}
+                                    onChange={(e: any) => setNewType({...newType, defaultDays: Number(e.target.value)})}
                                 />
                             </div>
                             <div className="flex items-center">
@@ -223,7 +223,7 @@ const LeaveSettings = () => {
                                     type="checkbox" 
                                     id="isPaid"
                                     checked={newType.isPaid}
-                                    onChange={(e) => setNewType({...newType, isPaid: e.target.checked})}
+                                    onChange={(e: any) => setNewType({...newType, isPaid: e.target.checked})}
                                     className="h-4 w-4 text-accent-blue focus:ring-accent-blue border-gray-300 rounded"
                                 />
                                 <label htmlFor="isPaid" className="ml-2 block text-sm text-gray-900">

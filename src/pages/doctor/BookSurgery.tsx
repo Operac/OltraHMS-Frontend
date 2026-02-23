@@ -3,9 +3,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { surgeryService } from '../../services/surgery.service';
 import type { OperatingTheater } from '../../services/surgery.service';
-import { PatientService } from '../../services/patient.service';
 import { AdminService } from '../../services/admin.service';
-import { Activity, Calendar, Clock, User, Search, Save } from 'lucide-react';
+import { Activity, Search, Save } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const BookSurgery = () => {
