@@ -34,6 +34,7 @@ const Sidebar = ({ onClose }: SidebarProps = {}) => {
         { icon: Settings, label: 'Leave Settings', path: '/admin/leaves/settings' },
         { icon: Activity, label: 'Radiology', path: '/radiology' },
         { icon: Activity, label: 'Surgery & OT', path: '/surgery' },
+        { icon: Activity, label: 'Operating Theaters', path: '/admin/theaters' },
         { icon: Settings, label: 'Settings', path: '/settings' },
       ];
     }

@@ -42,6 +42,21 @@ export const surgeryService = {
         return response.data;
     },
 
+    createTheater: async (data: Partial<OperatingTheater>) => {
+        const response = await api.post<OperatingTheater>('/surgery/theaters', data);
+        return response.data;
+    },
+
+    updateTheater: async (id: string, data: Partial<OperatingTheater>) => {
+        const response = await api.patch<OperatingTheater>(`/surgery/theaters/${id}`, data);
+        return response.data;
+    },
+
+    getSurgeons: async () => {
+        const response = await api.get<any[]>('/receptionist/doctors');
+        return response.data;
+    },
+
     scheduleSurgery: async (data: any) => {
         const response = await api.post<SurgeryCase>('/surgery/cases', data);
         return response.data;

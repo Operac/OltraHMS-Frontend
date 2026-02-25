@@ -60,23 +60,14 @@ const BookSurgery = () => {
 
     const loadResources = async () => {
         try {
-            const [theatersData, staffData] = await Promise.all([
+            const [theatersData, doctors] = await Promise.all([
                 surgeryService.getTheaters(),
-                AdminService.getAllStaff() 
-                // Ideally filter by role DOCTOR. But for MVP taking all.
+                surgeryService.getSurgeons() 
             ]);
             setTheaters(theatersData);
-            
-            // Filter only doctors
-            // Assuming staffData has user.role or similar check
-             // If staffService.getAllStaff returns { data: [...] } or array, let's assume array for now based on pattern.
-             // If not, might need adjustment.
-            const doctors = Array.isArray(staffData) ? staffData : []; 
-            // Better to filter if we can check department or role.
-            setSurgeons(doctors);
+            setSurgeons(Array.isArray(doctors) ? doctors : []);
         } catch (error) {
             console.error('Failed to load resources', error);
-            // Non-blocking toast?
         }
     };
 
@@ -183,7 +174,7 @@ const BookSurgery = () => {
                                 <option value="">Select Surgeon...</option>
                                 {surgeons.map(s => (
                                     <option key={s.id} value={s.id}>
-                                        Dr. {s.user?.firstName} {s.user?.lastName} ({s.specialization || 'General'})
+                                        {s.name} ({s.specialization || 'General'})
                                     </option>
                                 ))}
                             </select>

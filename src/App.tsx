@@ -56,6 +56,7 @@ import Settings from './pages/Settings';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register'; // New Import
 import LandingPage from './pages/LandingPage';
+import Theaters from './pages/admin/Theaters';
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Toaster } from 'react-hot-toast';
@@ -123,6 +124,14 @@ function App() {
             <ProtectedRoute allowedRoles={['ADMIN']}>
               <MainLayout>
                 <FacilityManagement />
+              </MainLayout>
+            </ProtectedRoute>
+          } />
+
+          <Route path="/admin/theaters" element={
+            <ProtectedRoute allowedRoles={['ADMIN']}>
+              <MainLayout>
+                <Theaters />
               </MainLayout>
             </ProtectedRoute>
           } />
