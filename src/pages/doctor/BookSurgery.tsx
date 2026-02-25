@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { surgeryService } from '../../services/surgery.service';
 import type { OperatingTheater } from '../../services/surgery.service';
 import { AdminService } from '../../services/admin.service';
+import { searchPatients } from '../../services/doctor.service';
 import { Activity, Search, Save } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -26,9 +27,36 @@ const BookSurgery = () => {
     
     const [submitting, setSubmitting] = useState(false);
 
+    // Patient Search State
+    const [searchQuery, setSearchQuery] = useState('');
+    const [patients, setPatients] = useState<any[]>([]);
+    const [showPatientDropdown, setShowPatientDropdown] = useState(false);
+
     useEffect(() => {
         loadResources();
     }, []);
+
+    useEffect(() => {
+        if (!searchQuery) {
+            setPatients([]);
+            return;
+        }
+        if (patientId) {
+            setShowPatientDropdown(false);
+            return;
+        }
+        const delayDebounceFn = setTimeout(async () => {
+            try {
+                const results = await searchPatients(searchQuery);
+                setPatients(results.data || results);
+                setShowPatientDropdown(true);
+            } catch (error) {
+                console.error("Patient search failed", error);
+            }
+        }, 300);
+
+        return () => clearTimeout(delayDebounceFn);
+    }, [searchQuery, patientId]);
 
     const loadResources = async () => {
         try {
@@ -94,19 +122,52 @@ const BookSurgery = () => {
                 <form onSubmit={handleSubmit} className="space-y-6">
                     
                     {/* Patient ID */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Patient ID</label>
+                    <div className="relative">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Search Patient</label>
                         <div className="relative">
                             <input 
-                                required
                                 type="text" 
-                                value={patientId}
-                                onChange={(e) => setPatientId(e.target.value)}
+                                value={searchQuery}
+                                onChange={(e) => {
+                                    setSearchQuery(e.target.value);
+                                    if (patientId) setPatientId('');
+                                }}
+                                onFocus={() => patients.length > 0 && setShowPatientDropdown(true)}
                                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
-                                placeholder="Search Patient ID..."
+                                placeholder="Search by name, phone or ID..."
                             />
                             <Search className="w-5 h-5 text-gray-400 absolute left-3 top-2.5" />
                         </div>
+                        
+                        {/* Selected Patient display */}
+                        {patientId && (
+                            <div className="mt-2 p-3 bg-blue-50 border border-blue-100 rounded-lg flex justify-between items-center">
+                                <span className="font-medium text-blue-800">Selected Patient ID: {patientId}</span>
+                                <button type="button" onClick={() => { setPatientId(''); setSearchQuery(''); }} className="text-sm text-blue-600 hover:underline">Clear</button>
+                            </div>
+                        )}
+
+                        {/* Dropdown */}
+                        {showPatientDropdown && patients.length > 0 && (
+                            <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                                {patients.map(p => (
+                                    <div 
+                                        key={p.id} 
+                                        onClick={() => {
+                                            setPatientId(p.id);
+                                            setSearchQuery(`${p.firstName} ${p.lastName} (${p.patientNumber})`);
+                                            setShowPatientDropdown(false);
+                                        }}
+                                        className="p-3 hover:bg-gray-50 cursor-pointer border-b last:border-0"
+                                    >
+                                        <div className="font-medium text-gray-900">{p.firstName} {p.lastName}</div>
+                                        <div className="text-sm text-gray-500">{p.patientNumber} • {p.phone}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                        {/* Hidden input to keep HTML required validation */}
+                        <input type="hidden" required value={patientId} />
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

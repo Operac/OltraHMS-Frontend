@@ -180,7 +180,7 @@ export default function FacilityManagement() {
                       />
                       <span className="font-semibold text-gray-900">{bed.number}</span>
                       <span className="text-xs text-gray-500 mt-1">
-                        {bed.price ? `$${bed.price}/day` : 'Standard'}
+                        {bed.price ? `₦${bed.price}/day` : 'Standard'}
                       </span>
                     </div>
                   ))}

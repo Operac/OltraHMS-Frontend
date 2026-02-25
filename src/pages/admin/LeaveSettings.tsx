@@ -70,9 +70,13 @@ const LeaveSettings = () => {
     };
 
     const handleSelectStaff = async (staff: any) => {
+        if (!staff.staff?.id) {
+            setError('Staff profile missing for this user');
+            return;
+        }
         setSelectedStaff(staff);
         try {
-            const balances = await AdminService.getStaffBalances(staff.id);
+            const balances = await AdminService.getStaffBalances(staff.staff.id);
             setStaffBalances(balances);
         } catch (err: any) {
              setError(err.response?.data?.message || 'Failed to load staff balances');
@@ -83,9 +87,9 @@ const LeaveSettings = () => {
         const newDays = prompt("Enter new allocated days:", String(currentDays));
         if (newDays && !isNaN(Number(newDays))) {
             try {
-                await AdminService.updateStaffBalance(selectedStaff.id, leaveTypeId, Number(newDays));
+                await AdminService.updateStaffBalance(selectedStaff.staff.id, leaveTypeId, Number(newDays));
                 // Refresh balances
-                const balances = await AdminService.getStaffBalances(selectedStaff.id);
+                const balances = await AdminService.getStaffBalances(selectedStaff.staff.id);
                 setStaffBalances(balances);
             } catch (err: any) {
                  setError(err.response?.data?.message || 'Failed to update balance');
@@ -161,8 +165,8 @@ const LeaveSettings = () => {
                                                 onClick={() => handleSelectStaff(staff)}
                                             >
                                                 <div>
-                                                    <p className="text-sm font-medium text-gray-900">{staff.user.firstName} {staff.user.lastName}</p>
-                                                    <p className="text-xs text-gray-500">{staff.department?.name || 'No Dept'} - {staff.role}</p>
+                                                    <p className="text-sm font-medium text-gray-900">{staff.firstName} {staff.lastName}</p>
+                                                    <p className="text-xs text-gray-500">{staff.staff?.department?.name || 'No Dept'} - {staff.role}</p>
                                                 </div>
                                                 <span className="text-accent-blue text-sm">Select &rarr;</span>
                                             </li>
@@ -174,8 +178,8 @@ const LeaveSettings = () => {
                             <div>
                                 <div className="flex justify-between items-center mb-4 pb-4 border-b border-gray-200">
                                     <div>
-                                        <h3 className="text-lg font-medium text-gray-900">{selectedStaff.user.firstName} {selectedStaff.user.lastName}</h3>
-                                        <p className="text-sm text-gray-500">{selectedStaff.role} - {selectedStaff.staffNumber}</p>
+                                        <h3 className="text-lg font-medium text-gray-900">{selectedStaff.firstName} {selectedStaff.lastName}</h3>
+                                        <p className="text-sm text-gray-500">{selectedStaff.role} - {selectedStaff.staff?.staffNumber}</p>
                                     </div>
                                     <Button variant="outline" onClick={() => setSelectedStaff(null)}>Change Staff</Button>
                                 </div>

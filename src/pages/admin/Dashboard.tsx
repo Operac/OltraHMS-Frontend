@@ -87,7 +87,7 @@ const AdminDashboard = () => {
                 />
                 <StatCard 
                     title="Revenue (Pending)" 
-                    value={loading ? '...' : `$${stats.revenuePending}`} 
+                    value={loading ? '...' : `₦${stats.revenuePending}`} 
                     icon={DollarSign} 
                     color="bg-orange-500" 
                     trend="Unpaid" 

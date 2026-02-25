@@ -42,7 +42,7 @@ const Appointments = () => {
         const fetchAppointments = async () => {
             try {
                 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
-                let query = `${API_URL}/appointments?date=${currentDate.toISOString()}`;
+                let query = `${API_URL}/appointments?startDate=${days[0].toISOString()}&endDate=${days[days.length - 1].toISOString()}`;
                 
                 if (user?.role === 'DOCTOR' && user.staffId) {
                     query += `&doctorId=${user.staffId}`;
@@ -77,7 +77,11 @@ const Appointments = () => {
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             // Refresh
-            const res = await axios.get(`${API_URL}/appointments?date=${currentDate.toISOString()}`, {
+            let query = `${API_URL}/appointments?startDate=${days[0].toISOString()}&endDate=${days[days.length - 1].toISOString()}`;
+            if (user?.role === 'DOCTOR' && user.staffId) {
+                query += `&doctorId=${user.staffId}`;
+            }
+            const res = await axios.get(query, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setAppointments(res.data);

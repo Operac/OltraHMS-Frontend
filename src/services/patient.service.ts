@@ -60,6 +60,11 @@ export const PatientService = {
     return response.data;
   },
 
+  getDashboardStats: async () => {
+    const response = await api.get('/patient/dashboard');
+    return response.data;
+  },
+
   updateProfile: async (data: any) => {
     const response = await api.patch('/patients/profile', data);
     return response.data;

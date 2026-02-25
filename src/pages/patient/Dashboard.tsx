@@ -43,13 +43,14 @@ const PatientDashboard = () => {
         const fetchStats = async () => {
             try {
                 // Fetch in parallel
-                const [queue, records, invoices, prescriptions, profile, medSchedule] = await Promise.all([
-                    PatientService.getQueueStatus(),
-                    PatientService.getMedicalRecords().catch(() => []), // Fallback empty array
-                    PatientService.getInvoices().catch(() => []),
+                const [queue, records, invoices, prescriptions, profile, medSchedule, dashboardStats] = await Promise.all([
+                    PatientService.getQueueStatus().catch(() => null), 
+                    PatientService.getMedicalRecords().catch(() => []), 
+                    PatientService.getInvoices().catch(() => []), 
                     PatientService.getPrescriptions().catch(() => []), 
                     PatientService.getEmergencyProfile().catch(() => null),
-                    PatientService.getMedicationSchedule().catch(() => null)
+                    PatientService.getMedicationSchedule().catch(() => null),
+                    PatientService.getDashboardStats().catch(() => null)
                 ]);
 
                 // Calculate Outstanding Balance
@@ -62,8 +63,8 @@ const PatientDashboard = () => {
                 const sortedRecords = Array.isArray(records) ? records.slice(0, 5) : [];
 
                 setStats({
-                    nextAppointment: queue?.appointmentId ? queue : null,
-                    queueStatus: queue,
+                    nextAppointment: dashboardStats?.nextAppointment || null,
+                    queueStatus: queue?.appointmentId ? queue : null,
                     activeMedications: activeMeds,
                     outstandingBalance: balance,
                     recentActivity: sortedRecords,
@@ -123,14 +124,14 @@ const PatientDashboard = () => {
                         <div className="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-blue-600 group-hover:bg-blue-100 transition-colors">
                             <Calendar className="w-5 h-5" />
                         </div>
-                        {stats?.nextAppointment ? (
+                        {stats?.nextAppointment || stats?.queueStatus ? (
                              <span className="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded-full uppercase tracking-wider"> Confirmed </span>
                         ) : (
                              <span className="text-xs font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded-full uppercase tracking-wider"> Inactive </span>
                         )}
                     </div>
                     
-                    {stats?.nextAppointment ? (
+                    {stats?.queueStatus?.appointmentId ? (
                         <div>
                              <h3 className="text-gray-500 text-xs font-bold uppercase tracking-wide mb-1">Today's Queue</h3>
                              <div className="flex items-baseline gap-1 mt-1">
@@ -141,6 +142,17 @@ const PatientDashboard = () => {
                              </p>
                              <div className="mt-4 pt-3 border-t border-gray-100">
                                 <p className="text-xs text-gray-400">Dr. Availability: Online</p>
+                             </div>
+                        </div>
+                    ) : stats?.nextAppointment ? (
+                        <div>
+                             <h3 className="text-gray-500 text-xs font-bold uppercase tracking-wide mb-1">Upcoming</h3>
+                             <p className="text-sm font-semibold text-gray-900 mt-2">{stats.nextAppointment.doctorName || 'Doctor'}</p>
+                             <p className="text-xs text-gray-500">
+                                {new Date(stats.nextAppointment.date).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })} at {new Date(stats.nextAppointment.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                             </p>
+                             <div className="mt-4 pt-3 border-t border-gray-100">
+                                <Link to="/appointments" className="text-blue-600 text-xs font-medium inline-block hover:underline">Manage &rarr;</Link>
                              </div>
                         </div>
                     ) : (

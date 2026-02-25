@@ -13,7 +13,10 @@ const DoctorDashboard = () => {
 
     useEffect(() => {
         const loadDashboard = async () => {
-             if (!user?.staffId) return;
+             if (!user?.staffId) {
+                 setLoading(false);
+                 return;
+             }
              try {
                  const data = await getDashboardStats();
                  setAppointments(data.appointments);
