@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { surgeryService } from '../../services/surgery.service';
 import type { OperatingTheater } from '../../services/surgery.service';
-import { AdminService } from '../../services/admin.service';
 import { searchPatients } from '../../services/doctor.service';
 import { Activity, Search, Save } from 'lucide-react';
 import toast from 'react-hot-toast';

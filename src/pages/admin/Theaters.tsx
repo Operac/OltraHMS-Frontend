@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Plus, Edit2, Activity } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { surgeryService, OperatingTheater } from '../../services/surgery.service';
+import { surgeryService } from '../../services/surgery.service';
+import type { OperatingTheater } from '../../services/surgery.service';
 
 const Theaters = () => {
     const [theaters, setTheaters] = useState<OperatingTheater[]>([]);
@@ -13,7 +14,7 @@ const Theaters = () => {
     const [formData, setFormData] = useState({
         name: '', 
         type: 'GENERAL', 
-        status: 'AVAILABLE'
+        status: 'AVAILABLE' as 'AVAILABLE' | 'IN_USE' | 'MAINTENANCE'
     });
 
     useEffect(() => {
@@ -38,11 +39,11 @@ const Theaters = () => {
             setFormData({
                 name: theater.name,
                 type: theater.type,
-                status: theater.status
+                status: theater.status as 'AVAILABLE' | 'IN_USE' | 'MAINTENANCE'
             });
         } else {
             setEditingTheater(null);
-            setFormData({ name: '', type: 'GENERAL', status: 'AVAILABLE' });
+            setFormData({ name: '', type: 'GENERAL', status: 'AVAILABLE' as 'AVAILABLE' | 'IN_USE' | 'MAINTENANCE' });
         }
         setShowModal(true);
     };
@@ -185,7 +186,7 @@ const Theaters = () => {
                                 <select 
                                     className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
                                     value={formData.status} 
-                                    onChange={e => setFormData({...formData, status: e.target.value})}
+                                    onChange={e => setFormData({...formData, status: e.target.value as 'AVAILABLE' | 'IN_USE' | 'MAINTENANCE'})}
                                 >
                                     <option value="AVAILABLE">Available</option>
                                     <option value="IN_USE">In Use</option>
