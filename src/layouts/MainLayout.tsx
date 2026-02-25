@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
 import Sidebar from '../components/Sidebar';
 import ChatWidget from '../components/ChatWidget';
-import { Bell, Search, User, Check } from 'lucide-react';
+import { Bell, Search, User, Check, Menu } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { getNotifications, markAsRead, markAllAsRead, type Notification } from '../services/notification.service';
 import clsx from 'clsx';
@@ -16,6 +16,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
   const { user, logout } = useAuth();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const notificationRef = useRef<HTMLDivElement>(null);
 
   // Auto-logout Logic
@@ -97,19 +98,40 @@ const MainLayout = ({ children }: MainLayoutProps) => {
 
   return (
     <div className="flex h-screen bg-gray-50">
-      <Sidebar />
+      {/* Mobile Sidebar Overlay */}
+      {sidebarOpen && (
+          <div 
+              className="fixed inset-0 z-20 bg-black bg-opacity-50 lg:hidden"
+              onClick={() => setSidebarOpen(false)}
+          ></div>
+      )}
+
+      {/* Sidebar */}
+      <div className={`fixed inset-y-0 left-0 z-30 w-64 transform bg-white transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+      }`}>
+          <Sidebar onClose={() => setSidebarOpen(false)} />
+      </div>
       
       <div className="flex-1 flex flex-col overflow-hidden">
         <header className="flex items-center justify-between h-16 px-6 bg-white border-b border-gray-200 z-10">
-          <div className="relative w-96">
-            <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-              <Search className="w-5 h-5" />
-            </span>
-            <input 
-              type="text" 
-              className="w-full py-2 pl-10 pr-4 text-sm text-gray-700 bg-gray-100 border-none rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Search patients, doctors, records..." 
-            />
+          <div className="flex items-center gap-4">
+            <button 
+                onClick={() => setSidebarOpen(true)}
+                className="text-gray-500 focus:outline-none lg:hidden -ml-2 p-2 hover:bg-gray-100 rounded-lg"
+            >
+                <Menu className="w-6 h-6" />
+            </button>
+            <div className="relative w-full max-w-sm hidden sm:block">
+              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                <Search className="w-5 h-5" />
+              </span>
+              <input 
+                type="text" 
+                className="w-full py-2 pl-10 pr-4 text-sm text-gray-700 bg-gray-100 border-none rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Search patients, doctors, records..." 
+              />
+            </div>
           </div>
           
           <div className="flex items-center space-x-4">

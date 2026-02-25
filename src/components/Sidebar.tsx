@@ -1,9 +1,13 @@
-import { LayoutDashboard, Users, UserPlus, Calendar, FileText, Settings, LogOut, Pill, CreditCard, Activity, Building2, BarChart, Video, DollarSign, Bed, BedDouble, Stethoscope, Heart } from 'lucide-react';
+import { LayoutDashboard, Users, UserPlus, Calendar, FileText, Settings, LogOut, Pill, CreditCard, Activity, Building2, BarChart, Video, DollarSign, Bed, BedDouble, Stethoscope, Heart, X } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
 import { useAuth } from '../context/AuthContext';
 
-const Sidebar = () => {
+interface SidebarProps {
+  onClose?: () => void;
+}
+
+const Sidebar = ({ onClose }: SidebarProps = {}) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth(); // Assuming logout exists
@@ -112,8 +116,13 @@ const Sidebar = () => {
 
   return (
     <div className="flex flex-col h-screen w-64 bg-white border-r border-gray-200">
-      <div className="flex items-center justify-center h-16 border-b border-gray-200">
+      <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200">
         <h1 className="text-2xl font-bold text-blue-600">OltraHMS</h1>
+        {onClose && (
+          <button onClick={onClose} className="lg:hidden text-gray-500 hover:text-gray-700 p-2 -mr-2 rounded-lg">
+            <X className="w-6 h-6" />
+          </button>
+        )}
       </div>
       
       <nav className="flex-1 overflow-y-auto py-4">
@@ -126,6 +135,7 @@ const Sidebar = () => {
               <li key={item.path}>
                 <Link
                   to={item.path}
+                  onClick={onClose}
                   className={clsx(
                     'flex items-center px-6 py-3 text-sm font-medium transition-colors',
                     isActive 
