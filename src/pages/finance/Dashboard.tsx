@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { FinanceService } from '../../services/finance.service';
-import { DollarSign, CreditCard, Clock, FileText, TrendingUp, TrendingDown } from 'lucide-react';
+import { DollarSign, CreditCard, Clock, FileText, TrendingUp, TrendingDown, RotateCcw } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { format } from 'date-fns';
 import ServiceManagement from './ServiceManagement';
@@ -16,10 +16,14 @@ const FinanceDashboard = () => {
         netProfit: 0
     });
     const [invoices, setInvoices] = useState<any[]>([]);
+    const [paidInvoices, setPaidInvoices] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [paymentModalOpen, setPaymentModalOpen] = useState(false);
+    const [refundModalOpen, setRefundModalOpen] = useState(false);
     const [selectedInvoice, setSelectedInvoice] = useState<any>(null);
     const [paymentMethod, setPaymentMethod] = useState('CASH');
+    const [refundAmount, setRefundAmount] = useState('');
+    const [refundReason, setRefundReason] = useState('');
 
     useEffect(() => {
         loadDashboardData();
@@ -48,9 +52,25 @@ const FinanceDashboard = () => {
         }
     };
 
+    const loadPaidInvoices = async () => {
+        try {
+            const paid = await FinanceService.getPaidInvoices();
+            setPaidInvoices(paid);
+        } catch (error) {
+            toast.error("Failed to load paid invoices");
+        }
+    };
+
     const handleProcessPayment = (invoice: any) => {
         setSelectedInvoice(invoice);
         setPaymentModalOpen(true);
+    };
+
+    const handleProcessRefund = (invoice: any) => {
+        setSelectedInvoice(invoice);
+        setRefundAmount(invoice.amountPaid.toString());
+        setRefundReason('');
+        setRefundModalOpen(true);
     };
 
     const confirmPayment = async () => {
@@ -69,6 +89,31 @@ const FinanceDashboard = () => {
         }
     };
 
+    const confirmRefund = async () => {
+        if (!selectedInvoice) return;
+        const amount = parseFloat(refundAmount);
+        if (isNaN(amount) || amount <= 0) {
+            toast.error("Please enter a valid amount");
+            return;
+        }
+        if (amount > selectedInvoice.amountPaid) {
+            toast.error("Refund amount cannot exceed amount paid");
+            return;
+        }
+        try {
+            await FinanceService.processRefund({
+                invoiceId: selectedInvoice.id,
+                amount: amount,
+                reason: refundReason
+            });
+            toast.success("Refund processed successfully");
+            setRefundModalOpen(false);
+            loadPaidInvoices();
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || "Refund failed");
+        }
+    };
+
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
@@ -83,7 +128,7 @@ const FinanceDashboard = () => {
                     <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
                         <div>
                             <p className="text-sm font-medium text-gray-500">Total Revenue</p>
-                            <p className="text-2xl font-bold text-gray-900">${stats.totalRevenue.toLocaleString()}</p>
+                            <p className="text-2xl font-bold text-gray-900">₦{stats.totalRevenue.toLocaleString()}</p>
                         </div>
                         <div className="p-3 bg-green-100 rounded-lg text-green-600">
                             <TrendingUp className="w-6 h-6" />
@@ -93,7 +138,7 @@ const FinanceDashboard = () => {
                     <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
                         <div>
                             <p className="text-sm font-medium text-gray-500">Total Expenses</p>
-                            <p className="text-2xl font-bold text-gray-900">${stats.totalExpenses.toLocaleString()}</p>
+                            <p className="text-2xl font-bold text-gray-900">₦{stats.totalExpenses.toLocaleString()}</p>
                         </div>
                         <div className="p-3 bg-red-100 rounded-lg text-red-600">
                             <TrendingDown className="w-6 h-6" />
@@ -104,7 +149,7 @@ const FinanceDashboard = () => {
                         <div>
                             <p className="text-sm font-medium text-gray-500">Net Profit</p>
                             <p className={`text-2xl font-bold ${stats.netProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                                ${stats.netProfit.toLocaleString()}
+                                ₦{stats.netProfit.toLocaleString()}
                             </p>
                         </div>
                         <div className="p-3 bg-blue-100 rounded-lg text-blue-600">
@@ -115,7 +160,7 @@ const FinanceDashboard = () => {
                     <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
                         <div>
                             <p className="text-sm font-medium text-gray-500">Pending Invoices</p>
-                            <p className="text-2xl font-bold text-orange-600">${stats.pendingAmount.toLocaleString()}</p>
+                            <p className="text-2xl font-bold text-orange-600">₦{stats.pendingAmount.toLocaleString()}</p>
                         </div>
                         <div className="p-3 bg-orange-100 rounded-lg text-orange-600">
                             <Clock className="w-6 h-6" />
@@ -133,6 +178,20 @@ const FinanceDashboard = () => {
                     >
                         Invoices
                         {activeTab === 'INVOICES' && (
+                            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 rounded-t-full" />
+                        )}
+                    </button>
+                    <button
+                        onClick={() => {
+                            setActiveTab('REFUNDS');
+                            loadPaidInvoices();
+                        }}
+                        className={`px-6 py-3 font-medium text-sm transition-colors relative ${
+                            activeTab === 'REFUNDS' ? 'text-blue-600' : 'text-gray-500 hover:text-gray-700'
+                        }`}
+                    >
+                        Refunds
+                        {activeTab === 'REFUNDS' && (
                             <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 rounded-t-full" />
                         )}
                     </button>
@@ -203,8 +262,8 @@ const FinanceDashboard = () => {
                                                     <td className="px-6 py-4 text-gray-500">
                                                         {format(new Date(inv.createdAt), 'MMM dd, yyyy')}
                                                     </td>
-                                                    <td className="px-6 py-4">${inv.total.toLocaleString()}</td>
-                                                    <td className="px-6 py-4 font-bold text-orange-600">${inv.balance.toLocaleString()}</td>
+                                                    <td className="px-6 py-4">₦{inv.total.toLocaleString()}</td>
+                                                    <td className="px-6 py-4 font-bold text-orange-600">₦{inv.balance.toLocaleString()}</td>
                                                     <td className="px-6 py-4">
                                                         <span className="px-2 py-1 text-xs font-semibold bg-yellow-100 text-yellow-700 rounded-full">
                                                             {inv.status}
@@ -216,6 +275,71 @@ const FinanceDashboard = () => {
                                                             className="text-blue-600 hover:text-blue-800 font-medium text-sm flex items-center gap-1"
                                                         >
                                                             <CreditCard className="w-4 h-4" /> Process
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {activeTab === 'REFUNDS' && (
+                        <div>
+                            <div className="flex justify-between items-center mb-6">
+                                <h2 className="text-lg font-bold text-gray-800">Paid Invoices - Process Refunds</h2>
+                                <button onClick={loadPaidInvoices} className="text-sm text-blue-600 hover:underline">
+                                    Refresh
+                                </button>
+                            </div>
+
+                            {loading ? (
+                                <div className="text-center py-12 text-gray-500">Loading invoices...</div>
+                            ) : paidInvoices.length === 0 ? (
+                                <div className="text-center py-12 bg-gray-50 rounded-lg">
+                                    <FileText className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                                    <p className="text-gray-500">No paid invoices found</p>
+                                </div>
+                            ) : (
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-left">
+                                        <thead className="bg-gray-50 text-gray-600 text-xs uppercase">
+                                            <tr>
+                                                <th className="px-6 py-3">Invoice #</th>
+                                                <th className="px-6 py-3">Patient</th>
+                                                <th className="px-6 py-3">Date</th>
+                                                <th className="px-6 py-3">Total</th>
+                                                <th className="px-6 py-3">Amount Paid</th>
+                                                <th className="px-6 py-3">Status</th>
+                                                <th className="px-6 py-3">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-gray-100">
+                                            {paidInvoices.map((inv) => (
+                                                <tr key={inv.id} className="hover:bg-gray-50 transition-colors">
+                                                    <td className="px-6 py-4 font-medium">{inv.invoiceNumber}</td>
+                                                    <td className="px-6 py-4">
+                                                        {inv.patient.firstName} {inv.patient.lastName}
+                                                        <div className="text-xs text-gray-400">{inv.patient.patientNumber}</div>
+                                                    </td>
+                                                    <td className="px-6 py-4 text-gray-500">
+                                                        {format(new Date(inv.createdAt), 'MMM dd, yyyy')}
+                                                    </td>
+                                                    <td className="px-6 py-4">₦{inv.total.toLocaleString()}</td>
+                                                    <td className="px-6 py-4 font-bold text-green-600">₦{inv.amountPaid.toLocaleString()}</td>
+                                                    <td className="px-6 py-4">
+                                                        <span className="px-2 py-1 text-xs font-semibold bg-green-100 text-green-700 rounded-full">
+                                                            {inv.status}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <button
+                                                            onClick={() => handleProcessRefund(inv)}
+                                                            className="text-orange-600 hover:text-orange-800 font-medium text-sm flex items-center gap-1"
+                                                        >
+                                                            <RotateCcw className="w-4 h-4" /> Refund
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -249,7 +373,7 @@ const FinanceDashboard = () => {
                             </div>
                             <div className="border-t border-gray-200 pt-2 flex justify-between font-bold text-lg">
                                 <span>Total Due</span>
-                                <span className="text-blue-600">${selectedInvoice.balance.toLocaleString()}</span>
+                                <span className="text-blue-600">₦{selectedInvoice.balance.toLocaleString()}</span>
                             </div>
                         </div>
 
@@ -279,6 +403,78 @@ const FinanceDashboard = () => {
 
                             <button 
                                 onClick={() => setPaymentModalOpen(false)}
+                                className="w-full py-2 text-gray-500 hover:text-gray-700 text-sm"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Refund Modal */}
+            {refundModalOpen && selectedInvoice && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-xl w-full max-w-md p-6">
+                        <h2 className="text-xl font-bold mb-4 text-orange-600">Process Refund</h2>
+                        
+                        <div className="bg-gray-50 p-4 rounded-lg mb-6 space-y-2">
+                            <div className="flex justify-between text-sm">
+                                <span className="text-gray-500">Invoice</span>
+                                <span className="font-medium">{selectedInvoice.invoiceNumber}</span>
+                            </div>
+                            <div className="flex justify-between text-sm">
+                                <span className="text-gray-500">Patient</span>
+                                <span className="font-medium">{selectedInvoice.patient.firstName} {selectedInvoice.patient.lastName}</span>
+                            </div>
+                            <div className="flex justify-between text-sm">
+                                <span className="text-gray-500">Amount Paid</span>
+                                <span className="font-bold text-green-600">₦{selectedInvoice.amountPaid.toLocaleString()}</span>
+                            </div>
+                            <div className="border-t border-gray-200 pt-2 flex justify-between font-bold text-lg">
+                                <span>Max Refund</span>
+                                <span className="text-orange-600">₦{selectedInvoice.amountPaid.toLocaleString()}</span>
+                            </div>
+                        </div>
+
+                        <div className="space-y-4 mb-6">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Refund Amount (₦)</label>
+                                <input 
+                                    type="number"
+                                    value={refundAmount}
+                                    onChange={(e) => setRefundAmount(e.target.value)}
+                                    max={selectedInvoice.amountPaid}
+                                    min={0}
+                                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                                    placeholder="Enter refund amount"
+                                />
+                                <p className="text-xs text-gray-500 mt-1">
+                                    Maximum: ₦{selectedInvoice.amountPaid.toLocaleString()}
+                                </p>
+                            </div>
+                            
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Reason (Optional)</label>
+                                <textarea 
+                                    value={refundReason}
+                                    onChange={(e) => setRefundReason(e.target.value)}
+                                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                                    rows={3}
+                                    placeholder="Enter reason for refund"
+                                />
+                            </div>
+                            
+                            <button 
+                                onClick={confirmRefund}
+                                className="w-full py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 font-medium flex justify-center items-center gap-2"
+                            >
+                                <RotateCcw className="w-5 h-5" />
+                                Process Refund
+                            </button>
+
+                            <button 
+                                onClick={() => setRefundModalOpen(false)}
                                 className="w-full py-2 text-gray-500 hover:text-gray-700 text-sm"
                             >
                                 Cancel

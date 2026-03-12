@@ -60,7 +60,7 @@ const Sidebar = ({ onClose }: SidebarProps = {}) => {
           { icon: Pill, label: 'My Medications', path: '/medications' },
           { icon: CreditCard, label: 'My Bills', path: '/billing' },
           { icon: Users, label: 'Find a Doctor', path: '/patient/doctors' },
-          { icon: Heart, label: 'Wellness Tracker', path: '/wellness' },
+          { icon: Heart, label: 'Health & Wellness', path: '/wellness' },
           { icon: Settings, label: 'Profile', path: '/settings' },
 
         ];

@@ -50,11 +50,13 @@ import RadiologyDashboard from './pages/radiology/RadiologyDashboard';
 import RequestImaging from './pages/doctor/RequestImaging';
 import SurgeryDashboard from './pages/surgery/SurgeryDashboard';
 import BookSurgery from './pages/doctor/BookSurgery';
-import WellnessTracker from './pages/patient/WellnessTracker';
+import WellnessDashboard from './pages/patient/WellnessDashboard';
+import PatientWellnessView from './pages/doctor/PatientWellnessView';
 
 import Settings from './pages/Settings';
 import Login from './pages/auth/Login';
-import Register from './pages/auth/Register'; // New Import
+import Register from './pages/auth/Register';
+import PatientOnboarding from './pages/patient/PatientOnboarding'; // New Import
 import LandingPage from './pages/LandingPage';
 import Theaters from './pages/admin/Theaters';
 import { AuthProvider } from './context/AuthContext';
@@ -70,6 +72,7 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} /> {/* New Route */}
+          <Route path="/onboarding" element={<PatientOnboarding />} />
           
           <Route path="/app" element={
             <ProtectedRoute>
@@ -331,7 +334,16 @@ function App() {
           <Route path="/wellness" element={
             <ProtectedRoute allowedRoles={['PATIENT']}>
               <MainLayout>
-                <WellnessTracker />
+                <WellnessDashboard />
+              </MainLayout>
+            </ProtectedRoute>
+          } />
+
+          {/* Provider: View Patient Wellness */}
+          <Route path="/wellness/patient/:patientId" element={
+            <ProtectedRoute allowedRoles={['DOCTOR', 'NURSE', 'ADMIN']}>
+              <MainLayout>
+                <PatientWellnessView />
               </MainLayout>
             </ProtectedRoute>
           } />

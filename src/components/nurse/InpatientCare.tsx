@@ -326,11 +326,8 @@ export const InpatientCare = ({ patientId, admissionId }: InpatientCareProps) =>
                             <form 
                                 onSubmit={async (e) => {
                                     e.preventDefault();
-                                    // In a real app, obtain admissionId properly
                                     if (!newRoundNote) return;
                                     try {
-                                        // TODO: Pass admissionId prop or fetch it
-                                        // keeping it simple for now, assuming we fetch rounds via patient/admission context
                                         toast.success("Note added (simulation)");
                                         setNewRoundNote('');
                                     } catch (e) { toast.error("Failed"); }

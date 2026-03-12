@@ -46,5 +46,17 @@ export const FinanceService = {
   getProfitLoss: async () => {
     const response = await api.get('/finance/reports/profit-loss');
     return response.data;
+  },
+
+  // Refund
+  processRefund: async (data: { invoiceId: string; amount: number; reason?: string }) => {
+    const response = await api.post('/finance/refund', data);
+    return response.data;
+  },
+
+  // Get all paid invoices (for refund)
+  getPaidInvoices: async () => {
+    const response = await api.get('/finance/invoices?status=PAID');
+    return response.data;
   }
 };
