@@ -66,7 +66,7 @@ const ReportsDashboard = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                         <p className="text-sm text-gray-500 mb-1">Total Patients</p>
-                        <h3 className="text-2xl font-bold text-blue-600">{patients?.totalPatients}</h3>
+                        <h3 className="text-2xl font-bold text-sky-500">{patients?.totalPatients}</h3>
                     </div>
                     <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                         <p className="text-sm text-gray-500 mb-1">New (Last 30 Days)</p>

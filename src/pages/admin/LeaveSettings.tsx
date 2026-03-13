@@ -8,12 +8,12 @@ const Button = ({ children, variant = 'primary', className = '', ...props }: any
     const baseClass = "px-4 py-2 rounded-lg font-medium transition-colors";
     const variantClass = variant === 'outline' 
         ? "border border-gray-300 text-gray-700 hover:bg-gray-50" 
-        : "bg-blue-600 text-white hover:bg-blue-700";
+        : "bg-sky-500 text-white hover:bg-sky-600";
     return <button className={`${baseClass} ${variantClass} ${className}`} {...props}>{children}</button>;
 };
 
 const Input = ({ className = '', ...props }: any) => (
-    <input className={`w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${className}`} {...props} />
+    <input className={`w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-400 outline-none ${className}`} {...props} />
 );
 
 const LeaveSettings = () => {

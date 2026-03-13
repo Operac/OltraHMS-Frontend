@@ -66,7 +66,7 @@ const Registration = () => {
                                 type="text"
                                 name="firstName"
                                 required
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-400 focus:border-sky-400"
                                 value={formData.firstName}
                                 onChange={handleChange}
                             />
@@ -77,7 +77,7 @@ const Registration = () => {
                                 type="text"
                                 name="lastName"
                                 required
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-400 focus:border-sky-400"
                                 value={formData.lastName}
                                 onChange={handleChange}
                             />
@@ -87,7 +87,7 @@ const Registration = () => {
                             <input
                                 type="email"
                                 name="email"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-400 focus:border-sky-400"
                                 value={formData.email}
                                 onChange={handleChange}
                             />
@@ -98,7 +98,7 @@ const Registration = () => {
                                 type="tel"
                                 name="phone"
                                 required
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-400 focus:border-sky-400"
                                 value={formData.phone}
                                 onChange={handleChange}
                             />
@@ -109,7 +109,7 @@ const Registration = () => {
                                 type="date"
                                 name="dateOfBirth"
                                 required
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-400 focus:border-sky-400"
                                 value={formData.dateOfBirth}
                                 onChange={handleChange}
                             />
@@ -119,7 +119,7 @@ const Registration = () => {
                             <select
                                 name="gender"
                                 required
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-400 focus:border-sky-400"
                                 value={formData.gender}
                                 onChange={handleChange}
                             >
@@ -135,7 +135,7 @@ const Registration = () => {
                         <textarea
                             name="address"
                             rows={3}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-400 focus:border-sky-400"
                             value={formData.address}
                             onChange={handleChange}
                         />
@@ -145,7 +145,7 @@ const Registration = () => {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="flex items-center gap-2 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                            className="flex items-center gap-2 bg-sky-500 text-white px-6 py-2 rounded-lg hover:bg-sky-600 disabled:opacity-50"
                         >
                             <Save className="w-4 h-4" />
                             {loading ? 'Registering...' : 'Register Patient'}

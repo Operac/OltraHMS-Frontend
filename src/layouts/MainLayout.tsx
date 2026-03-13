@@ -128,7 +128,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
               </span>
               <input 
                 type="text" 
-                className="w-full py-2 pl-10 pr-4 text-sm text-gray-700 bg-gray-100 border-none rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full py-2 pl-10 pr-4 text-sm text-gray-700 bg-gray-100 border-none rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-400"
                 placeholder="Search patients, doctors, records..." 
               />
             </div>
@@ -139,7 +139,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
             <div className="relative" ref={notificationRef}>
                 <button 
                     onClick={() => setShowNotifications(!showNotifications)}
-                    className="p-2 text-gray-400 hover:text-blue-600 rounded-full hover:bg-gray-100 transition-colors relative"
+                    className="p-2 text-gray-400 hover:text-sky-500 rounded-full hover:bg-gray-100 transition-colors relative"
                 >
                     <Bell className="w-6 h-6" />
                     {unreadCount > 0 && (
@@ -155,7 +155,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                         <div className="p-3 border-b border-gray-100 flex justify-between items-center bg-gray-50">
                             <h3 className="font-bold text-gray-700 text-sm">Notifications</h3>
                             {unreadCount > 0 && (
-                                <button onClick={handleMarkAllRead} className="text-xs text-blue-600 hover:text-blue-800 hover:underline">
+                                <button onClick={handleMarkAllRead} className="text-xs text-sky-500 hover:text-sky-700 hover:underline">
                                     Mark all read
                                 </button>
                             )}
@@ -169,14 +169,14 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                                         key={notification.id} 
                                         className={clsx(
                                             "p-3 border-b border-gray-100 hover:bg-gray-50 transition-colors group relative",
-                                            notification.status !== 'READ' ? "bg-blue-50/50" : ""
+                                            notification.status !== 'READ' ? "bg-sky-50/50" : ""
                                         )}
                                     >
                                         <div className="flex gap-3">
                                             <div className={clsx(
                                                 "w-2 h-2 mt-2 rounded-full shrink-0",
                                                 notification.priority === 'CRITICAL' ? "bg-red-500" : 
-                                                notification.priority === 'HIGH' ? "bg-orange-500" : "bg-blue-500",
+                                                notification.priority === 'HIGH' ? "bg-orange-500" : "bg-sky-400",
                                                 notification.status === 'READ' && "bg-gray-300"
                                             )} />
                                             <div className="flex-1">
@@ -190,7 +190,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                                             {notification.status !== 'READ' && (
                                                 <button 
                                                     onClick={(e) => handleMarkAsRead(notification.id, e)}
-                                                    className="opacity-0 group-hover:opacity-100 p-1 text-gray-400 hover:text-blue-600 transition-opacity"
+                                                    className="opacity-0 group-hover:opacity-100 p-1 text-gray-400 hover:text-sky-500 transition-opacity"
                                                     title="Mark as read"
                                                 >
                                                     <Check className="w-4 h-4" />
@@ -206,7 +206,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
             </div>
             
             <div className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors">
-              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
+              <div className="w-8 h-8 bg-sky-100 rounded-full flex items-center justify-center text-sky-500">
                 <User className="w-5 h-5" />
               </div>
               <div className="hidden md:block text-left">

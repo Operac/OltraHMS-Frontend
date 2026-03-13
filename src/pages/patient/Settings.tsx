@@ -121,10 +121,10 @@ const PatientSettings = () => {
             <div className="flex border-b border-gray-200 mb-8">
                 <button 
                     onClick={() => setActiveTab('profile')}
-                    className={`pb-4 px-6 font-medium text-sm transition-colors relative ${activeTab === 'profile' ? 'text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+                    className={`pb-4 px-6 font-medium text-sm transition-colors relative ${activeTab === 'profile' ? 'text-sky-500' : 'text-gray-500 hover:text-gray-700'}`}
                 >
                     <span className="flex items-center gap-2"><User className="w-4 h-4" /> Personal Info</span>
-                    {activeTab === 'profile' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 rounded-t-full"></div>}
+                    {activeTab === 'profile' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-sky-500 rounded-t-full"></div>}
                 </button>
                 <button 
                     onClick={() => setActiveTab('emergency')}
@@ -156,11 +156,11 @@ const PatientSettings = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-gray-700">First Name</label>
-                                <input type="text" value={profile.firstName} onChange={e => setProfile({...profile, firstName: e.target.value})} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
+                                <input type="text" value={profile.firstName} onChange={e => setProfile({...profile, firstName: e.target.value})} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400 outline-none" />
                             </div>
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-gray-700">Last Name</label>
-                                <input type="text" value={profile.lastName} onChange={e => setProfile({...profile, lastName: e.target.value})} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
+                                <input type="text" value={profile.lastName} onChange={e => setProfile({...profile, lastName: e.target.value})} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400 outline-none" />
                             </div>
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-gray-700">Email</label>
@@ -168,15 +168,15 @@ const PatientSettings = () => {
                             </div>
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-gray-700">Phone</label>
-                                <input type="tel" value={profile.phone} onChange={e => setProfile({...profile, phone: e.target.value})} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
+                                <input type="tel" value={profile.phone} onChange={e => setProfile({...profile, phone: e.target.value})} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400 outline-none" />
                             </div>
                              <div className="span-full md:col-span-2 space-y-2">
                                 <label className="text-sm font-medium text-gray-700">Address</label>
-                                <input type="text" value={profile.address} onChange={e => setProfile({...profile, address: e.target.value})} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
+                                <input type="text" value={profile.address} onChange={e => setProfile({...profile, address: e.target.value})} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400 outline-none" />
                             </div>
                         </div>
                         <div className="pt-4">
-                            <button type="submit" className="bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 font-medium flex items-center gap-2 transition-colors">
+                            <button type="submit" className="bg-sky-500 text-white px-6 py-2.5 rounded-lg hover:bg-sky-600 font-medium flex items-center gap-2 transition-colors">
                                 <Save className="w-4 h-4" /> Save Changes
                             </button>
                         </div>

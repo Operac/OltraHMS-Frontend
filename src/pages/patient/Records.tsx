@@ -84,7 +84,7 @@ const Records = () => {
 
     if (loading) return (
         <div className="flex justify-center items-center h-64">
-             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div>
         </div>
     );
 
@@ -103,7 +103,7 @@ const Records = () => {
                         placeholder={`Search ${activeTab}...`}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm"
+                        className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-400 focus:outline-none text-sm"
                     />
                 </div>
             </div>
@@ -113,14 +113,14 @@ const Records = () => {
                 <nav className="-mb-px flex space-x-8" aria-label="Tabs">
                     <button
                         onClick={() => { setActiveTab('history'); setSearchTerm(''); }}
-                        className={`${activeTab === 'history' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} 
+                        className={`${activeTab === 'history' ? 'border-sky-400 text-sky-500' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} 
                             whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2`}
                     >
                         <Clock className="w-4 h-4" /> Visit History
                     </button>
                     <button
                         onClick={() => { setActiveTab('labs'); setSearchTerm(''); }}
-                        className={`${activeTab === 'labs' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} 
+                        className={`${activeTab === 'labs' ? 'border-sky-400 text-sky-500' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} 
                             whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2`}
                     >
                         <Beaker className="w-4 h-4" /> Lab Results
@@ -128,7 +128,7 @@ const Records = () => {
                     </button>
                     <button
                         onClick={() => { setActiveTab('prescriptions'); setSearchTerm(''); }}
-                        className={`${activeTab === 'prescriptions' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} 
+                        className={`${activeTab === 'prescriptions' ? 'border-sky-400 text-sky-500' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} 
                             whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2`}
                     >
                         <Pill className="w-4 h-4" /> Prescriptions
@@ -144,7 +144,7 @@ const Records = () => {
                         filteredData.map((record: any) => (
                             <div key={record.id} className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow flex flex-col md:flex-row md:items-center justify-between gap-4">
                                 <div className="flex items-start gap-4">
-                                    <div className="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center text-blue-600 flex-shrink-0">
+                                    <div className="w-12 h-12 bg-sky-50 rounded-full flex items-center justify-center text-sky-500 flex-shrink-0">
                                         <FileText className="w-6 h-6" />
                                     </div>
                                     <div>
@@ -192,7 +192,7 @@ const Records = () => {
                                     </div>
                                 </div>
                                 {lab.fileUrl && (
-                                     <a href={lab.fileUrl} target="_blank" rel="noreferrer" className="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center gap-1">
+                                     <a href={lab.fileUrl} target="_blank" rel="noreferrer" className="text-sky-500 hover:text-sky-700 text-sm font-medium flex items-center gap-1">
                                         <Download className="w-4 h-4" /> View Report
                                      </a>
                                 )}

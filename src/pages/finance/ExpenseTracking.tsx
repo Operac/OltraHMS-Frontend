@@ -113,7 +113,7 @@ const ExpenseTracking = () => {
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
                                 <input 
                                     required
-                                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-400 outline-none"
                                     value={formData.description}
                                     onChange={e => setFormData({...formData, description: e.target.value})}
                                     placeholder="e.g., Office Supplies"
@@ -128,7 +128,7 @@ const ExpenseTracking = () => {
                                         <input 
                                             type="number"
                                             required
-                                            className="w-full pl-9 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                            className="w-full pl-9 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-400 outline-none"
                                             value={formData.amount}
                                             onChange={e => setFormData({...formData, amount: e.target.value})}
                                         />
@@ -139,7 +139,7 @@ const ExpenseTracking = () => {
                                     <input 
                                         type="date"
                                         required
-                                        className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                        className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-400 outline-none"
                                         value={formData.incurredAt}
                                         onChange={e => setFormData({...formData, incurredAt: e.target.value})}
                                     />
@@ -149,7 +149,7 @@ const ExpenseTracking = () => {
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
                                 <select 
-                                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-400 outline-none"
                                     value={formData.category}
                                     onChange={e => setFormData({...formData, category: e.target.value})}
                                 >

@@ -126,7 +126,7 @@ const LeaveManagement = () => {
                                         <div className="flex justify-end gap-2">
                                             <button 
                                                 onClick={() => handleReviewClick(leave)}
-                                                className="text-blue-600 hover:text-blue-800 p-1 rounded bg-blue-50 hover:bg-blue-100 flex items-center gap-1 px-3 text-sm font-medium" 
+                                                className="text-sky-500 hover:text-sky-700 p-1 rounded bg-sky-50 hover:bg-sky-100 flex items-center gap-1 px-3 text-sm font-medium" 
                                                 title="Review Request"
                                             >
                                                 <Eye className="w-4 h-4" /> Review

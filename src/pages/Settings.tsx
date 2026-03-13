@@ -73,7 +73,7 @@ const Settings = () => {
             
             <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
                 <div className="flex items-center gap-4 mb-8">
-                    <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-3xl">
+                    <div className="w-20 h-20 bg-sky-100 rounded-full flex items-center justify-center text-sky-500 font-bold text-3xl">
                         {formData.firstName?.[0]}{formData.lastName?.[0]}
                     </div>
                     <div>
@@ -86,7 +86,7 @@ const Settings = () => {
                 <div className="flex border-b border-gray-200 mb-6">
                     <button 
                         onClick={() => setActiveTab('PROFILE')}
-                        className={`px-4 py-2 font-medium text-sm border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'PROFILE' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+                        className={`px-4 py-2 font-medium text-sm border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'PROFILE' ? 'border-sky-500 text-sky-500' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
                     >
                         <User className="w-4 h-4" /> Profile
                     </button>
@@ -94,13 +94,13 @@ const Settings = () => {
                         <>
                             <button 
                                 onClick={() => setActiveTab('LEAVES')}
-                                className={`px-4 py-2 font-medium text-sm border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'LEAVES' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+                                className={`px-4 py-2 font-medium text-sm border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'LEAVES' ? 'border-sky-500 text-sky-500' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
                             >
                                 <Calendar className="w-4 h-4" /> My Leaves
                             </button>
                             <button 
                                 onClick={() => setActiveTab('PAYROLL')}
-                                className={`px-4 py-2 font-medium text-sm border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'PAYROLL' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+                                className={`px-4 py-2 font-medium text-sm border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'PAYROLL' ? 'border-sky-500 text-sky-500' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
                             >
                                 <DollarSign className="w-4 h-4" /> My Payslips
                             </button>
@@ -133,7 +133,7 @@ const Settings = () => {
                                     name="firstName"
                                     value={formData.firstName}
                                     onChange={handleChange}
-                                    className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                    className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400 outline-none"
                                 />
                             </div>
                         </div>
@@ -146,7 +146,7 @@ const Settings = () => {
                                     name="lastName"
                                     value={formData.lastName}
                                     onChange={handleChange}
-                                    className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                    className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400 outline-none"
                                 />
                             </div>
                         </div>
@@ -161,7 +161,7 @@ const Settings = () => {
                                 name="email"
                                 value={formData.email}
                                 onChange={handleChange}
-                                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400 outline-none"
                             />
                         </div>
                     </div>
@@ -170,7 +170,7 @@ const Settings = () => {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 font-medium flex items-center gap-2 transition-colors disabled:opacity-50"
+                            className="bg-sky-500 text-white px-6 py-2 rounded-lg hover:bg-sky-600 font-medium flex items-center gap-2 transition-colors disabled:opacity-50"
                         >
                             <Save className="w-5 h-5" />
                             {loading ? 'Saving...' : 'Save Changes'}

@@ -95,7 +95,7 @@ const PharmacyDashboard = () => {
                                         <div className="text-xs text-gray-500">{p.patient.patientNumber}</div>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <div className="font-medium text-blue-800">{p.medicationName}</div>
+                                        <div className="font-medium text-sky-700">{p.medicationName}</div>
                                         <div className="text-xs text-gray-500">{p.dosage} - {p.frequency}</div>
                                     </td>
                                     <td className="px-6 py-4 text-sm text-gray-600">
@@ -123,7 +123,7 @@ const PharmacyDashboard = () => {
                                         {!hasInvoice ? (
                                             <button 
                                                 onClick={() => handleCreateInvoice(p.id)}
-                                                className="text-blue-600 hover:text-blue-800 text-xs font-medium border border-blue-200 hover:bg-blue-50 px-3 py-1.5 rounded-lg"
+                                                className="text-sky-500 hover:text-sky-700 text-xs font-medium border border-sky-200 hover:bg-sky-50 px-3 py-1.5 rounded-lg"
                                             >
                                                 Create Bill
                                             </button>
@@ -133,7 +133,7 @@ const PharmacyDashboard = () => {
                                                 disabled={!isPaid}
                                                 className={`px-4 py-2 rounded-lg text-sm shadow-sm ${
                                                     isPaid 
-                                                        ? 'bg-blue-600 text-white hover:bg-blue-700' 
+                                                        ? 'bg-sky-500 text-white hover:bg-sky-600' 
                                                         : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                                                 }`}
                                             >
@@ -158,7 +158,7 @@ const PharmacyDashboard = () => {
                     {['ADMIN', 'PHARMACIST'].includes(user?.role || '') && (
                         <button 
                             onClick={() => setShowAddMedModal(true)}
-                            className="flex items-center gap-2 text-blue-700 bg-blue-50 px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-blue-100 border border-blue-200"
+                            className="flex items-center gap-2 text-sky-600 bg-sky-50 px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-sky-100 border border-sky-200"
                         >
                             <Plus className="w-4 h-4" /> Add Product
                         </button>
@@ -289,7 +289,7 @@ const PharmacyDashboard = () => {
         <div className="space-y-6">
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-                    <Pill className="w-8 h-8 text-blue-600" /> Pharmacy Management
+                    <Pill className="w-8 h-8 text-sky-500" /> Pharmacy Management
                 </h1>
                 <div className="flex gap-2">
                     <button 
@@ -305,31 +305,31 @@ const PharmacyDashboard = () => {
             <div className="flex gap-4 border-b border-gray-200">
                 <button 
                     onClick={() => setActiveTab('QUEUE')}
-                    className={`pb-4 px-2 font-medium text-sm transition-colors relative ${activeTab === 'QUEUE' ? 'text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+                    className={`pb-4 px-2 font-medium text-sm transition-colors relative ${activeTab === 'QUEUE' ? 'text-sky-500' : 'text-gray-500 hover:text-gray-700'}`}
                 >
                     <div className="flex items-center gap-2">
                         <ShoppingCart className="w-4 h-4" /> Prescription Queue
                         {queue.length > 0 && <span className="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">{queue.length}</span>}
                     </div>
-                    {activeTab === 'QUEUE' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600"></div>}
+                    {activeTab === 'QUEUE' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-sky-500"></div>}
                 </button>
                 <button 
                     onClick={() => setActiveTab('INVENTORY')}
-                    className={`pb-4 px-2 font-medium text-sm transition-colors relative ${activeTab === 'INVENTORY' ? 'text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+                    className={`pb-4 px-2 font-medium text-sm transition-colors relative ${activeTab === 'INVENTORY' ? 'text-sky-500' : 'text-gray-500 hover:text-gray-700'}`}
                 >
                     <div className="flex items-center gap-2">
                         <Package className="w-4 h-4" /> Inventory & Stock
                     </div>
-                    {activeTab === 'INVENTORY' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600"></div>}
+                    {activeTab === 'INVENTORY' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-sky-500"></div>}
                 </button>
                 <button 
                     onClick={() => setActiveTab('REPORTS')}
-                    className={`pb-4 px-2 font-medium text-sm transition-colors relative ${activeTab === 'REPORTS' ? 'text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+                    className={`pb-4 px-2 font-medium text-sm transition-colors relative ${activeTab === 'REPORTS' ? 'text-sky-500' : 'text-gray-500 hover:text-gray-700'}`}
                 >
                     <div className="flex items-center gap-2">
                         <BarChart3 className="w-4 h-4" /> Reports
                     </div>
-                    {activeTab === 'REPORTS' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600"></div>}
+                    {activeTab === 'REPORTS' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-sky-500"></div>}
                 </button>
             </div>
 

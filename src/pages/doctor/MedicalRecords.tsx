@@ -105,7 +105,7 @@ const MedicalRecords = () => {
                     <input 
                         type="text" 
                         placeholder="Search patient or diagnosis..." 
-                        className="pl-10 pr-4 py-2 border rounded-lg w-64 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="pl-10 pr-4 py-2 border rounded-lg w-64 focus:outline-none focus:ring-2 focus:ring-sky-400"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -145,7 +145,7 @@ const MedicalRecords = () => {
                                             ? (record.subjective.chiefComplaint || JSON.stringify(record.subjective))
                                             : record.subjective}
                                     </td>
-                                    <td className="p-4 text-blue-600 font-medium">
+                                    <td className="p-4 text-sky-500 font-medium">
                                         {typeof record.assessment === 'object' && record.assessment !== null
                                             ? (record.assessment.primaryDiagnosis || JSON.stringify(record.assessment))
                                             : record.assessment}
@@ -156,7 +156,7 @@ const MedicalRecords = () => {
                                     <td className="p-4">
                                         <button 
                                             onClick={() => fetchRecordDetails(record.id)}
-                                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg flex items-center gap-1"
+                                            className="p-2 text-sky-500 hover:bg-sky-50 rounded-lg flex items-center gap-1"
                                         >
                                             <Eye className="w-4 h-4" /> View
                                         </button>
@@ -182,7 +182,7 @@ const MedicalRecords = () => {
                             <div className="flex gap-2">
                                 <button 
                                     onClick={handlePrint}
-                                    className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg flex items-center gap-2 font-medium transition-colors"
+                                    className="p-2 text-sky-500 hover:bg-sky-100 rounded-lg flex items-center gap-2 font-medium transition-colors"
                                 >
                                     <Printer className="w-5 h-5" />
                                     <span>Print / Download</span>
@@ -203,10 +203,10 @@ const MedicalRecords = () => {
                             {/* ... Content ... */}
                             {/* Header Info */}
                             <div className="grid grid-cols-2 gap-8">
-                                <div className="bg-blue-50 p-4 rounded-lg">
-                                    <h3 className="text-xs font-bold text-blue-800 uppercase mb-2">Patient</h3>
+                                <div className="bg-sky-50 p-4 rounded-lg">
+                                    <h3 className="text-xs font-bold text-sky-700 uppercase mb-2">Patient</h3>
                                     <p className="text-lg font-bold">{selectedRecord.patient?.firstName} {selectedRecord.patient?.lastName}</p>
-                                    <p className="text-sm text-blue-700">
+                                    <p className="text-sm text-sky-600">
                                         {selectedRecord.patient?.gender} 
                                         {selectedRecord.patient?.dateOfBirth && (
                                             <> • {format(new Date(selectedRecord.patient.dateOfBirth), 'yyyy-MM-dd')}</>
@@ -306,7 +306,7 @@ const MedicalRecords = () => {
                                                             <span className={`px-2 py-1 rounded text-xs font-bold ${
                                                                 l.priority === 'STAT' ? 'bg-red-100 text-red-800' : 
                                                                 l.priority === 'URGENT' ? 'bg-orange-100 text-orange-800' : 
-                                                                'bg-blue-100 text-blue-800'
+                                                                'bg-sky-100 text-sky-700'
                                                             }`}>{l.priority}</span>
                                                         </td>
                                                         <td className="p-3">

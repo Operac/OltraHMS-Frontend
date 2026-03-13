@@ -52,7 +52,7 @@ const PatientWellnessView = () => {
     if (loading) {
         return (
             <div className="flex items-center justify-center h-64">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500"></div>
             </div>
         );
     }
@@ -87,7 +87,7 @@ const PatientWellnessView = () => {
                         onClick={() => setActiveTab(tab.id as any)}
                         className={`flex items-center gap-2 px-4 py-2 rounded-lg whitespace-nowrap ${
                             activeTab === tab.id 
-                                ? 'bg-blue-600 text-white' 
+                                ? 'bg-sky-500 text-white' 
                                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                         }`}
                     >
@@ -115,8 +115,8 @@ const PatientWellnessView = () => {
                         </div>
                         <div className="bg-white p-4 rounded-xl shadow-sm border">
                             <div className="flex items-center gap-3">
-                                <div className="p-2 bg-blue-100 rounded-lg">
-                                    <TrendingUp className="text-blue-600" size={20} />
+                                <div className="p-2 bg-sky-100 rounded-lg">
+                                    <TrendingUp className="text-sky-500" size={20} />
                                 </div>
                                 <div>
                                     <p className="text-sm text-gray-500">Active Goals</p>
@@ -188,7 +188,7 @@ const PatientWellnessView = () => {
                                     <div className="flex items-center gap-3">
                                         {vital.type === 'BLOOD_PRESSURE' && <Heart className="text-red-500" />}
                                         {vital.type === 'HEART_RATE' && <Activity className="text-pink-500" />}
-                                        {vital.type === 'WEIGHT' && <TrendingUp className="text-blue-500" />}
+                                        {vital.type === 'WEIGHT' && <TrendingUp className="text-sky-400" />}
                                         {vital.type === 'GLUCOSE' && <Droplets className="text-purple-500" />}
                                         {vital.type === 'TEMPERATURE' && <Thermometer className="text-orange-500" />}
                                         <div>

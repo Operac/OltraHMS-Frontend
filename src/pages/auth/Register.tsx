@@ -54,13 +54,13 @@ const Register = () => {
     return (
         <div className="min-h-screen w-full flex bg-[#F8FAFC]">
             {/* Left Side - Hero/Brand */}
-            <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-blue-600 to-indigo-700 relative overflow-hidden items-center justify-center p-12 text-white">
+            <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-sky-500 to-indigo-700 relative overflow-hidden items-center justify-center p-12 text-white">
                 <div className="relative z-10 max-w-lg">
                     <div className="mb-8 p-4 bg-white/10 backdrop-blur-md rounded-2xl w-16 h-16 flex items-center justify-center border border-white/20">
                         <Activity className="w-8 h-8 text-white" />
                     </div>
                     <h1 className="text-5xl font-bold mb-6 tracking-tight">Join OltraHMS</h1>
-                    <p className="text-xl text-blue-100 leading-relaxed mb-8">
+                    <p className="text-xl text-sky-100 leading-relaxed mb-8">
                         Create your patient account to manage appointments, view medical records, and access telemedicine services.
                     </p>
                 </div>
@@ -92,7 +92,7 @@ const Register = () => {
                                         required
                                         value={formData.firstName}
                                         onChange={handleChange}
-                                        className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-600 outline-none transition-all"
+                                        className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-sky-100 focus:border-sky-500 outline-none transition-all"
                                         placeholder="John"
                                     />
                                 </div>
@@ -106,7 +106,7 @@ const Register = () => {
                                         required
                                         value={formData.lastName}
                                         onChange={handleChange}
-                                        className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-600 outline-none transition-all"
+                                        className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-sky-100 focus:border-sky-500 outline-none transition-all"
                                         placeholder="Doe"
                                     />
                                 </div>
@@ -123,7 +123,7 @@ const Register = () => {
                                     required
                                     value={formData.email}
                                     onChange={handleChange}
-                                    className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-600 outline-none transition-all"
+                                    className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-sky-100 focus:border-sky-500 outline-none transition-all"
                                     placeholder="john@example.com"
                                 />
                             </div>
@@ -139,7 +139,7 @@ const Register = () => {
                                     required
                                     value={formData.password}
                                     onChange={handleChange}
-                                    className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-600 outline-none transition-all"
+                                    className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-sky-100 focus:border-sky-500 outline-none transition-all"
                                     placeholder="••••••••"
                                 />
                             </div>
@@ -155,7 +155,7 @@ const Register = () => {
                                     required
                                     value={formData.confirmPassword}
                                     onChange={handleChange}
-                                    className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-600 outline-none transition-all"
+                                    className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-sky-100 focus:border-sky-500 outline-none transition-all"
                                     placeholder="••••••••"
                                 />
                             </div>
@@ -164,7 +164,7 @@ const Register = () => {
                         <button 
                             type="submit"
                             disabled={loading}
-                            className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-lg shadow-blue-500/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-70"
+                            className="w-full py-4 bg-sky-500 hover:bg-sky-600 text-white rounded-xl font-bold shadow-lg shadow-sky-500/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-70"
                         >
                             {loading ? 'Creating Account...' : (
                                 <>
@@ -175,7 +175,7 @@ const Register = () => {
 
                         <div className="text-center text-sm text-gray-500">
                             Already have an account? {' '}
-                            <Link to="/login" className="font-semibold text-blue-600 hover:text-blue-700">
+                            <Link to="/login" className="font-semibold text-sky-500 hover:text-sky-600">
                                 Sign in
                             </Link>
                         </div>

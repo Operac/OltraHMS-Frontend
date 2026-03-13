@@ -108,7 +108,7 @@ const Appointments = () => {
                     </button>
                     <button 
                         onClick={() => navigate('/appointments/new')}
-                        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2 font-medium"
+                        className="bg-sky-500 text-white px-4 py-2 rounded-lg hover:bg-sky-600 flex items-center gap-2 font-medium"
                     >
                         <Plus className="w-4 h-4" /> New Appointment
                     </button>
@@ -162,7 +162,7 @@ const Appointments = () => {
                                  key={day.toISOString()} 
                                  className={`min-h-[100px] border-b border-r p-2 hover:bg-gray-50 transition-colors ${!isSameMonth(day, currentDate) ? 'bg-gray-50/50 text-gray-400' : ''}`}
                              >
-                                 <div className={`text-sm font-semibold mb-2 ${isSameDay(day, new Date()) ? 'bg-blue-600 text-white w-6 h-6 rounded-full flex items-center justify-center' : ''}`}>
+                                 <div className={`text-sm font-semibold mb-2 ${isSameDay(day, new Date()) ? 'bg-sky-500 text-white w-6 h-6 rounded-full flex items-center justify-center' : ''}`}>
                                      {format(day, 'd')}
                                  </div>
                                  <div className="space-y-1">
@@ -175,7 +175,7 @@ const Appointments = () => {
                                                      if (user?.role === 'DOCTOR') navigate(`/consultation/${apt.id}`);
                                                 }}
                                                 className={`text-[10px] p-1 rounded truncate cursor-pointer ${
-                                                    apt.type === 'TELEHEALTH' ? 'bg-teal-100 text-teal-700' : 'bg-blue-100 text-blue-700'
+                                                    apt.type === 'TELEHEALTH' ? 'bg-teal-100 text-teal-700' : 'bg-sky-100 text-sky-600'
                                                 }`}
                                             >
                                                 {format(new Date(apt.startTime), 'HH:mm')} {user?.role === 'PATIENT' ? apt.doctor?.user?.lastName : apt.patient.lastName}
@@ -193,11 +193,11 @@ const Appointments = () => {
                         <div className="p-4 border-b border-r bg-gray-50 font-medium text-gray-500 text-sm">Time</div>
                         {/* Day Headers */}
                         {days.map(day => (
-                            <div key={day.toString()} className={`p-4 border-b border-r text-center ${isSameDay(day, new Date()) ? 'bg-blue-50' : 'bg-gray-50'}`}>
-                                <div className={`text-xs font-semibold uppercase mb-1 ${isSameDay(day, new Date()) ? 'text-blue-600' : 'text-gray-500'}`}>
+                            <div key={day.toString()} className={`p-4 border-b border-r text-center ${isSameDay(day, new Date()) ? 'bg-sky-50' : 'bg-gray-50'}`}>
+                                <div className={`text-xs font-semibold uppercase mb-1 ${isSameDay(day, new Date()) ? 'text-sky-500' : 'text-gray-500'}`}>
                                     {format(day, 'EEE')}
                                 </div>
-                                <div className={`text-xl font-bold ${isSameDay(day, new Date()) ? 'text-blue-700' : 'text-gray-800'}`}>
+                                <div className={`text-xl font-bold ${isSameDay(day, new Date()) ? 'text-sky-600' : 'text-gray-800'}`}>
                                     {format(day, 'd')}
                                 </div>
                             </div>
@@ -221,16 +221,16 @@ const Appointments = () => {
                                                         if (user?.role === 'DOCTOR') navigate(`/consultation/${apt.id}`);
                                                     }}
                                                     className={`p-2 rounded text-xs mb-1 cursor-pointer transition-colors border-l-4 ${
-                                                        apt.type === 'TELEHEALTH' ? 'bg-teal-100 border-teal-500 hover:bg-teal-200' : 'bg-blue-100 border-blue-500 hover:bg-blue-200'
+                                                        apt.type === 'TELEHEALTH' ? 'bg-teal-100 border-teal-500 hover:bg-teal-200' : 'bg-sky-100 border-sky-400 hover:bg-sky-200'
                                                     }`}
                                                 >
-                                                    <div className={`font-bold truncate ${apt.type === 'TELEHEALTH' ? 'text-teal-900' : 'text-blue-900'}`}>
+                                                    <div className={`font-bold truncate ${apt.type === 'TELEHEALTH' ? 'text-teal-900' : 'text-sky-900'}`}>
                                                         {user?.role === 'PATIENT' 
                                                             ? `Dr. ${apt.doctor?.user?.lastName}`
                                                             : `${apt.patient.firstName} ${apt.patient.lastName}`
                                                         }
                                                     </div>
-                                                    <div className={`${apt.type === 'TELEHEALTH' ? 'text-teal-700' : 'text-blue-700'} flex items-center gap-1`}>
+                                                    <div className={`${apt.type === 'TELEHEALTH' ? 'text-teal-700' : 'text-sky-600'} flex items-center gap-1`}>
                                                         {format(new Date(apt.startTime), 'h:mm')}
                                                         {apt.type === 'TELEHEALTH' && <span className="ml-1 text-[10px] bg-teal-200 px-1 rounded">V</span>}
                                                     </div>

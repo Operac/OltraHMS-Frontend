@@ -80,12 +80,12 @@ const PatientBooking = () => {
                         <div 
                             key={doc.id} 
                             onClick={() => handleDoctorSelect(doc)}
-                            className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:border-blue-500 cursor-pointer transition-all group"
+                            className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:border-sky-400 cursor-pointer transition-all group"
                         >
-                            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-xl font-bold mb-4">
+                            <div className="w-16 h-16 bg-sky-100 rounded-full flex items-center justify-center text-sky-500 text-xl font-bold mb-4">
                                 {doc.user.firstName[0]}{doc.user.lastName[0]}
                             </div>
-                            <h3 className="font-bold text-gray-900 group-hover:text-blue-600">Dr. {doc.user.firstName} {doc.user.lastName}</h3>
+                            <h3 className="font-bold text-gray-900 group-hover:text-sky-500">Dr. {doc.user.firstName} {doc.user.lastName}</h3>
                             <p className="text-sm text-gray-500">{doc.specialization}</p>
                             <div className="mt-4 flex items-center gap-2 text-xs text-green-600 font-medium">
                                 <span className="w-2 h-2 rounded-full bg-green-500"></span> Available Today
@@ -103,7 +103,7 @@ const PatientBooking = () => {
                                 <h2 className="font-bold text-gray-900">Select a Time Slot</h2>
                                 <p className="text-sm text-gray-500">with Dr. {selectedDoctor.user.lastName} on {selectedDate}</p>
                             </div>
-                            <button onClick={() => setStep(1)} className="text-sm text-blue-600 hover:underline">Change Doctor</button>
+                            <button onClick={() => setStep(1)} className="text-sm text-sky-500 hover:underline">Change Doctor</button>
                         </div>
                     </div>
                     
@@ -121,7 +121,7 @@ const PatientBooking = () => {
                                 <button 
                                     key={time}
                                     onClick={() => handleBooking(time)}
-                                    className="p-3 rounded-lg border border-gray-200 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-700 transition-all text-sm font-medium"
+                                    className="p-3 rounded-lg border border-gray-200 hover:border-sky-400 hover:bg-sky-50 hover:text-sky-600 transition-all text-sm font-medium"
                                 >
                                     {time}
                                 </button>

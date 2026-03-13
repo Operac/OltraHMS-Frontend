@@ -26,7 +26,7 @@ const InpatientDashboard = () => {
     return (
         <div className="space-y-6">
             <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                <BedDouble className="w-8 h-8 text-blue-600" /> Inpatient Wards
+                <BedDouble className="w-8 h-8 text-sky-500" /> Inpatient Wards
             </h1>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -46,7 +46,7 @@ const InpatientDashboard = () => {
                                 <div className="text-sm text-gray-500 uppercase">{ward.type}</div>
                             </div>
                             <div className={`p-2 rounded-lg ${
-                                ward.type === 'ICU' ? 'bg-red-50 text-red-600' : 'bg-blue-50 text-blue-600'
+                                ward.type === 'ICU' ? 'bg-red-50 text-red-600' : 'bg-sky-50 text-sky-500'
                             }`}>
                                 <Activity className="w-5 h-5" />
                             </div>

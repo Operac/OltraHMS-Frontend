@@ -88,7 +88,7 @@ const AdmissionDashboard = () => {
                             <div className="text-sm font-medium text-gray-500">Total Beds</div>
                             <div className="text-2xl font-bold text-gray-900">{totalBeds}</div>
                         </div>
-                        <Bed className="w-8 h-8 text-blue-600 opacity-20" />
+                        <Bed className="w-8 h-8 text-sky-500 opacity-20" />
                     </div>
                     <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
                         <div>

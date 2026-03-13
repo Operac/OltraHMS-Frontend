@@ -61,7 +61,7 @@ const MyPayslips = () => {
                                     {p.paymentDate ? new Date(p.paymentDate).toLocaleDateString() : '-'}
                                 </td>
                                 <td className="px-6 py-4 text-right">
-                                    <button className="text-blue-600 hover:text-blue-800 text-xs flex items-center gap-1 ml-auto">
+                                    <button className="text-sky-500 hover:text-sky-700 text-xs flex items-center gap-1 ml-auto">
                                         <Download className="w-4 h-4" /> PDF
                                     </button>
                                 </td>

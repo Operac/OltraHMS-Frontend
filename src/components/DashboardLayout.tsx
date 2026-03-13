@@ -17,7 +17,7 @@ const DashboardLayout = ({ children, role, title }: DashboardLayoutProps) => {
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-50">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500"></div>
             </div>
         );
     }
@@ -75,7 +75,7 @@ const DashboardLayout = ({ children, role, title }: DashboardLayoutProps) => {
                                 <span className="font-semibold text-gray-800">{user.firstName} {user.lastName}</span>
                                 <span className="text-xs text-gray-500 uppercase tracking-wider">{user.role}</span>
                             </div>
-                            <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-lg border-2 border-white shadow-sm">
+                            <div className="h-10 w-10 rounded-full bg-sky-100 flex items-center justify-center text-sky-500 font-bold text-lg border-2 border-white shadow-sm">
                                 {user.firstName?.charAt(0) || 'U'}
                             </div>
                         </div>

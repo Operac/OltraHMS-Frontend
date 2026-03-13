@@ -49,7 +49,7 @@ const Doctors = () => {
                     <input 
                         type="text" 
                         placeholder="Search by name or specialty..."
-                        className="pl-10 pr-4 py-2 border rounded-lg w-full md:w-64 focus:ring-2 focus:ring-blue-500"
+                        className="pl-10 pr-4 py-2 border rounded-lg w-full md:w-64 focus:ring-2 focus:ring-sky-400"
                         value={searchQuery}
                         onChange={e => setSearchQuery(e.target.value)}
                     />
@@ -60,11 +60,11 @@ const Doctors = () => {
                 {filteredDoctors.map(doc => (
                     <div key={doc.id} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col">
                         <div className="p-6 flex flex-col items-center text-center flex-1">
-                            <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-3xl font-bold mb-4">
+                            <div className="w-24 h-24 bg-sky-100 rounded-full flex items-center justify-center text-sky-500 text-3xl font-bold mb-4">
                                 {doc.name.split(' ').map((n: string) => n[0]).join('')}
                             </div>
                             <h3 className="text-lg font-bold text-gray-900">{doc.name}</h3>
-                            <span className="inline-block px-3 py-1 bg-blue-50 text-blue-700 text-xs font-semibold rounded-full mt-2 mb-4">
+                            <span className="inline-block px-3 py-1 bg-sky-50 text-sky-600 text-xs font-semibold rounded-full mt-2 mb-4">
                                 {doc.specialization || 'General Practitioner'}
                             </span>
                             <div className="flex items-center gap-1 text-yellow-500 text-sm mb-4">
@@ -76,7 +76,7 @@ const Doctors = () => {
                         <div className="p-4 border-t border-gray-100 mt-auto bg-gray-50">
                             <button 
                                 onClick={() => navigate(`/appointments/new?doctorId=${doc.id}`)}
-                                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg flex items-center justify-center gap-2 transition-colors"
+                                className="w-full bg-sky-500 hover:bg-sky-600 text-white font-medium py-2 rounded-lg flex items-center justify-center gap-2 transition-colors"
                             >
                                 <Calendar className="w-4 h-4" />
                                 Book Appointment

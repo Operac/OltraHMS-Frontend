@@ -82,7 +82,7 @@ const Patients = () => {
                 {user?.role !== 'DOCTOR' && (
                     <button 
                         onClick={() => navigate('/patients/new')}
-                        className="flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors shadow-sm"
+                        className="flex items-center justify-center space-x-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-lg transition-colors shadow-sm"
                     >
                         <Plus className="w-5 h-5" />
                         <span>Register New Patient</span>
@@ -97,8 +97,8 @@ const Patients = () => {
                         <p className="text-sm font-medium text-gray-500">Total Patients</p>
                         <h3 className="text-2xl font-bold text-gray-900 mt-1">{totalPatients}</h3>
                     </div>
-                    <div className="p-3 bg-blue-50 rounded-lg">
-                        <Users className="w-6 h-6 text-blue-600" />
+                    <div className="p-3 bg-sky-50 rounded-lg">
+                        <Users className="w-6 h-6 text-sky-500" />
                     </div>
                 </div>
                 {/* ... other cards ... */}
@@ -111,7 +111,7 @@ const Patients = () => {
                     <input
                         type="text"
                         placeholder="Search by name, ID, or phone..."
-                        className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                        className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-400 focus:border-sky-400 outline-none transition-all"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                     />
@@ -158,7 +158,7 @@ const Patients = () => {
                                     >
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="flex items-center">
-                                                <div className="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold">
+                                                <div className="flex-shrink-0 h-10 w-10 bg-sky-100 rounded-full flex items-center justify-center text-sky-500 font-bold">
                                                     {patient.firstName[0]}{patient.lastName[0]}
                                                 </div>
                                                 <div className="ml-4">
@@ -185,7 +185,7 @@ const Patients = () => {
                                             {patient.lastVisit ? format(new Date(patient.lastVisit), 'MMM d, yyyy') : 'Never'}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                            <button className="text-gray-400 hover:text-blue-600">
+                                            <button className="text-gray-400 hover:text-sky-500">
                                                 <MoreVertical className="w-5 h-5" />
                                             </button>
                                         </td>

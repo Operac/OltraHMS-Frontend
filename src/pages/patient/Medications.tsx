@@ -62,8 +62,8 @@ const Medications = () => {
                     <div key={med.id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col">
                         <div className="p-5 flex-1">
                             <div className="flex justify-between items-start mb-4">
-                                <div className="p-2 bg-blue-50 rounded-lg">
-                                    <Pill className="w-6 h-6 text-blue-600" />
+                                <div className="p-2 bg-sky-50 rounded-lg">
+                                    <Pill className="w-6 h-6 text-sky-500" />
                                 </div>
                                 <span className={`px-2 py-1 rounded text-xs font-bold uppercase ${getStatusColor(med.status)}`}>
                                     {med.status}
@@ -114,14 +114,14 @@ const Medications = () => {
                                              alert('Failed to request refill');
                                          }
                                      }}
-                                     className="text-blue-600 font-medium flex items-center gap-1 hover:underline"
+                                     className="text-sky-500 font-medium flex items-center gap-1 hover:underline"
                                  >
                                     <RefreshCcw className="w-4 h-4" /> Request Refill
                                  </button>
                              )}
 
                              {med.status === 'PENDING' && (
-                                <span className="text-blue-600 font-medium flex items-center gap-1">
+                                <span className="text-sky-500 font-medium flex items-center gap-1">
                                     <AlertCircle className="w-4 h-4" /> Pickup at Pharmacy
                                 </span>
                              )}
@@ -145,7 +145,7 @@ const Medications = () => {
                                              alert('Failed to download');
                                          }
                                      }}
-                                     className="text-gray-500 hover:text-blue-600 flex items-center gap-1"
+                                     className="text-gray-500 hover:text-sky-500 flex items-center gap-1"
                                      title="Download Prescription PDF"
                                  >
                                      <Download className="w-4 h-4" />

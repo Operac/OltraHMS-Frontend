@@ -136,7 +136,7 @@ const Consultation = () => {
             {/* Header */}
             <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-xl">
+                    <div className="w-12 h-12 bg-sky-100 rounded-full flex items-center justify-center text-sky-500 font-bold text-xl">
                         {patient?.firstName?.[0]}{patient?.lastName?.[0]}
                     </div>
                     <div>
@@ -151,7 +151,7 @@ const Consultation = () => {
                     {appointment?.type === 'TELEMEDICINE' && (
                         <button 
                             onClick={() => navigate(`/consultation/video/${appointmentId}`)}
-                            className="px-3 py-2 text-blue-700 bg-blue-50 rounded-lg hover:bg-blue-100 font-medium flex items-center gap-2 text-sm"
+                            className="px-3 py-2 text-sky-600 bg-sky-50 rounded-lg hover:bg-sky-100 font-medium flex items-center gap-2 text-sm"
                         >
                             <Video className="w-4 h-4" /> Video Call
                         </button>
@@ -177,10 +177,10 @@ const Consultation = () => {
                             <div className="text-center text-gray-400 py-8 text-sm">No previous history</div>
                         ) : (
                             history.map((record: any) => (
-                                <div key={record.id} className="border-l-2 border-blue-200 pl-4 py-1">
+                                <div key={record.id} className="border-l-2 border-sky-200 pl-4 py-1">
                                     <div className="text-xs text-gray-500 mb-1">{new Date(record.visitDate).toLocaleDateString()}</div>
                                     <div className="font-medium text-sm text-gray-900 line-clamp-2">{record.diagnosis || record.assessment || 'Checkup'}</div>
-                                    <div className="text-xs text-blue-600 mt-1">Dr. {record.doctor?.user?.firstName} {record.doctor?.user?.lastName}</div>
+                                    <div className="text-xs text-sky-500 mt-1">Dr. {record.doctor?.user?.firstName} {record.doctor?.user?.lastName}</div>
                                 </div>
                             ))
                         )}
@@ -190,9 +190,9 @@ const Consultation = () => {
                 {/* Main: SOAP Editor */}
                 <div className="col-span-6 space-y-4 overflow-y-auto pr-2 pb-4">
                      <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
-                        <h2 className="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wide text-blue-600">Subjective</h2>
+                        <h2 className="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wide text-sky-500">Subjective</h2>
                         <textarea 
-                            className="w-full p-3 border border-gray-200 rounded-lg h-24 focus:ring-2 focus:ring-blue-500 outline-none text-sm resize-none bg-gray-50 focus:bg-white transition-colors"
+                            className="w-full p-3 border border-gray-200 rounded-lg h-24 focus:ring-2 focus:ring-sky-400 outline-none text-sm resize-none bg-gray-50 focus:bg-white transition-colors"
                             placeholder="Chief Complaint, HPI..."
                             value={soap.subjective}
                             onChange={(e) => setSoap({...soap, subjective: e.target.value})}
@@ -200,7 +200,7 @@ const Consultation = () => {
                     </div>
 
                     <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
-                        <h2 className="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wide text-blue-600">Objective</h2>
+                        <h2 className="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wide text-sky-500">Objective</h2>
                         <div className="grid grid-cols-4 gap-3 mb-4">
                             <div><label className="text-[10px] text-gray-500 font-bold uppercase">BP (Sys)</label><input type="number" className="w-full p-2 border rounded text-sm bg-gray-50" value={vitals.bpSystolic} onChange={(e) => setVitals({...vitals, bpSystolic: e.target.value})} /></div>
                             <div><label className="text-[10px] text-gray-500 font-bold uppercase">BP (Dia)</label><input type="number" className="w-full p-2 border rounded text-sm bg-gray-50" value={vitals.bpDiastolic} onChange={(e) => setVitals({...vitals, bpDiastolic: e.target.value})} /></div>
@@ -208,7 +208,7 @@ const Consultation = () => {
                             <div><label className="text-[10px] text-gray-500 font-bold uppercase">HR (bpm)</label><input type="number" className="w-full p-2 border rounded text-sm bg-gray-50" value={vitals.heartRate} onChange={(e) => setVitals({...vitals, heartRate: e.target.value})} /></div>
                         </div>
                         <textarea 
-                             className="w-full p-3 border border-gray-200 rounded-lg h-24 focus:ring-2 focus:ring-blue-500 outline-none text-sm resize-none bg-gray-50 focus:bg-white transition-colors"
+                             className="w-full p-3 border border-gray-200 rounded-lg h-24 focus:ring-2 focus:ring-sky-400 outline-none text-sm resize-none bg-gray-50 focus:bg-white transition-colors"
                              placeholder="Physical Exam Findings..."
                              value={soap.objective}
                              onChange={(e) => setSoap({...soap, objective: e.target.value})}
@@ -216,9 +216,9 @@ const Consultation = () => {
                     </div>
 
                     <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
-                        <h2 className="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wide text-blue-600">Assessment</h2>
+                        <h2 className="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wide text-sky-500">Assessment</h2>
                         <textarea 
-                             className="w-full p-3 border border-gray-200 rounded-lg h-24 focus:ring-2 focus:ring-blue-500 outline-none text-sm resize-none bg-gray-50 focus:bg-white transition-colors"
+                             className="w-full p-3 border border-gray-200 rounded-lg h-24 focus:ring-2 focus:ring-sky-400 outline-none text-sm resize-none bg-gray-50 focus:bg-white transition-colors"
                              placeholder="Diagnosis & Clinical Impressions..."
                              value={soap.assessment}
                              onChange={(e) => setSoap({...soap, assessment: e.target.value})}
@@ -226,9 +226,9 @@ const Consultation = () => {
                     </div>
 
                      <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
-                        <h2 className="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wide text-blue-600">Plan</h2>
+                        <h2 className="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wide text-sky-500">Plan</h2>
                         <textarea 
-                             className="w-full p-3 border border-gray-200 rounded-lg h-24 focus:ring-2 focus:ring-blue-500 outline-none text-sm resize-none bg-gray-50 focus:bg-white transition-colors"
+                             className="w-full p-3 border border-gray-200 rounded-lg h-24 focus:ring-2 focus:ring-sky-400 outline-none text-sm resize-none bg-gray-50 focus:bg-white transition-colors"
                              placeholder="Treatment Plan, Education, Follow-up..."
                              value={soap.plan}
                              onChange={(e) => setSoap({...soap, plan: e.target.value})}
@@ -259,15 +259,15 @@ const Consultation = () => {
 
                     <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
                          <div className="flex items-center justify-between mb-4">
-                            <h3 className="font-bold text-gray-900 flex items-center gap-2"><FlaskConical className="w-4 h-4 text-blue-600" /> Lab Orders</h3>
-                            <button onClick={() => setShowLabModal(true)} className="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded hover:bg-blue-100 font-bold">+ Add</button>
+                            <h3 className="font-bold text-gray-900 flex items-center gap-2"><FlaskConical className="w-4 h-4 text-sky-500" /> Lab Orders</h3>
+                            <button onClick={() => setShowLabModal(true)} className="text-xs bg-sky-50 text-sky-600 px-2 py-1 rounded hover:bg-sky-100 font-bold">+ Add</button>
                         </div>
                         {labOrders.length === 0 ? (
                             <div className="text-sm text-gray-400 italic">No labs ordered</div>
                         ) : (
                             <ul className="space-y-2">
                                 {labOrders.map(l => (
-                                    <li key={l.id} className={`text-sm p-2 rounded border border-blue-100 ${l.isExternal ? 'bg-orange-50 text-orange-900 border-orange-100' : 'bg-blue-50 text-blue-900'}`}>
+                                    <li key={l.id} className={`text-sm p-2 rounded border border-sky-100 ${l.isExternal ? 'bg-orange-50 text-orange-900 border-orange-100' : 'bg-sky-50 text-sky-900'}`}>
                                         <div className="font-bold flex items-center gap-2">
                                             {l.test}
                                             {l.isExternal && <Building2 className="w-3 h-3 text-orange-600" />}
@@ -293,7 +293,7 @@ const Consultation = () => {
                             <input className="w-full p-2 border rounded" placeholder="Duration (e.g., 5 days)" value={newRx.duration} onChange={e=>setNewRx({...newRx, duration: e.target.value})} />
                             <div className="flex justify-end gap-2 mt-4">
                                 <button onClick={()=>setShowRxModal(false)} className="px-4 py-2 text-gray-600">Cancel</button>
-                                <button onClick={addPrescription} className="px-4 py-2 bg-blue-600 text-white rounded">Add</button>
+                                <button onClick={addPrescription} className="px-4 py-2 bg-sky-500 text-white rounded">Add</button>
                             </div>
                         </div>
                     </div>
@@ -309,7 +309,7 @@ const Consultation = () => {
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Select Test</label>
                                 <select 
-                                    className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none"
+                                    className="w-full p-2 border rounded focus:ring-2 focus:ring-sky-400 outline-none"
                                     value={newLab.test}
                                     onChange={e => {
                                         const selected = availableTests.find(t => t.name === e.target.value);
@@ -332,7 +332,7 @@ const Consultation = () => {
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
                                 <select 
-                                    className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none" 
+                                    className="w-full p-2 border rounded focus:ring-2 focus:ring-sky-400 outline-none" 
                                     value={newLab.priority} 
                                     onChange={e=>setNewLab({...newLab, priority: e.target.value})}
                                 >

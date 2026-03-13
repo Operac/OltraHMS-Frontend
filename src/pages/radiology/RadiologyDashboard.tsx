@@ -75,14 +75,14 @@ const RadiologyDashboard = () => {
             <header className="mb-8 flex justify-between items-center">
                 <div>
                     <h1 className="text-2xl font-bold flex items-center gap-2 text-gray-800">
-                        <Activity className="text-blue-600" /> Radiology Dashboard
+                        <Activity className="text-sky-500" /> Radiology Dashboard
                     </h1>
                     <p className="text-gray-600">Manage imaging requests and reports.</p>
                 </div>
                 <div className="flex gap-2">
                     <button 
                         onClick={() => setFilterStatus('PENDING')}
-                        className={`px-4 py-2 rounded-lg font-medium transition-colors ${filterStatus === 'PENDING' ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 border'}`}
+                        className={`px-4 py-2 rounded-lg font-medium transition-colors ${filterStatus === 'PENDING' ? 'bg-sky-500 text-white' : 'bg-white text-gray-600 border'}`}
                     >
                         Pending Worklist
                     </button>
@@ -97,7 +97,7 @@ const RadiologyDashboard = () => {
 
             {loading ? (
                 <div className="flex justify-center p-12">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div>
                 </div>
             ) : (
                 <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
@@ -137,7 +137,7 @@ const RadiologyDashboard = () => {
                                                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                                                     ${req.priority === 'STAT' ? 'bg-red-100 text-red-800' : 
                                                       req.priority === 'URGENT' ? 'bg-orange-100 text-orange-800' : 
-                                                      'bg-blue-100 text-blue-800'}`}>
+                                                      'bg-sky-100 text-sky-700'}`}>
                                                     {req.priority}
                                                 </span>
                                             </td>
@@ -148,7 +148,7 @@ const RadiologyDashboard = () => {
                                                 {filterStatus === 'PENDING' ? (
                                                     <button 
                                                         onClick={() => setSelectedRequest(req)}
-                                                        className="text-blue-600 hover:text-blue-800 font-medium text-sm flex items-center justify-end gap-1 ml-auto"
+                                                        className="text-sky-500 hover:text-sky-700 font-medium text-sm flex items-center justify-end gap-1 ml-auto"
                                                     >
                                                         <Upload size={16} /> Upload Report
                                                     </button>
@@ -198,7 +198,7 @@ const RadiologyDashboard = () => {
                                     value={findings}
                                     onChange={e => setFindings(e.target.value)}
                                     rows={4}
-                                    className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                                    className="w-full rounded-lg border-gray-300 shadow-sm focus:border-sky-400 focus:ring-sky-400 p-2 border"
                                     placeholder="Detailed radiological findings..."
                                 />
                             </div>
@@ -210,7 +210,7 @@ const RadiologyDashboard = () => {
                                     value={impression}
                                     onChange={e => setImpression(e.target.value)}
                                     rows={2}
-                                    className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                                    className="w-full rounded-lg border-gray-300 shadow-sm focus:border-sky-400 focus:ring-sky-400 p-2 border"
                                     placeholder="Summary impression..."
                                 />
                             </div>
@@ -221,7 +221,7 @@ const RadiologyDashboard = () => {
                                     <div className="space-y-1 text-center">
                                         <Upload className="mx-auto h-12 w-12 text-gray-400" />
                                         <div className="flex text-sm text-gray-600">
-                                            <label htmlFor="file-upload" className="relative cursor-pointer rounded-md bg-white font-medium text-blue-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 hover:text-blue-500">
+                                            <label htmlFor="file-upload" className="relative cursor-pointer rounded-md bg-white font-medium text-sky-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-sky-400 focus-within:ring-offset-2 hover:text-sky-400">
                                                 <span>Upload files</span>
                                                 <input 
                                                     id="file-upload" 
@@ -256,7 +256,7 @@ const RadiologyDashboard = () => {
                                 <button
                                     type="submit"
                                     disabled={uploading}
-                                    className="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                    className="px-6 py-2 bg-sky-500 text-white rounded-lg font-medium hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-400 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                                 >
                                     {uploading ? (
                                         <>

@@ -43,7 +43,7 @@ const DoctorDashboard = () => {
                  </div>
                  <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                     <div className="text-gray-500 font-medium mb-1">In Progress</div>
-                    <div className="text-3xl font-bold text-blue-600">{stats?.inProgress || 0}</div>
+                    <div className="text-3xl font-bold text-sky-500">{stats?.inProgress || 0}</div>
                  </div>
                  <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                     <div className="text-gray-500 font-medium mb-1">Completed</div>
@@ -60,18 +60,18 @@ const DoctorDashboard = () => {
                  <div className="lg:col-span-2">
                      <div 
                         onClick={() => stats?.nextPatient && navigate(`/consultation/${stats.nextPatient.id}`)}
-                        className={`bg-blue-600 text-white p-8 rounded-xl shadow-lg transition-transform hover:scale-[1.02] cursor-pointer relative overflow-hidden ${!stats?.nextPatient ? 'opacity-90 cursor-default' : ''}`}
+                        className={`bg-sky-500 text-white p-8 rounded-xl shadow-lg transition-transform hover:scale-[1.02] cursor-pointer relative overflow-hidden ${!stats?.nextPatient ? 'opacity-90 cursor-default' : ''}`}
                      >
                         <div className="relative z-10 flex justify-between items-start">
                             <div>
-                                <div className="flex items-center gap-2 text-blue-100 mb-2">
+                                <div className="flex items-center gap-2 text-sky-100 mb-2">
                                     <Clock className="w-5 h-5" />
                                     <span className="font-medium">Up Next</span>
                                 </div>
                                 <h2 className="text-4xl font-bold mb-2">
                                     {stats?.nextPatient ? `${stats.nextPatient.patient.firstName} ${stats.nextPatient.patient.lastName}` : 'No Pending Patients'}
                                 </h2>
-                                <p className="text-blue-100 text-lg">
+                                <p className="text-sky-100 text-lg">
                                     {stats?.nextPatient ? `Scheduled for ${new Date(stats.nextPatient.startTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}` : 'You have cleared your queue!'}
                                 </p>
                             </div>
@@ -81,7 +81,7 @@ const DoctorDashboard = () => {
                                         e.stopPropagation();
                                         navigate(`/consultation/video/${stats.nextPatient.id}`);
                                     }}
-                                    className="bg-white text-blue-600 px-6 py-3 rounded-lg font-bold shadow-md hover:bg-blue-50 transition-colors"
+                                    className="bg-white text-sky-500 px-6 py-3 rounded-lg font-bold shadow-md hover:bg-sky-50 transition-colors"
                                 >
                                     Call Patient
                                 </button>
@@ -128,7 +128,7 @@ const DoctorDashboard = () => {
                             <div key={apt.id} className="flex items-center justify-between p-4 border rounded-xl hover:bg-gray-50 transition-colors group">
                                 <div className="flex items-center gap-4">
                                     <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg ${
-                                        apt.status === 'IN_PROGRESS' ? 'bg-blue-100 text-blue-600 ring-2 ring-blue-500 ring-offset-2' : 
+                                        apt.status === 'IN_PROGRESS' ? 'bg-sky-100 text-sky-500 ring-2 ring-sky-400 ring-offset-2' : 
                                         apt.status === 'COMPLETED' ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-600'
                                     }`}>
                                         {apt.patient.firstName[0]}{apt.patient.lastName[0]}
@@ -139,7 +139,7 @@ const DoctorDashboard = () => {
                                             <span className="font-medium">{new Date(apt.startTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                                             <span>•</span>
                                             <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${
-                                                apt.status === 'IN_PROGRESS' ? 'bg-blue-100 text-blue-700' :
+                                                apt.status === 'IN_PROGRESS' ? 'bg-sky-100 text-sky-600' :
                                                 apt.status === 'COMPLETED' ? 'bg-green-100 text-green-700' :
                                                 'bg-orange-100 text-orange-700'
                                             }`}>{apt.status.replace('_', ' ')}</span>

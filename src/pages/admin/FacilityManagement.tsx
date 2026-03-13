@@ -99,7 +99,7 @@ export default function FacilityManagement() {
         </div>
         <button
           onClick={() => setShowWardModal(true)}
-          className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors shadow-sm"
+          className="flex items-center px-4 py-2 bg-sky-500 text-white rounded-xl hover:bg-sky-600 transition-colors shadow-sm"
         >
           <Plus className="w-5 h-5 mr-2" />
           Add New Ward
@@ -118,7 +118,7 @@ export default function FacilityManagement() {
             {/* Ward Header */}
             <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
               <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600">
+                <div className="w-12 h-12 bg-sky-100 rounded-xl flex items-center justify-center text-sky-500">
                   <Building2 className="w-6 h-6" />
                 </div>
                 <div>
@@ -165,7 +165,7 @@ export default function FacilityManagement() {
                       key={bed.id} 
                       className={`relative group p-4 rounded-xl border flex flex-col items-center justify-center text-center
                         ${bed.status === 'VACANT_CLEAN' ? 'bg-green-50 border-green-200' : 
-                          bed.status === 'OCCUPIED' ? 'bg-blue-50 border-blue-200' : 'bg-gray-50 border-gray-200'}`}
+                          bed.status === 'OCCUPIED' ? 'bg-sky-50 border-sky-200' : 'bg-gray-50 border-gray-200'}`}
                     >
                       <button 
                         onClick={() => handleDeleteBed(bed.id, bed.number)}
@@ -176,7 +176,7 @@ export default function FacilityManagement() {
                       </button>
                       <BedDouble className={`w-6 h-6 mb-2 
                         ${bed.status === 'VACANT_CLEAN' ? 'text-green-600' : 
-                          bed.status === 'OCCUPIED' ? 'text-blue-600' : 'text-gray-400'}`} 
+                          bed.status === 'OCCUPIED' ? 'text-sky-500' : 'text-gray-400'}`} 
                       />
                       <span className="font-semibold text-gray-900">{bed.number}</span>
                       <span className="text-xs text-gray-500 mt-1">
@@ -196,7 +196,7 @@ export default function FacilityManagement() {
             <p className="text-gray-500 mt-1 mb-6">Get started by creating your first hospital ward.</p>
             <button
               onClick={() => setShowWardModal(true)}
-              className="flex items-center px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors font-medium shadow-sm"
+              className="flex items-center px-6 py-3 bg-sky-500 text-white rounded-xl hover:bg-sky-600 transition-colors font-medium shadow-sm"
             >
               <Plus className="w-5 h-5 mr-2" />
               Create First Ward
@@ -271,7 +271,7 @@ export default function FacilityManagement() {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  className="px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600"
                 >
                   Create Ward
                 </button>
@@ -338,7 +338,7 @@ export default function FacilityManagement() {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  className="px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600"
                 >
                   Add Bed
                 </button>

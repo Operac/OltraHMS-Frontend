@@ -131,9 +131,9 @@ const BookSurgery = () => {
                         
                         {/* Selected Patient display */}
                         {patientId && (
-                            <div className="mt-2 p-3 bg-blue-50 border border-blue-100 rounded-lg flex justify-between items-center">
-                                <span className="font-medium text-blue-800">Selected Patient ID: {patientId}</span>
-                                <button type="button" onClick={() => { setPatientId(''); setSearchQuery(''); }} className="text-sm text-blue-600 hover:underline">Clear</button>
+                            <div className="mt-2 p-3 bg-sky-50 border border-sky-100 rounded-lg flex justify-between items-center">
+                                <span className="font-medium text-sky-700">Selected Patient ID: {patientId}</span>
+                                <button type="button" onClick={() => { setPatientId(''); setSearchQuery(''); }} className="text-sm text-sky-500 hover:underline">Clear</button>
                             </div>
                         )}
 

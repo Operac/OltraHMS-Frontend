@@ -93,7 +93,7 @@ const RegisterPatient = () => {
                 {/* Personal Information */}
                 <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                        <User className="w-5 h-5 mr-2 text-blue-600" />
+                        <User className="w-5 h-5 mr-2 text-sky-500" />
                         Personal Information
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -105,7 +105,7 @@ const RegisterPatient = () => {
                                 value={formData.firstName}
                                 onChange={handleChange}
                                 type="text"
-                                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-400 outline-none transition-all"
                             />
                         </div>
                         <div>
@@ -116,7 +116,7 @@ const RegisterPatient = () => {
                                 value={formData.lastName}
                                 onChange={handleChange}
                                 type="text"
-                                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-400 outline-none transition-all"
                             />
                         </div>
                         <div>
@@ -127,7 +127,7 @@ const RegisterPatient = () => {
                                 value={formData.email}
                                 onChange={handleChange}
                                 type="email"
-                                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-400 outline-none transition-all"
                             />
                         </div>
                         <div>
@@ -138,7 +138,7 @@ const RegisterPatient = () => {
                                 value={formData.dateOfBirth}
                                 onChange={handleChange}
                                 type="date"
-                                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-400 outline-none transition-all"
                             />
                         </div>
                         <div>
@@ -147,7 +147,7 @@ const RegisterPatient = () => {
                                 name="gender"
                                 value={formData.gender}
                                 onChange={handleChange}
-                                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-400 outline-none transition-all"
                             >
                                 <option value="MALE">Male</option>
                                 <option value="FEMALE">Female</option>
@@ -160,7 +160,7 @@ const RegisterPatient = () => {
                 {/* Contact Information */}
                 <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                        <MapPin className="w-5 h-5 mr-2 text-blue-600" />
+                        <MapPin className="w-5 h-5 mr-2 text-sky-500" />
                         Contact Details
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -172,7 +172,7 @@ const RegisterPatient = () => {
                                 value={formData.phone}
                                 onChange={handleChange}
                                 type="tel"
-                                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-400 outline-none transition-all"
                             />
                         </div>
                         <div className="col-span-2 md:col-span-1">
@@ -183,7 +183,7 @@ const RegisterPatient = () => {
                                 value={formData.address}
                                 onChange={handleChange}
                                 type="text"
-                                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-400 outline-none transition-all"
                             />
                         </div>
                     </div>
@@ -192,7 +192,7 @@ const RegisterPatient = () => {
                 {/* Medical & Emergency */}
                 <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                        <Heart className="w-5 h-5 mr-2 text-blue-600" />
+                        <Heart className="w-5 h-5 mr-2 text-sky-500" />
                         Medical & Emergency
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
@@ -202,7 +202,7 @@ const RegisterPatient = () => {
                                 name="bloodGroup"
                                 value={formData.bloodGroup}
                                 onChange={handleChange}
-                                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-400 outline-none transition-all"
                             >
                                 <option value="">Select...</option>
                                 <option value="A_POSITIVE">A+</option>
@@ -221,7 +221,7 @@ const RegisterPatient = () => {
                                 name="genotype"
                                 value={formData.genotype}
                                 onChange={handleChange}
-                                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-400 outline-none transition-all"
                             >
                                 <option value="">Select...</option>
                                 <option value="AA">AA</option>
@@ -242,7 +242,7 @@ const RegisterPatient = () => {
                                     value={formData.emergencyContactName}
                                     onChange={handleChange}
                                     type="text"
-                                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-400 outline-none transition-all"
                                 />
                             </div>
                             <div>
@@ -252,7 +252,7 @@ const RegisterPatient = () => {
                                     value={formData.emergencyContactPhone}
                                     onChange={handleChange}
                                     type="tel"
-                                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-400 outline-none transition-all"
                                 />
                             </div>
                             <div>
@@ -262,7 +262,7 @@ const RegisterPatient = () => {
                                     value={formData.emergencyContactRelation}
                                     onChange={handleChange}
                                     type="text"
-                                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-400 outline-none transition-all"
                                 />
                             </div>
                          </div>
@@ -273,7 +273,7 @@ const RegisterPatient = () => {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-medium shadow-lg shadow-blue-500/20 active:scale-[0.98] transition-all flex items-center disabled:opacity-70 disabled:cursor-not-allowed"
+                        className="bg-sky-500 hover:bg-sky-600 text-white px-8 py-3 rounded-xl font-medium shadow-lg shadow-sky-400/20 active:scale-[0.98] transition-all flex items-center disabled:opacity-70 disabled:cursor-not-allowed"
                     >
                         {loading ? 'Registering...' : (
                             <>

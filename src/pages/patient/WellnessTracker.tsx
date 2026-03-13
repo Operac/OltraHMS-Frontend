@@ -81,7 +81,7 @@ const WellnessTracker = () => {
     const getIcon = (category: string) => {
         switch (category) {
             case 'Nutrition': return <Apple className="text-green-500" />;
-            case 'Fitness': return <Activity className="text-blue-500" />;
+            case 'Fitness': return <Activity className="text-sky-400" />;
             case 'Mental': return <Brain className="text-teal-500" />;
             case 'Sleep': return <Moon className="text-indigo-500" />;
             case 'Hydration': return <Droplets className="text-cyan-500" />;
@@ -164,7 +164,7 @@ const WellnessTracker = () => {
                                 </div>
                                 <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
                                     <div 
-                                        className={`h-full rounded-full transition-all duration-500 ${isCompleted ? 'bg-green-500' : 'bg-blue-500'}`}
+                                        className={`h-full rounded-full transition-all duration-500 ${isCompleted ? 'bg-green-500' : 'bg-sky-400'}`}
                                         style={{ width: `${progress}%` }}
                                     />
                                 </div>
@@ -197,7 +197,7 @@ const WellnessTracker = () => {
                 {goals.length === 0 && (
                     <div className="col-span-full py-12 text-center text-gray-400 bg-gray-50 rounded-xl border-dashed border-2 border-gray-200">
                         <p>No habits tracked yet. Start your journey!</p>
-                        <button onClick={() => setShowModal(true)} className="mt-4 text-blue-600 font-medium hover:underline">
+                        <button onClick={() => setShowModal(true)} className="mt-4 text-sky-500 font-medium hover:underline">
                             + Create your first habit
                         </button>
                     </div>
@@ -263,7 +263,7 @@ const WellnessTracker = () => {
                                 </div>
                             </div>
 
-                            <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-lg font-bold hover:bg-blue-700 mt-2">
+                            <button type="submit" className="w-full bg-sky-500 text-white py-2 rounded-lg font-bold hover:bg-sky-600 mt-2">
                                 Start Habit
                             </button>
                         </form>

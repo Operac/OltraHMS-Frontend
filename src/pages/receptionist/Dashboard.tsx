@@ -92,7 +92,7 @@ const ReceptionistDashboard = () => {
             </td>
             <td className="px-6 py-4 whitespace-nowrap">
                 <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                    ${appointment.status === 'CONFIRMED' ? 'bg-blue-100 text-blue-800' : 
+                    ${appointment.status === 'CONFIRMED' ? 'bg-sky-100 text-sky-700' : 
                       appointment.status === 'CHECKED_IN' ? 'bg-orange-100 text-orange-800' : 
                       appointment.status === 'COMPLETED' ? 'bg-green-100 text-green-800' : 
                       appointment.status === 'NO_SHOW' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'}`}>
@@ -104,7 +104,7 @@ const ReceptionistDashboard = () => {
                     <div className="flex justify-end gap-2">
                          <button 
                             onClick={() => handleCheckIn(appointment.id)}
-                            className="text-white bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded-md text-xs"
+                            className="text-white bg-sky-500 hover:bg-sky-600 px-3 py-1 rounded-md text-xs"
                         >
                             Check In
                         </button>
@@ -134,7 +134,7 @@ const ReceptionistDashboard = () => {
                     </button>
                     <button 
                         onClick={() => navigate('/receptionist/booking')}
-                        className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                        className="flex items-center gap-2 bg-sky-500 text-white px-4 py-2 rounded-lg hover:bg-sky-600"
                     >
                         <Calendar className="w-4 h-4" />
                         Book Appointment
@@ -157,7 +157,7 @@ const ReceptionistDashboard = () => {
                 </div>
                 <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
                     <div className="text-gray-500 text-sm">Expected (Pending)</div>
-                    <div className="text-2xl font-bold text-blue-600">{stats.confirmed}</div>
+                    <div className="text-2xl font-bold text-sky-500">{stats.confirmed}</div>
                 </div>
                 <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
                     <div className="text-gray-500 text-sm">Warning Room (Arrived)</div>

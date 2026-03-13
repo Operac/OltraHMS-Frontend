@@ -146,7 +146,7 @@ const AddMedicationModal = ({ onClose, onSuccess }: AddMedicationModalProps) => 
                         <input 
                             type="checkbox"
                             id="controlled"
-                            className="w-4 h-4 text-blue-600 rounded"
+                            className="w-4 h-4 text-sky-500 rounded"
                             checked={formData.isControlledSubstance}
                             onChange={e => setFormData({...formData, isControlledSubstance: e.target.checked})}
                         />
@@ -156,7 +156,7 @@ const AddMedicationModal = ({ onClose, onSuccess }: AddMedicationModalProps) => 
                     <button 
                         type="submit"
                         disabled={loading}
-                        className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition disabled:opacity-50 flex items-center justify-center gap-2"
+                        className="w-full bg-sky-500 text-white py-3 rounded-lg font-bold hover:bg-sky-600 transition disabled:opacity-50 flex items-center justify-center gap-2"
                     >
                         <Save className="w-5 h-5" />
                         {loading ? 'Creating...' : 'Create Medication'}

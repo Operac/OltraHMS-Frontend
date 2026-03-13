@@ -94,9 +94,9 @@ const Booking = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Steps Indicator */}
                 <div className="col-span-1 space-y-4">
-                    <div className={`p-4 rounded-xl border ${step >= 1 ? 'border-blue-500 bg-blue-50' : 'border-gray-200'}`}>
+                    <div className={`p-4 rounded-xl border ${step >= 1 ? 'border-sky-400 bg-sky-50' : 'border-gray-200'}`}>
                         <div className="flex items-center gap-3">
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 1 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-500'}`}>1</div>
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 1 ? 'bg-sky-500 text-white' : 'bg-gray-200 text-gray-500'}`}>1</div>
                             <span className="font-medium">Select Patient</span>
                         </div>
                         {selectedPatient && (
@@ -105,9 +105,9 @@ const Booking = () => {
                             </div>
                         )}
                     </div>
-                    <div className={`p-4 rounded-xl border ${step >= 2 ? 'border-blue-500 bg-blue-50' : 'border-gray-200'}`}>
+                    <div className={`p-4 rounded-xl border ${step >= 2 ? 'border-sky-400 bg-sky-50' : 'border-gray-200'}`}>
                         <div className="flex items-center gap-3">
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 2 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-500'}`}>2</div>
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 2 ? 'bg-sky-500 text-white' : 'bg-gray-200 text-gray-500'}`}>2</div>
                             <span className="font-medium">Appointment Details</span>
                         </div>
                     </div>
@@ -121,11 +121,11 @@ const Booking = () => {
                                 <input
                                     type="text"
                                     placeholder="Search by name, phone, or ID..."
-                                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-400 focus:border-sky-400"
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                 />
-                                <button type="submit" className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+                                <button type="submit" className="bg-sky-500 text-white px-6 py-2 rounded-lg hover:bg-sky-600">
                                     <Search className="w-5 h-5" />
                                 </button>
                             </form>
@@ -158,7 +158,7 @@ const Booking = () => {
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Doctor</label>
                                     <select
                                         required
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-400 focus:border-sky-400"
                                         value={bookingData.doctorId}
                                         onChange={(e) => setBookingData({...bookingData, doctorId: e.target.value})}
                                     >
@@ -175,7 +175,7 @@ const Booking = () => {
                                         <input
                                             type="date"
                                             required
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-400 focus:border-sky-400"
                                             value={bookingData.date}
                                             onChange={(e) => setBookingData({...bookingData, date: e.target.value})}
                                         />
@@ -185,7 +185,7 @@ const Booking = () => {
                                         <input
                                             type="time"
                                             required
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-400 focus:border-sky-400"
                                             value={bookingData.time}
                                             onChange={(e) => setBookingData({...bookingData, time: e.target.value})}
                                         />
@@ -195,7 +195,7 @@ const Booking = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
                                     <select
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-400 focus:border-sky-400"
                                         value={bookingData.type}
                                         onChange={(e) => setBookingData({...bookingData, type: e.target.value})}
                                     >
@@ -210,7 +210,7 @@ const Booking = () => {
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
                                     <textarea
                                         rows={3}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-400 focus:border-sky-400"
                                         value={bookingData.notes}
                                         onChange={(e) => setBookingData({...bookingData, notes: e.target.value})}
                                     />
@@ -226,7 +226,7 @@ const Booking = () => {
                                     </button>
                                     <button
                                         type="submit"
-                                        className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+                                        className="bg-sky-500 text-white px-6 py-2 rounded-lg hover:bg-sky-600"
                                     >
                                         Confirm Booking
                                     </button>

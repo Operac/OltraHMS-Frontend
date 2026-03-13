@@ -105,7 +105,7 @@ const WellnessDashboard = () => {
 
     if (loading) return (
         <div className="flex items-center justify-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500"></div>
         </div>
     );
 
@@ -135,7 +135,7 @@ const WellnessDashboard = () => {
                         onClick={() => setActiveTab(tab.id as TabType)}
                         className={`flex items-center gap-2 px-4 py-2 rounded-lg whitespace-nowrap transition-colors ${
                             activeTab === tab.id 
-                                ? 'bg-blue-600 text-white' 
+                                ? 'bg-sky-500 text-white' 
                                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                         }`}
                     >
@@ -261,8 +261,8 @@ function OverviewTab({ summary, vitals, moods, sleep, onNavigate }: any) {
                     className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 cursor-pointer hover:shadow-md transition-shadow"
                 >
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-blue-100 rounded-lg">
-                            <Activity className="text-blue-600" size={20} />
+                        <div className="p-2 bg-sky-100 rounded-lg">
+                            <Activity className="text-sky-500" size={20} />
                         </div>
                         <div>
                             <p className="text-sm text-gray-500">Heart Rate</p>
@@ -310,7 +310,7 @@ function OverviewTab({ summary, vitals, moods, sleep, onNavigate }: any) {
                 <h3 className="font-bold text-gray-800 mb-4">30-Day Summary</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div className="text-center">
-                        <p className="text-3xl font-bold text-blue-600">{summary.goals.completed}</p>
+                        <p className="text-3xl font-bold text-sky-500">{summary.goals.completed}</p>
                         <p className="text-sm text-gray-500">Goals Completed</p>
                     </div>
                     <div className="text-center">
@@ -374,7 +374,7 @@ function HabitsTab({ goals, onCheckIn, setShowModal }: any) {
                                 </div>
                                 <div className="h-2 bg-gray-100 rounded-full">
                                     <div 
-                                        className={`h-full rounded-full ${isCompleted ? 'bg-green-500' : 'bg-blue-500'}`}
+                                        className={`h-full rounded-full ${isCompleted ? 'bg-green-500' : 'bg-sky-400'}`}
                                         style={{ width: `${progress}%` }}
                                     />
                                 </div>
@@ -412,7 +412,7 @@ function VitalsTab({ vitals, onAdd }: { vitals: WellnessVitals[], onAdd: () => v
         switch(type) {
             case 'BLOOD_PRESSURE': return <Heart className="text-red-500" />;
             case 'HEART_RATE': return <Activity className="text-pink-500" />;
-            case 'WEIGHT': return <TrendingUp className="text-blue-500" />;
+            case 'WEIGHT': return <TrendingUp className="text-sky-400" />;
             case 'GLUCOSE': return <Droplets className="text-purple-500" />;
             case 'TEMPERATURE': return <Thermometer className="text-orange-500" />;
             default: return <Heart className="text-gray-500" />;
@@ -476,7 +476,7 @@ function VitalsTab({ vitals, onAdd }: { vitals: WellnessVitals[], onAdd: () => v
                 <div className="text-center py-12 bg-gray-50 rounded-xl">
                     <Heart className="mx-auto text-gray-300 mb-3" size={48} />
                     <p className="text-gray-500">No vitals recorded yet</p>
-                    <button onClick={onAdd} className="mt-2 text-blue-600 hover:underline">Record your first reading</button>
+                    <button onClick={onAdd} className="mt-2 text-sky-500 hover:underline">Record your first reading</button>
                 </div>
             )}
         </div>
@@ -793,7 +793,7 @@ function GoalModal({ onClose, onSave }: { onClose: () => void, onSave: () => voi
                     </div>
                     <div className="flex gap-2 pt-2">
                         <button type="button" onClick={onClose} className="flex-1 py-2 border rounded-lg">Cancel</button>
-                        <button type="submit" className="flex-1 py-2 bg-blue-600 text-white rounded-lg">Create</button>
+                        <button type="submit" className="flex-1 py-2 bg-sky-500 text-white rounded-lg">Create</button>
                     </div>
                 </form>
             </div>

@@ -65,7 +65,7 @@ const MyLeaves = () => {
                 <h3 className="text-xl font-bold text-gray-800">My Leave History</h3>
                 <button 
                     onClick={() => setShowModal(true)}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700"
+                    className="bg-sky-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-sky-600"
                 >
                     <Plus className="w-5 h-5" /> Request Leave
                 </button>
@@ -167,7 +167,7 @@ const MyLeaves = () => {
 
                             <div className="flex justify-end gap-2 mt-6">
                                 <button type="button" onClick={() => setShowModal(false)} className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">Cancel</button>
-                                <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Submit Request</button>
+                                <button type="submit" className="px-4 py-2 bg-sky-500 text-white rounded hover:bg-sky-600">Submit Request</button>
                             </div>
                         </form>
                     </div>

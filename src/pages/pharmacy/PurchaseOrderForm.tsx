@@ -46,7 +46,7 @@ const PurchaseOrderForm = ({ onClose, onSuccess, availableMeds }: PurchaseOrderF
                         <label className="block text-sm font-medium text-gray-700 mb-1">Medication</label>
                         <select 
                             required
-                            className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                            className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-sky-400"
                             value={formData.medicationId}
                             onChange={e => setFormData({...formData, medicationId: e.target.value})}
                         >
@@ -120,7 +120,7 @@ const PurchaseOrderForm = ({ onClose, onSuccess, availableMeds }: PurchaseOrderF
                     <button 
                         type="submit"
                         disabled={loading}
-                        className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition disabled:opacity-50"
+                        className="w-full bg-sky-500 text-white py-3 rounded-lg font-bold hover:bg-sky-600 transition disabled:opacity-50"
                     >
                         {loading ? 'Processing...' : 'Confirm Receipt'}
                     </button>

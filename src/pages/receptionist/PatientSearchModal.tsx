@@ -31,14 +31,14 @@ const PatientSearchModal: React.FC<PatientSearchModalProps> = ({ onSelect, onClo
                 <input
                     type="text"
                     placeholder="Search by name, phone, or ID..."
-                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-400 focus:border-sky-400"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     autoFocus
                 />
                 <button 
                     type="submit" 
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                    className="bg-sky-500 text-white px-4 py-2 rounded-lg hover:bg-sky-600 disabled:opacity-50"
                     disabled={loading}
                 >
                     {loading ? 'Searching...' : <Search className="w-5 h-5" />}
@@ -52,8 +52,8 @@ const PatientSearchModal: React.FC<PatientSearchModalProps> = ({ onSelect, onClo
                         onClick={() => onSelect(patient)}
                         className="p-3 border border-gray-100 rounded-lg hover:bg-gray-50 cursor-pointer flex items-start gap-3 transition-colors"
                     >
-                        <div className="bg-blue-100 p-2 rounded-full">
-                            <User className="w-4 h-4 text-blue-600" />
+                        <div className="bg-sky-100 p-2 rounded-full">
+                            <User className="w-4 h-4 text-sky-500" />
                         </div>
                         <div>
                             <div className="font-medium text-gray-900">{patient.firstName} {patient.lastName}</div>

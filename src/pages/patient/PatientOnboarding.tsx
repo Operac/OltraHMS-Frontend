@@ -135,7 +135,7 @@ export default function PatientOnboarding() {
             <div
               className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
                 currentStep >= step
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-sky-500 text-white'
                   : 'bg-gray-200 text-gray-500'
               }`}
             >
@@ -144,7 +144,7 @@ export default function PatientOnboarding() {
             {step < totalSteps && (
               <div
                 className={`w-16 h-1 ${
-                  currentStep > step ? 'bg-blue-600' : 'bg-gray-200'
+                  currentStep > step ? 'bg-sky-500' : 'bg-gray-200'
                 }`}
               />
             )}
@@ -166,7 +166,7 @@ export default function PatientOnboarding() {
             value={data.firstName}
             onChange={handleChange}
             required
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-sky-400 focus:ring-sky-400"
           />
         </div>
         <div>
@@ -177,7 +177,7 @@ export default function PatientOnboarding() {
             value={data.lastName}
             onChange={handleChange}
             required
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-sky-400 focus:ring-sky-400"
           />
         </div>
         <div>
@@ -188,7 +188,7 @@ export default function PatientOnboarding() {
             value={data.email}
             onChange={handleChange}
             required
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-sky-400 focus:ring-sky-400"
           />
         </div>
         <div>
@@ -199,7 +199,7 @@ export default function PatientOnboarding() {
             value={data.phone}
             onChange={handleChange}
             required
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-sky-400 focus:ring-sky-400"
           />
         </div>
         <div>
@@ -210,7 +210,7 @@ export default function PatientOnboarding() {
             value={data.dateOfBirth}
             onChange={handleChange}
             required
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-sky-400 focus:ring-sky-400"
           />
         </div>
         <div>
@@ -219,7 +219,7 @@ export default function PatientOnboarding() {
             name="gender"
             value={data.gender}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-sky-400 focus:ring-sky-400"
           >
             <option value="MALE">Male</option>
             <option value="FEMALE">Female</option>
@@ -242,7 +242,7 @@ export default function PatientOnboarding() {
             value={data.address}
             onChange={handleChange}
             required
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-sky-400 focus:ring-sky-400"
           />
         </div>
         <div>
@@ -253,7 +253,7 @@ export default function PatientOnboarding() {
             value={data.city}
             onChange={handleChange}
             required
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-sky-400 focus:ring-sky-400"
           />
         </div>
         <div>
@@ -264,7 +264,7 @@ export default function PatientOnboarding() {
             value={data.state}
             onChange={handleChange}
             required
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-sky-400 focus:ring-sky-400"
           />
         </div>
         <div>
@@ -275,7 +275,7 @@ export default function PatientOnboarding() {
             value={data.country}
             onChange={handleChange}
             required
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-sky-400 focus:ring-sky-400"
           />
         </div>
       </div>
@@ -290,7 +290,7 @@ export default function PatientOnboarding() {
             value={data.emergencyContactName}
             onChange={handleChange}
             required
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-sky-400 focus:ring-sky-400"
           />
         </div>
         <div>
@@ -301,7 +301,7 @@ export default function PatientOnboarding() {
             value={data.emergencyContactPhone}
             onChange={handleChange}
             required
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-sky-400 focus:ring-sky-400"
           />
         </div>
       </div>
@@ -318,7 +318,7 @@ export default function PatientOnboarding() {
             name="bloodGroup"
             value={data.bloodGroup}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-sky-400 focus:ring-sky-400"
           >
             <option value="">Select Blood Group</option>
             <option value="A+">A+</option>
@@ -339,7 +339,7 @@ export default function PatientOnboarding() {
             onChange={handleChange}
             rows={2}
             placeholder="List any known allergies..."
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-sky-400 focus:ring-sky-400"
           />
         </div>
         <div className="md:col-span-2">
@@ -350,7 +350,7 @@ export default function PatientOnboarding() {
             onChange={handleChange}
             rows={2}
             placeholder="List any chronic conditions (diabetes, hypertension, etc.)..."
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-sky-400 focus:ring-sky-400"
           />
         </div>
         <div className="md:col-span-2">
@@ -361,7 +361,7 @@ export default function PatientOnboarding() {
             onChange={handleChange}
             rows={2}
             placeholder="List any current medications..."
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-sky-400 focus:ring-sky-400"
           />
         </div>
       </div>
@@ -380,7 +380,7 @@ export default function PatientOnboarding() {
             value={data.insuranceProvider}
             onChange={handleChange}
             placeholder="e.g., AXA, Leadway"
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-sky-400 focus:ring-sky-400"
           />
         </div>
         <div>
@@ -390,7 +390,7 @@ export default function PatientOnboarding() {
             name="insurancePolicyNumber"
             value={data.insurancePolicyNumber}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-sky-400 focus:ring-sky-400"
           />
         </div>
         <div>
@@ -400,7 +400,7 @@ export default function PatientOnboarding() {
             name="insuranceExpiry"
             value={data.insuranceExpiry}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-sky-400 focus:ring-sky-400"
           />
         </div>
       </div>
@@ -447,7 +447,7 @@ export default function PatientOnboarding() {
               <button
                 type="button"
                 onClick={handleNext}
-                className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                className="px-6 py-2 bg-sky-500 text-white rounded-md hover:bg-sky-600"
               >
                 Next
               </button>

@@ -19,7 +19,7 @@ const TreatmentDashboard = () => {
                 {!selectedPatientId && (
                     <button 
                         onClick={() => setShowSearch(true)}
-                        className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition"
+                        className="bg-sky-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-sky-600 transition"
                     >
                         <Search className="w-4 h-4" /> Find Patient
                     </button>
@@ -36,7 +36,7 @@ const TreatmentDashboard = () => {
 
             {!selectedPatientId ? (
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
-                    <div className="w-20 h-20 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <div className="w-20 h-20 bg-sky-50 text-sky-400 rounded-full flex items-center justify-center mx-auto mb-6">
                         <User className="w-10 h-10" />
                     </div>
                     <h2 className="text-xl font-semibold text-gray-900 mb-2">Select a Patient</h2>
@@ -45,16 +45,16 @@ const TreatmentDashboard = () => {
                     </p>
                     <button 
                         onClick={() => setShowSearch(true)}
-                        className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition shadow-sm inline-flex items-center gap-2"
+                        className="bg-sky-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-sky-600 transition shadow-sm inline-flex items-center gap-2"
                     >
                         <Search className="w-5 h-5" /> Search Patient Records
                     </button>
                 </div>
             ) : (
                 <div className="space-y-6">
-                    <div className="bg-blue-50 border border-blue-100 p-4 rounded-lg flex items-center gap-3">
-                        <User className="w-5 h-5 text-blue-600" />
-                        <span className="font-medium text-blue-900">Treating: <span className="font-bold text-lg ml-1">{patientName}</span></span>
+                    <div className="bg-sky-50 border border-sky-100 p-4 rounded-lg flex items-center gap-3">
+                        <User className="w-5 h-5 text-sky-500" />
+                        <span className="font-medium text-sky-900">Treating: <span className="font-bold text-lg ml-1">{patientName}</span></span>
                     </div>
                     
                     {/* Reuse InpatientCare component which handles MAR and Fluids */}

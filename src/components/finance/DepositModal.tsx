@@ -62,7 +62,7 @@ const DepositModal = ({ admissionId, patientName, onClose, onSuccess }: DepositM
                 </div>
                 
                 <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                    <div className="bg-blue-50 p-4 rounded-lg text-blue-800 text-sm mb-4">
+                    <div className="bg-sky-50 p-4 rounded-lg text-sky-700 text-sm mb-4">
                         Collecting deposit for patient: <strong>{patientName}</strong>
                     </div>
 
@@ -72,7 +72,7 @@ const DepositModal = ({ admissionId, patientName, onClose, onSuccess }: DepositM
                             <span className="absolute left-3 top-2 text-gray-500">₦</span>
                             <input
                                 type="number"
-                                className="w-full pl-8 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                className="w-full pl-8 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400 focus:border-sky-400"
                                 placeholder="0.00"
                                 value={amount}
                                 onChange={(e) => setAmount(e.target.value)}
@@ -86,7 +86,7 @@ const DepositModal = ({ admissionId, patientName, onClose, onSuccess }: DepositM
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Payment Method</label>
                         <select
-                            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400 focus:border-sky-400"
                             value={method}
                             onChange={(e) => setMethod(e.target.value)}
                         >
@@ -102,7 +102,7 @@ const DepositModal = ({ admissionId, patientName, onClose, onSuccess }: DepositM
                             <label className="block text-sm font-medium text-gray-700 mb-1">Transaction Reference</label>
                             <input
                                 type="text"
-                                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400 focus:border-sky-400"
                                 placeholder="Ref / Trx ID"
                                 value={reference}
                                 onChange={(e) => setReference(e.target.value)}
@@ -121,7 +121,7 @@ const DepositModal = ({ admissionId, patientName, onClose, onSuccess }: DepositM
                         <button
                             type="submit"
                             disabled={loading}
-                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                            className="px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 disabled:opacity-50"
                         >
                             {loading ? 'Processing...' : 'Collect Deposit'}
                         </button>

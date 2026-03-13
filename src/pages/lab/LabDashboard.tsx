@@ -65,7 +65,7 @@ const LabDashboard = () => {
         <div className="p-6 max-w-7xl mx-auto">
             <header className="mb-8">
                 <h1 className="text-2xl font-bold flex items-center gap-2">
-                    <Activity className="text-blue-600" /> Lab Dashboard
+                    <Activity className="text-sky-500" /> Lab Dashboard
                 </h1>
                 <p className="text-gray-600">Manage pending tests and upload results.</p>
             </header>
@@ -101,7 +101,7 @@ const LabDashboard = () => {
                                         <div className="text-xs text-gray-500">{order.patient.patientNumber}</div>
                                     </td>
                                     <td className="p-4">
-                                        <div className="font-medium text-blue-600">{order.testName}</div>
+                                        <div className="font-medium text-sky-500">{order.testName}</div>
                                         <div className="text-xs text-gray-500">{new Date(order.orderedAt).toLocaleDateString()}</div>
                                     </td>
                                     <td className="p-4">
@@ -127,7 +127,7 @@ const LabDashboard = () => {
                                     </td>
                                     <td className="p-4">
                                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                            order.status === 'IN_PROGRESS' ? 'bg-blue-100 text-blue-700' : 'bg-yellow-100 text-yellow-700'
+                                            order.status === 'IN_PROGRESS' ? 'bg-sky-100 text-sky-600' : 'bg-yellow-100 text-yellow-700'
                                         }`}>
                                             {order.status.replace('_', ' ')}
                                         </span>
@@ -156,7 +156,7 @@ const LabDashboard = () => {
                                                 title={!canProcess ? "Payment Required" : ""}
                                                 className={`text-sm px-3 py-1.5 rounded-lg transition-colors ${
                                                     canProcess 
-                                                    ? 'bg-blue-50 text-blue-600 hover:bg-blue-100' 
+                                                    ? 'bg-sky-50 text-sky-500 hover:bg-sky-100' 
                                                     : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                                                 }`}
                                             >
@@ -193,7 +193,7 @@ const LabDashboard = () => {
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
                     <div className="bg-white rounded-2xl w-full max-w-lg p-6 shadow-2xl animate-in fade-in zoom-in duration-200">
                         <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-                            <FileText className="text-blue-600" /> Upload Results
+                            <FileText className="text-sky-500" /> Upload Results
                         </h2>
                         <div className="mb-4 bg-gray-50 p-4 rounded-lg text-sm border border-gray-100">
                             <p><strong>Patient:</strong> {selectedOrder.patient.firstName} {selectedOrder.patient.lastName}</p>
@@ -204,7 +204,7 @@ const LabDashboard = () => {
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Result Summary / Notes</label>
                                 <textarea 
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 h-32"
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-sky-400 h-32"
                                     placeholder="Enter test results data..."
                                     value={resultText}
                                     onChange={e => setResultText(e.target.value)}
@@ -237,7 +237,7 @@ const LabDashboard = () => {
                                 <button 
                                     type="submit"
                                     disabled={uploading}
-                                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium disabled:opacity-50"
+                                    className="px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 font-medium disabled:opacity-50"
                                 >
                                     {uploading ? 'Processing...' : 'Submit Results'}
                                 </button>

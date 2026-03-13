@@ -83,24 +83,24 @@ const PatientDashboard = () => {
 
     if (loading) return (
         <div className="flex items-center justify-center h-96">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500"></div>
         </div>
     );
 
     return (
         <div className="space-y-8">
             {/* Welcome Header */}
-            <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-8 text-white shadow-xl relative overflow-hidden">
+            <div className="bg-gradient-to-r from-sky-500 to-indigo-700 rounded-2xl p-8 text-white shadow-xl relative overflow-hidden">
                 <div className="relative z-10">
                     <h1 className="text-3xl font-bold mb-2">Welcome back, {user?.firstName}!</h1>
-                    <p className="text-blue-100 mb-6 max-w-lg">Manage your health journey, view records, and connect with your doctors securely.</p>
+                    <p className="text-sky-100 mb-6 max-w-lg">Manage your health journey, view records, and connect with your doctors securely.</p>
                     
                     <div className="flex flex-wrap gap-4">
-                        <Link to="/appointments/new" className="bg-white text-blue-700 px-5 py-2.5 rounded-lg font-semibold hover:bg-blue-50 transition-all shadow-sm flex items-center gap-2 text-sm transform hover:scale-105 duration-200">
+                        <Link to="/appointments/new" className="bg-white text-sky-600 px-5 py-2.5 rounded-lg font-semibold hover:bg-sky-50 transition-all shadow-sm flex items-center gap-2 text-sm transform hover:scale-105 duration-200">
                             <Calendar className="w-4 h-4" />
                             Book Appointment
                         </Link>
-                        <Link to="/records" className="bg-blue-800/50 backdrop-blur-sm text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-blue-800 transition-all border border-blue-400/30 flex items-center gap-2 text-sm">
+                        <Link to="/records" className="bg-sky-700/50 backdrop-blur-sm text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-sky-700 transition-all border border-sky-300/30 flex items-center gap-2 text-sm">
                             <Activity className="w-4 h-4" />
                             View Records
                         </Link>
@@ -121,7 +121,7 @@ const PatientDashboard = () => {
                 {/* Queue / Appointment Card */}
                 <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 group">
                     <div className="flex items-center justify-between mb-4">
-                        <div className="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-blue-600 group-hover:bg-blue-100 transition-colors">
+                        <div className="w-10 h-10 bg-sky-50 rounded-full flex items-center justify-center text-sky-500 group-hover:bg-sky-100 transition-colors">
                             <Calendar className="w-5 h-5" />
                         </div>
                         {stats?.nextAppointment || stats?.queueStatus ? (
@@ -138,7 +138,7 @@ const PatientDashboard = () => {
                                 <span className="text-3xl font-bold text-gray-900">#{stats.queueStatus.queuePosition || '-'}</span>
                              </div>
                              <p className="text-sm text-gray-500 mt-1">
-                                Est. Wait: <span className="text-blue-600 font-semibold">{stats.queueStatus.estimatedWaitTime} mins</span>
+                                Est. Wait: <span className="text-sky-500 font-semibold">{stats.queueStatus.estimatedWaitTime} mins</span>
                              </p>
                              <div className="mt-4 pt-3 border-t border-gray-100">
                                 <p className="text-xs text-gray-400">Dr. Availability: Online</p>
@@ -152,14 +152,14 @@ const PatientDashboard = () => {
                                 {new Date(stats.nextAppointment.date).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })} at {new Date(stats.nextAppointment.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                              </p>
                              <div className="mt-4 pt-3 border-t border-gray-100">
-                                <Link to="/appointments" className="text-blue-600 text-xs font-medium inline-block hover:underline">Manage &rarr;</Link>
+                                <Link to="/appointments" className="text-sky-500 text-xs font-medium inline-block hover:underline">Manage &rarr;</Link>
                              </div>
                         </div>
                     ) : (
                         <div>
                             <h3 className="text-gray-500 text-xs font-bold uppercase tracking-wide mb-2">No Appointments Today</h3>
                              <p className="text-sm text-gray-400 leading-relaxed">You have no scheduled visits for today.</p>
-                             <Link to="/appointments" className="text-blue-600 text-sm font-medium mt-4 inline-block hover:underline">View Schedule &rarr;</Link>
+                             <Link to="/appointments" className="text-sky-500 text-sm font-medium mt-4 inline-block hover:underline">View Schedule &rarr;</Link>
                         </div>
                     )}
                 </div>
@@ -260,7 +260,7 @@ const PatientDashboard = () => {
                             return (
                                 <div key={p.id} className="flex justify-between items-center p-4 bg-gray-50 rounded-lg border border-gray-100">
                                     <div className="flex items-center gap-3">
-                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isTaken ? 'bg-green-100 text-green-600' : 'bg-blue-100 text-blue-600'}`}>
+                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isTaken ? 'bg-green-100 text-green-600' : 'bg-sky-100 text-sky-500'}`}>
                                             <Pill className="w-5 h-5" />
                                         </div>
                                         <div>
@@ -282,7 +282,7 @@ const PatientDashboard = () => {
                                                  {/* Delivery button if needed */}
                                                 <button 
                                                     onClick={() => handleOrderDelivery(p.id)}
-                                                    className="text-[10px] text-gray-400 hover:text-blue-600 underline"
+                                                    className="text-[10px] text-gray-400 hover:text-sky-500 underline"
                                                 >
                                                     Order Refill
                                                 </button>
@@ -320,9 +320,9 @@ const PatientDashboard = () => {
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
                 <div className="p-6 border-b border-gray-100 flex items-center justify-between">
                     <h3 className="font-bold text-gray-900 text-lg flex items-center gap-2">
-                        <Activity className="w-5 h-5 text-blue-500" /> Recent Medical History
+                        <Activity className="w-5 h-5 text-sky-400" /> Recent Medical History
                     </h3>
-                    <Link to="/records" className="text-blue-600 text-sm font-medium hover:underline flex items-center">
+                    <Link to="/records" className="text-sky-500 text-sm font-medium hover:underline flex items-center">
                         View Full History <ChevronRight className="w-4 h-4 ml-1" />
                     </Link>
                 </div>
@@ -330,7 +330,7 @@ const PatientDashboard = () => {
                     {stats?.recentActivity.length ? (
                         stats.recentActivity.map((record: any) => (
                             <div key={record.id} className="p-4 hover:bg-gray-50 transition-colors flex items-center gap-4">
-                                <div className="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center flex-shrink-0 text-blue-600">
+                                <div className="w-10 h-10 bg-sky-50 rounded-full flex items-center justify-center flex-shrink-0 text-sky-500">
                                     <Activity className="w-5 h-5" />
                                 </div>
                                 <div className="flex-1">

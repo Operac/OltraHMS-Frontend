@@ -213,7 +213,7 @@ const NewAppointment = () => {
                             <input 
                                 type="text"
                                 placeholder="Search patient by name or ID..."
-                                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400"
                                 value={searchQuery}
                                 onChange={e => setSearchQuery(e.target.value)}
                             />
@@ -223,7 +223,7 @@ const NewAppointment = () => {
                                 <div 
                                     key={p.id}
                                     onClick={() => setSelectedPatient(p)}
-                                    className={`p-4 border rounded-lg cursor-pointer transition-colors ${selectedPatient?.id === p.id ? 'border-blue-500 bg-blue-50' : 'hover:bg-gray-50'}`}
+                                    className={`p-4 border rounded-lg cursor-pointer transition-colors ${selectedPatient?.id === p.id ? 'border-sky-400 bg-sky-50' : 'hover:bg-gray-50'}`}
                                 >
                                     <div className="font-bold text-gray-900">{p.firstName} {p.lastName}</div>
                                     <div className="text-sm text-gray-500">{p.patientNumber} • {p.phone}</div>
@@ -242,10 +242,10 @@ const NewAppointment = () => {
                             <div 
                                 key={doc.id}
                                 onClick={() => setSelectedDoctor(doc)}
-                                className={`p-4 border rounded-lg cursor-pointer transition-colors ${selectedDoctor?.id === doc.id ? 'border-blue-500 bg-blue-50' : 'hover:bg-gray-50'}`}
+                                className={`p-4 border rounded-lg cursor-pointer transition-colors ${selectedDoctor?.id === doc.id ? 'border-sky-400 bg-sky-50' : 'hover:bg-gray-50'}`}
                             >
                                 <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold">
+                                    <div className="w-10 h-10 bg-sky-100 rounded-full flex items-center justify-center text-sky-500 font-bold">
                                         Dr
                                     </div>
                                     <div>
@@ -279,7 +279,7 @@ const NewAppointment = () => {
                                     <button
                                         key={time}
                                         onClick={() => setSelectedTime(time)}
-                                        className={`py-2 px-3 text-sm rounded-lg border ${selectedTime === time ? 'bg-blue-600 text-white border-blue-600' : 'hover:bg-gray-50'}`}
+                                        className={`py-2 px-3 text-sm rounded-lg border ${selectedTime === time ? 'bg-sky-500 text-white border-sky-500' : 'hover:bg-gray-50'}`}
                                     >
                                         {time}
                                     </button>
@@ -349,10 +349,10 @@ const NewAppointment = () => {
                  {steps.map((step, idx) => (
                      <div key={idx} className={`flex flex-col items-center gap-2 bg-white px-2 ${(isPatient && idx === 0) ? 'hidden' : ''} ${(isDoctor && idx === 1) ? 'hidden' : ''}`}>
 
-                         <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${idx <= currentStep ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-400'}`}>
+                         <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${idx <= currentStep ? 'bg-sky-500 text-white' : 'bg-gray-100 text-gray-400'}`}>
                              {idx < currentStep ? <Check className="w-4 h-4" /> : idx + 1}
                          </div>
-                         <span className={`text-xs ${idx <= currentStep ? 'text-blue-600 font-medium' : 'text-gray-400'}`}>{step}</span>
+                         <span className={`text-xs ${idx <= currentStep ? 'text-sky-500 font-medium' : 'text-gray-400'}`}>{step}</span>
                      </div>
                  ))}
             </div>
@@ -389,7 +389,7 @@ const NewAppointment = () => {
                 ) : (
                     <button 
                         onClick={handleNext}
-                        className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2 shadow-sm"
+                        className="px-6 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 flex items-center gap-2 shadow-sm"
                     >
                         Next <ChevronRight className="w-4 h-4" />
                     </button>

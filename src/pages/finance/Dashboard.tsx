@@ -152,7 +152,7 @@ const FinanceDashboard = () => {
                                 ₦{stats.netProfit.toLocaleString()}
                             </p>
                         </div>
-                        <div className="p-3 bg-blue-100 rounded-lg text-blue-600">
+                        <div className="p-3 bg-sky-100 rounded-lg text-sky-500">
                             <DollarSign className="w-6 h-6" />
                         </div>
                     </div>
@@ -173,12 +173,12 @@ const FinanceDashboard = () => {
                     <button
                         onClick={() => setActiveTab('INVOICES')}
                         className={`px-6 py-3 font-medium text-sm transition-colors relative ${
-                            activeTab === 'INVOICES' ? 'text-blue-600' : 'text-gray-500 hover:text-gray-700'
+                            activeTab === 'INVOICES' ? 'text-sky-500' : 'text-gray-500 hover:text-gray-700'
                         }`}
                     >
                         Invoices
                         {activeTab === 'INVOICES' && (
-                            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 rounded-t-full" />
+                            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-sky-500 rounded-t-full" />
                         )}
                     </button>
                     <button
@@ -187,34 +187,34 @@ const FinanceDashboard = () => {
                             loadPaidInvoices();
                         }}
                         className={`px-6 py-3 font-medium text-sm transition-colors relative ${
-                            activeTab === 'REFUNDS' ? 'text-blue-600' : 'text-gray-500 hover:text-gray-700'
+                            activeTab === 'REFUNDS' ? 'text-sky-500' : 'text-gray-500 hover:text-gray-700'
                         }`}
                     >
                         Refunds
                         {activeTab === 'REFUNDS' && (
-                            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 rounded-t-full" />
+                            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-sky-500 rounded-t-full" />
                         )}
                     </button>
                     <button
                         onClick={() => setActiveTab('SERVICES')}
                         className={`px-6 py-3 font-medium text-sm transition-colors relative ${
-                            activeTab === 'SERVICES' ? 'text-blue-600' : 'text-gray-500 hover:text-gray-700'
+                            activeTab === 'SERVICES' ? 'text-sky-500' : 'text-gray-500 hover:text-gray-700'
                         }`}
                     >
                         Services & Pricing
                         {activeTab === 'SERVICES' && (
-                            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 rounded-t-full" />
+                            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-sky-500 rounded-t-full" />
                         )}
                     </button>
                     <button
                         onClick={() => setActiveTab('EXPENSES')}
                         className={`px-6 py-3 font-medium text-sm transition-colors relative ${
-                            activeTab === 'EXPENSES' ? 'text-blue-600' : 'text-gray-500 hover:text-gray-700'
+                            activeTab === 'EXPENSES' ? 'text-sky-500' : 'text-gray-500 hover:text-gray-700'
                         }`}
                     >
                         Expenses
                         {activeTab === 'EXPENSES' && (
-                            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 rounded-t-full" />
+                            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-sky-500 rounded-t-full" />
                         )}
                     </button>
                 </div>
@@ -225,7 +225,7 @@ const FinanceDashboard = () => {
                         <div>
                             <div className="flex justify-between items-center mb-6">
                                 <h2 className="text-lg font-bold text-gray-800">Pending Invoices</h2>
-                                <button onClick={loadDashboardData} className="text-sm text-blue-600 hover:underline">
+                                <button onClick={loadDashboardData} className="text-sm text-sky-500 hover:underline">
                                     Refresh
                                 </button>
                             </div>
@@ -272,7 +272,7 @@ const FinanceDashboard = () => {
                                                     <td className="px-6 py-4">
                                                         <button
                                                             onClick={() => handleProcessPayment(inv)}
-                                                            className="text-blue-600 hover:text-blue-800 font-medium text-sm flex items-center gap-1"
+                                                            className="text-sky-500 hover:text-sky-700 font-medium text-sm flex items-center gap-1"
                                                         >
                                                             <CreditCard className="w-4 h-4" /> Process
                                                         </button>
@@ -290,7 +290,7 @@ const FinanceDashboard = () => {
                         <div>
                             <div className="flex justify-between items-center mb-6">
                                 <h2 className="text-lg font-bold text-gray-800">Paid Invoices - Process Refunds</h2>
-                                <button onClick={loadPaidInvoices} className="text-sm text-blue-600 hover:underline">
+                                <button onClick={loadPaidInvoices} className="text-sm text-sky-500 hover:underline">
                                     Refresh
                                 </button>
                             </div>
@@ -373,7 +373,7 @@ const FinanceDashboard = () => {
                             </div>
                             <div className="border-t border-gray-200 pt-2 flex justify-between font-bold text-lg">
                                 <span>Total Due</span>
-                                <span className="text-blue-600">₦{selectedInvoice.balance.toLocaleString()}</span>
+                                <span className="text-sky-500">₦{selectedInvoice.balance.toLocaleString()}</span>
                             </div>
                         </div>
 
@@ -383,7 +383,7 @@ const FinanceDashboard = () => {
                                 <select 
                                     value={paymentMethod}
                                     onChange={(e) => setPaymentMethod(e.target.value)}
-                                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-400 outline-none"
                                 >
                                     <option value="CASH">Cash</option>
                                     <option value="CARD">Card</option>
@@ -395,7 +395,7 @@ const FinanceDashboard = () => {
                             
                             <button 
                                 onClick={confirmPayment}
-                                className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium flex justify-center items-center gap-2"
+                                className="w-full py-3 bg-sky-500 text-white rounded-lg hover:bg-sky-600 font-medium flex justify-center items-center gap-2"
                             >
                                 <CreditCard className="w-5 h-5" />
                                 Confirm Payment

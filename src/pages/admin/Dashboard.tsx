@@ -58,7 +58,7 @@ const AdminDashboard = () => {
                     <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
                     <p className="text-gray-500">System overview and management</p>
                 </div>
-                <div className="bg-blue-50 text-blue-700 px-4 py-2 rounded-lg text-sm font-medium">
+                <div className="bg-sky-50 text-sky-600 px-4 py-2 rounded-lg text-sm font-medium">
                     System Status: Healthy
                 </div>
             </div>
@@ -68,7 +68,7 @@ const AdminDashboard = () => {
                     title="Total Patients" 
                     value={loading ? '...' : stats.totalPatients} 
                     icon={Users} 
-                    color="bg-blue-500" 
+                    color="bg-sky-400" 
                     trend="+12%" 
                 />
                 <StatCard 
@@ -104,7 +104,7 @@ const AdminDashboard = () => {
                     <div className="space-y-4">
                         {[1,2,3].map(i => (
                             <div key={i} className="flex items-center gap-4 text-sm">
-                                <div className="w-2 h-2 rounded-full bg-blue-500" />
+                                <div className="w-2 h-2 rounded-full bg-sky-400" />
                                 <span className="text-gray-600">New patient registered</span>
                                 <span className="ml-auto text-gray-400">Just now</span>
                             </div>

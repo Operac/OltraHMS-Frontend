@@ -120,7 +120,7 @@ const StaffList = () => {
                 <h1 className="text-2xl font-bold text-gray-900">Staff Management</h1>
                 <button 
                     onClick={() => setShowModal(true)}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700"
+                    className="bg-sky-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-sky-600"
                 >
                     <Plus className="w-5 h-5" /> Add Staff
                 </button>
@@ -147,7 +147,7 @@ const StaffList = () => {
                                     <div className="text-xs text-gray-500">{s.email}</div>
                                 </td>
                                 <td className="px-6 py-4">
-                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-sky-100 text-sky-700">
                                         <Shield className="w-3 h-3 mr-1" /> {s.role}
                                     </span>
                                 </td>
@@ -171,7 +171,7 @@ const StaffList = () => {
                                     </button>
                                     <button
                                         onClick={() => openHRModal(s)}
-                                        className="text-gray-400 hover:text-blue-600 ml-2" title="Edit HR Details"
+                                        className="text-gray-400 hover:text-sky-500 ml-2" title="Edit HR Details"
                                     >
                                         <Banknote className="w-5 h-5" />
                                     </button>
@@ -209,7 +209,7 @@ const StaffList = () => {
 
                             <div className="flex justify-end gap-2 mt-6">
                                 <button type="button" onClick={() => setShowModal(false)} className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">Cancel</button>
-                                <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Create Staff</button>
+                                <button type="submit" className="px-4 py-2 bg-sky-500 text-white rounded hover:bg-sky-600">Create Staff</button>
                             </div>
                         </form>
                     </div>
@@ -244,7 +244,7 @@ const StaffList = () => {
 
                             <div className="flex justify-end gap-2 mt-6">
                                 <button type="button" onClick={() => setShowHRModal(false)} className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">Cancel</button>
-                                <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Save Changes</button>
+                                <button type="submit" className="px-4 py-2 bg-sky-500 text-white rounded hover:bg-sky-600">Save Changes</button>
                             </div>
                         </form>
                     </div>

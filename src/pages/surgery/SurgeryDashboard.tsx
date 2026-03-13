@@ -163,7 +163,7 @@ const SurgeryDashboard = () => {
                                                         <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide ${
                                                             surgery.status === 'COMPLETED' ? 'bg-gray-100 text-gray-600' :
                                                             surgery.status === 'IN_PROGRESS' ? 'bg-green-100 text-green-700 animate-pulse' :
-                                                            'bg-blue-50 text-blue-700'
+                                                            'bg-sky-50 text-sky-600'
                                                         }`}>
                                                             {surgery.status.replace('_', ' ')}
                                                         </span>
@@ -180,7 +180,7 @@ const SurgeryDashboard = () => {
                                                             {surgery.status === 'IN_PROGRESS' && (
                                                                 <button 
                                                                     onClick={() => handleStatusUpdate(surgery.id, 'RECOVERY')}
-                                                                    className="text-xs bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
+                                                                    className="text-xs bg-sky-500 text-white px-3 py-1 rounded hover:bg-sky-600"
                                                                 >
                                                                     To Recovery
                                                                 </button>

@@ -118,7 +118,7 @@ const Sidebar = ({ onClose }: SidebarProps = {}) => {
   return (
     <div className="flex flex-col h-screen w-64 bg-white border-r border-gray-200">
       <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200">
-        <h1 className="text-2xl font-bold text-blue-600">OltraHMS</h1>
+        <h1 className="text-2xl font-bold text-sky-500">OltraHMS</h1>
         {onClose && (
           <button onClick={onClose} className="lg:hidden text-gray-500 hover:text-gray-700 p-2 -mr-2 rounded-lg">
             <X className="w-6 h-6" />
@@ -140,8 +140,8 @@ const Sidebar = ({ onClose }: SidebarProps = {}) => {
                   className={clsx(
                     'flex items-center px-6 py-3 text-sm font-medium transition-colors',
                     isActive 
-                      ? 'text-blue-600 bg-blue-50 border-r-4 border-blue-600' 
-                      : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'
+                      ? 'text-sky-500 bg-sky-50 border-r-4 border-sky-500' 
+                      : 'text-gray-600 hover:text-sky-500 hover:bg-gray-50'
                   )}
                 >
                   <Icon className="w-5 h-5 mr-3" />

@@ -20,7 +20,7 @@ export const Loading: React.FC<LoadingProps> = ({
   const container = (
     <div className="flex flex-col items-center justify-center gap-3">
       <div 
-        className={`${sizeClasses[size]} border-blue-600 border-t-transparent rounded-full animate-spin`}
+        className={`${sizeClasses[size]} border-sky-500 border-t-transparent rounded-full animate-spin`}
         role="status"
         aria-label="Loading"
       />

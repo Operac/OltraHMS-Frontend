@@ -69,11 +69,11 @@ const DepartmentList = () => {
         <div className="space-y-6">
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                    <Building2 className="w-6 h-6 text-blue-600" /> Departments
+                    <Building2 className="w-6 h-6 text-sky-500" /> Departments
                 </h1>
                 <button
                     onClick={openCreateModal}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition"
+                    className="bg-sky-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-sky-600 transition"
                 >
                     <Plus className="w-4 h-4" /> Add Department
                 </button>
@@ -85,8 +85,8 @@ const DepartmentList = () => {
                 ) : departments.map((dept) => (
                     <div key={dept.id} className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition">
                         <div className="flex justify-between items-start mb-4">
-                            <div className="p-3 bg-blue-50 rounded-lg">
-                                <Building2 className="w-6 h-6 text-blue-600" />
+                            <div className="p-3 bg-sky-50 rounded-lg">
+                                <Building2 className="w-6 h-6 text-sky-500" />
                             </div>
                             <div className="flex gap-2">
                                 <button 
@@ -131,13 +131,13 @@ const DepartmentList = () => {
                                     required
                                     value={formData.name}
                                     onChange={e => setFormData({ ...formData, name: e.target.value })}
-                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400 outline-none"
                                 />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
                                 <textarea
-                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400 outline-none"
                                     rows={3}
                                     value={formData.description}
                                     onChange={e => setFormData({ ...formData, description: e.target.value })}
@@ -153,7 +153,7 @@ const DepartmentList = () => {
                                 </button>
                                 <button
                                     type="submit"
-                                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                                    className="px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600"
                                 >
                                     {editingId ? 'Save Changes' : 'Create Department'}
                                 </button>

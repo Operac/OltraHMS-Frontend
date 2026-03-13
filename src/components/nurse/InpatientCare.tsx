@@ -112,7 +112,7 @@ export const InpatientCare = ({ patientId, admissionId }: InpatientCareProps) =>
                 <button
                     onClick={() => setActiveTab('meds')}
                     className={`flex-1 py-4 text-sm font-medium flex items-center justify-center gap-2 ${
-                        activeTab === 'meds' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'
+                        activeTab === 'meds' ? 'text-sky-500 border-b-2 border-sky-500' : 'text-gray-500 hover:text-gray-700'
                     }`}
                 >
                     <Pill className="w-4 h-4" /> Medication Administration
@@ -120,7 +120,7 @@ export const InpatientCare = ({ patientId, admissionId }: InpatientCareProps) =>
                 <button
                     onClick={() => setActiveTab('fluids')}
                     className={`flex-1 py-4 text-sm font-medium flex items-center justify-center gap-2 ${
-                        activeTab === 'fluids' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'
+                        activeTab === 'fluids' ? 'text-sky-500 border-b-2 border-sky-500' : 'text-gray-500 hover:text-gray-700'
                     }`}
                 >
                     <Droplets className="w-4 h-4" /> Fluid Balance
@@ -128,7 +128,7 @@ export const InpatientCare = ({ patientId, admissionId }: InpatientCareProps) =>
                 <button
                     onClick={() => setActiveTab('rounds')}
                     className={`flex-1 py-4 text-sm font-medium flex items-center justify-center gap-2 ${
-                        activeTab === 'rounds' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'
+                        activeTab === 'rounds' ? 'text-sky-500 border-b-2 border-sky-500' : 'text-gray-500 hover:text-gray-700'
                     }`}
                 >
                     <Stethoscope className="w-4 h-4" /> Doctor Rounds
@@ -170,7 +170,7 @@ export const InpatientCare = ({ patientId, admissionId }: InpatientCareProps) =>
                                                     <>
                                                         <button 
                                                             onClick={() => handleAdminister(pres.id, 'GIVEN')}
-                                                            className="flex items-center gap-1 px-3 py-1.5 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 transition-colors"
+                                                            className="flex items-center gap-1 px-3 py-1.5 bg-sky-500 text-white rounded-md text-sm hover:bg-sky-600 transition-colors"
                                                         >
                                                             <CheckCircle className="w-4 h-4" /> Give
                                                         </button>
@@ -217,7 +217,7 @@ export const InpatientCare = ({ patientId, admissionId }: InpatientCareProps) =>
                                                 type="radio" 
                                                 checked={fluidDirection === 'INTAKE'} 
                                                 onChange={() => setFluidDirection('INTAKE')}
-                                                className="text-blue-600"
+                                                className="text-sky-500"
                                             />
                                             <span className="text-sm">Intake (IV/Oral)</span>
                                         </label>
@@ -236,7 +236,7 @@ export const InpatientCare = ({ patientId, admissionId }: InpatientCareProps) =>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Fluid Type</label>
                                     <select 
-                                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border"
+                                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-sky-400 focus:ring-sky-400 py-2 px-3 border"
                                         value={fluidType}
                                         onChange={(e) => setFluidType(e.target.value)}
                                     >
@@ -253,7 +253,7 @@ export const InpatientCare = ({ patientId, admissionId }: InpatientCareProps) =>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Amount (ml)</label>
                                     <input 
                                         type="number" 
-                                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border"
+                                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-sky-400 focus:ring-sky-400 py-2 px-3 border"
                                         placeholder="e.g. 500"
                                         value={fluidAmount}
                                         onChange={(e) => setFluidAmount(e.target.value)}
@@ -263,7 +263,7 @@ export const InpatientCare = ({ patientId, admissionId }: InpatientCareProps) =>
 
                                 <button 
                                     type="submit"
-                                    className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors font-medium"
+                                    className="w-full bg-sky-500 text-white py-2 px-4 rounded-md hover:bg-sky-600 transition-colors font-medium"
                                 >
                                     Record Entry
                                 </button>
@@ -279,7 +279,7 @@ export const InpatientCare = ({ patientId, admissionId }: InpatientCareProps) =>
                                 ) : charts.fluids.map(record => (
                                     <div key={record.id} className="flex justify-between items-center text-sm border-b border-gray-200 pb-2 last:border-0">
                                         <div>
-                                            <span className={`font-medium ${record.type === 'INTAKE' ? 'text-blue-600' : 'text-red-600'}`}>
+                                            <span className={`font-medium ${record.type === 'INTAKE' ? 'text-sky-500' : 'text-red-600'}`}>
                                                 {record.type}
                                             </span>
                                             <span className="text-gray-600 mx-2">•</span>
@@ -297,9 +297,9 @@ export const InpatientCare = ({ patientId, admissionId }: InpatientCareProps) =>
                             
                             {/* Summary Totals */}
                             <div className="mt-4 grid grid-cols-2 gap-4">
-                                <div className="bg-blue-50 p-3 rounded-lg text-center">
-                                    <div className="text-xs text-blue-600 uppercase font-semibold">Total Intake</div>
-                                    <div className="text-xl font-bold text-blue-800">
+                                <div className="bg-sky-50 p-3 rounded-lg text-center">
+                                    <div className="text-xs text-sky-500 uppercase font-semibold">Total Intake</div>
+                                    <div className="text-xl font-bold text-sky-700">
                                         {charts.fluids.filter(f => f.type === 'INTAKE').reduce((acc, curr) => acc + curr.amount, 0)} ml
                                     </div>
                                 </div>
@@ -335,7 +335,7 @@ export const InpatientCare = ({ patientId, admissionId }: InpatientCareProps) =>
                                 className="bg-gray-50 p-4 rounded-lg border border-gray-200"
                             >
                                 <textarea
-                                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-sky-400 focus:ring-sky-400 p-2 border"
                                     rows={3}
                                     placeholder="Enter SOAP notes (Subjective, Objective, Assessment, Plan)..."
                                     value={newRoundNote}
@@ -344,7 +344,7 @@ export const InpatientCare = ({ patientId, admissionId }: InpatientCareProps) =>
                                 <div className="mt-2 flex justify-end">
                                     <button
                                         type="submit"
-                                        className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
+                                        className="bg-sky-500 text-white px-4 py-2 rounded-md hover:bg-sky-600 transition-colors text-sm font-medium"
                                     >
                                         Save Round Note
                                     </button>

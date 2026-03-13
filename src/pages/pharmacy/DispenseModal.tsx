@@ -63,14 +63,14 @@ const DispenseModal = ({ prescription, inventory, onClose, onSuccess }: Dispense
 
                 <div className="p-6 space-y-6">
                     {/* Prescription Details */}
-                    <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                    <div className="bg-sky-50 p-4 rounded-lg border border-sky-100">
                         <div className="flex justify-between mb-2">
-                             <span className="text-sm text-blue-600 font-semibold">PRESCRIPTION</span>
-                             <span className="text-sm text-blue-600 font-bold">Qty: {prescription.quantity}</span>
+                             <span className="text-sm text-sky-500 font-semibold">PRESCRIPTION</span>
+                             <span className="text-sm text-sky-500 font-bold">Qty: {prescription.quantity}</span>
                         </div>
-                        <div className="font-medium text-lg text-blue-900">{prescription.medicationName}</div>
-                        <div className="text-sm text-blue-700">{prescription.dosage} - {prescription.frequency}</div>
-                        <div className="text-xs text-blue-500 mt-1">Patient: {prescription.patient.firstName} {prescription.patient.lastName}</div>
+                        <div className="font-medium text-lg text-sky-900">{prescription.medicationName}</div>
+                        <div className="text-sm text-sky-600">{prescription.dosage} - {prescription.frequency}</div>
+                        <div className="text-xs text-sky-400 mt-1">Patient: {prescription.patient.firstName} {prescription.patient.lastName}</div>
                     </div>
 
                     {error && (

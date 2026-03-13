@@ -32,7 +32,7 @@ const AuditLogs = () => {
                         <Search className="w-4 h-4 absolute left-3 top-3 text-gray-400" />
                         <input 
                             placeholder="Search logs..." 
-                            className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-400"
                         />
                     </div>
                 </div>

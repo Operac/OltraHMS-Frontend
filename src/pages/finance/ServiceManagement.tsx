@@ -88,7 +88,7 @@ const ServiceManagement = () => {
                 <h1 className="text-2xl font-bold text-gray-800">Service & Price List</h1>
                 <button 
                     onClick={() => { setEditingService(null); setFormData({ name: '', type: 'LAB', price: '', code: '', isExternal: false }); setIsModalOpen(true); }}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700"
+                    className="bg-sky-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-sky-600"
                 >
                     <Plus size={20} /> Add Service
                 </button>
@@ -99,7 +99,7 @@ const ServiceManagement = () => {
                 <div className="relative flex-1">
                     <Search className="absolute left-3 top-3 text-gray-400" size={18} />
                     <input 
-                        className="w-full pl-10 p-2 border rounded-lg bg-gray-50 focus:bg-white transition-colors outline-none focus:ring-2 focus:ring-blue-100" 
+                        className="w-full pl-10 p-2 border rounded-lg bg-gray-50 focus:bg-white transition-colors outline-none focus:ring-2 focus:ring-sky-100" 
                         placeholder="Search services..." 
                         value={searchTerm}
                         onChange={e => setSearchTerm(e.target.value)}
@@ -144,7 +144,7 @@ const ServiceManagement = () => {
                                     <td className="p-4">
                                         <span className={`px-2 py-1 rounded text-xs font-bold 
                                             ${service.type === 'LAB' ? 'bg-teal-100 text-teal-700' : 
-                                              service.type === 'CONSULTATION' ? 'bg-blue-100 text-blue-700' : 
+                                              service.type === 'CONSULTATION' ? 'bg-sky-100 text-sky-600' : 
                                               'bg-gray-100 text-gray-700'}`}>
                                             {service.type}
                                         </span>
@@ -165,7 +165,7 @@ const ServiceManagement = () => {
                                     </td>
                                     <td className="p-4 text-right">
                                         <div className="flex justify-end gap-2">
-                                            <button onClick={() => openEdit(service)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"><Edit size={16} /></button>
+                                            <button onClick={() => openEdit(service)} className="p-2 text-sky-500 hover:bg-sky-50 rounded-lg"><Edit size={16} /></button>
                                             <button onClick={() => handleDelete(service.id)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg"><Trash2 size={16} /></button>
                                         </div>
                                     </td>
@@ -190,7 +190,7 @@ const ServiceManagement = () => {
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Service Name</label>
                                 <input 
                                     required
-                                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-400 outline-none"
                                     value={formData.name}
                                     onChange={e => setFormData({...formData, name: e.target.value})}
                                 />
@@ -200,7 +200,7 @@ const ServiceManagement = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
                                     <select 
-                                        className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                        className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-400 outline-none"
                                         value={formData.type}
                                         onChange={e => setFormData({...formData, type: e.target.value})}
                                     >
@@ -212,7 +212,7 @@ const ServiceManagement = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Code (Optional)</label>
                                     <input 
-                                        className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                        className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-400 outline-none"
                                         value={formData.code}
                                         onChange={e => setFormData({...formData, code: e.target.value})}
                                     />
@@ -225,7 +225,7 @@ const ServiceManagement = () => {
                                     id="isExternal"
                                     checked={formData.isExternal}
                                     onChange={e => setFormData({...formData, isExternal: e.target.checked})}
-                                    className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                                    className="w-4 h-4 text-sky-500 rounded focus:ring-sky-400"
                                 />
                                 <label htmlFor="isExternal" className="text-sm font-medium text-gray-700 cursor-pointer select-none">
                                     External Service (Referral Only)
@@ -241,7 +241,7 @@ const ServiceManagement = () => {
                                         <input 
                                             type="number"
                                             required
-                                            className="w-full pl-9 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                            className="w-full pl-9 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-400 outline-none"
                                             value={formData.price}
                                             onChange={e => setFormData({...formData, price: e.target.value})}
                                         />
@@ -251,7 +251,7 @@ const ServiceManagement = () => {
 
                             <div className="flex justify-end gap-3 mt-6">
                                 <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-gray-600 font-medium hover:bg-gray-100 rounded-lg">Cancel</button>
-                                <button type="submit" className="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 shadow-sm">
+                                <button type="submit" className="px-4 py-2 bg-sky-500 text-white font-medium rounded-lg hover:bg-sky-600 shadow-sm">
                                     {editingService ? 'Save Changes' : 'Create Service'}
                                 </button>
                             </div>

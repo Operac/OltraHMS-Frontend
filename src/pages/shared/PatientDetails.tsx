@@ -109,7 +109,7 @@ const PatientDetails = () => {
         <div className="p-6 text-center text-red-500 flex flex-col items-center">
             <AlertCircle className="w-10 h-10 mb-2" />
             <p>{error || 'Patient not found'}</p>
-            <button onClick={() => navigate('/patients')} className="text-blue-600 mt-4 hover:underline">Back to list</button>
+            <button onClick={() => navigate('/patients')} className="text-sky-500 mt-4 hover:underline">Back to list</button>
         </div>
     );
 
@@ -127,7 +127,7 @@ const PatientDetails = () => {
                     <div>
                         <h1 className="text-2xl font-bold flex items-center gap-2">
                             {patient.firstName} {patient.lastName}
-                            <span className="text-sm font-normal bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
+                            <span className="text-sm font-normal bg-sky-100 text-sky-600 px-2 py-1 rounded-full">
                                 {patient.patientNumber}
                             </span>
                         </h1>
@@ -144,7 +144,7 @@ const PatientDetails = () => {
                     </button>
                     <button 
                         onClick={() => navigate(`/appointments/new?patientId=${patient.id}`)}
-                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                        className="flex items-center gap-2 px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600"
                     >
                         <Calendar className="w-4 h-4" />
                         <span>Book Appointment</span>
@@ -164,7 +164,7 @@ const PatientDetails = () => {
                 <div className="space-y-6">
                     <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                         <div className="flex flex-col items-center text-center mb-6">
-                            <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-2xl font-bold mb-4">
+                            <div className="w-24 h-24 bg-sky-100 rounded-full flex items-center justify-center text-sky-500 text-2xl font-bold mb-4">
                                 {patient.firstName[0]}{patient.lastName[0]}
                             </div>
                             <h2 className="text-lg font-bold">{patient.firstName} {patient.lastName}</h2>
@@ -217,7 +217,7 @@ const PatientDetails = () => {
                     {/* Tabs / Sections */}
                     <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden min-h-[500px]">
                         <div className="border-b border-gray-200 px-6 py-4 flex items-center gap-6">
-                            <button className="text-blue-600 font-medium border-b-2 border-blue-600 pb-4 -mb-4">Medical History</button>
+                            <button className="text-sky-500 font-medium border-b-2 border-sky-500 pb-4 -mb-4">Medical History</button>
                             <button className="text-gray-500 hover:text-gray-700 font-medium pb-4 -mb-4">Upcoming Appointments</button>
                             <button 
                                 onClick={() => navigate(`/records?patientId=${patient.id}`)}
@@ -241,7 +241,7 @@ const PatientDetails = () => {
                                             <div key={rec.id} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
                                                 <div className="flex justify-between items-start mb-2">
                                                     <div>
-                                                        <span className="text-xs font-bold text-blue-600 uppercase mb-1 block">
+                                                        <span className="text-xs font-bold text-sky-500 uppercase mb-1 block">
                                                             {format(new Date(rec.visitDate), 'MMM dd, yyyy')}
                                                         </span>
                                                         <h4 className="font-bold text-gray-800">{rec.assessment || 'No Diagnosis'}</h4>
@@ -276,14 +276,14 @@ const PatientDetails = () => {
                              {/* Appointments Preview */}
                              <div className="mt-8 pt-8 border-t border-gray-100">
                                 <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
-                                    <Calendar className="w-5 h-5 mr-2 text-blue-500" />
+                                    <Calendar className="w-5 h-5 mr-2 text-sky-400" />
                                     Next Appointment
                                 </h3>
                                 
                                 {patient.appointments && patient.appointments.length > 0 ? (
                                     <div 
                                         onClick={() => navigate(`/consultation/${patient.appointments[0].id}`)}
-                                        className="flex items-center p-4 bg-blue-50 rounded-lg border border-blue-100 cursor-pointer hover:bg-blue-100 transition-colors"
+                                        className="flex items-center p-4 bg-sky-50 rounded-lg border border-sky-100 cursor-pointer hover:bg-sky-100 transition-colors"
                                     >
                                          <div className="mr-4 text-center bg-white p-2 rounded shadow-sm min-w-[60px]">
                                              <div className="text-xs text-gray-500 uppercase">{format(new Date(patient.appointments[0].appointmentDate), 'MMM')}</div>
@@ -298,7 +298,7 @@ const PatientDetails = () => {
                                                  e.stopPropagation();
                                                  navigate('/appointments');
                                              }}
-                                             className="text-sm text-blue-600 hover:underline"
+                                             className="text-sm text-sky-500 hover:underline"
                                          >
                                              View All
                                          </button>
@@ -308,7 +308,7 @@ const PatientDetails = () => {
                                         <p className="text-gray-500 mb-2">No upcoming appointments scheduled.</p>
                                         <button 
                                             onClick={() => navigate(`/appointments/new?patientId=${patient.id}`)}
-                                            className="text-blue-600 font-medium hover:underline text-sm"
+                                            className="text-sky-500 font-medium hover:underline text-sm"
                                         >
                                             Book an Appointment
                                         </button>

@@ -212,7 +212,7 @@ const VideoCallPage = () => {
                     <button onClick={toggleCam} className={`p-4 rounded-full ${camOn ? 'bg-gray-700 hover:bg-gray-600' : 'bg-red-500 hover:bg-red-600'}`}>
                         {camOn ? <Video className="w-6 h-6" /> : <VideoOff className="w-6 h-6" />}
                     </button>
-                    <button onClick={() => setShowChat(!showChat)} className={`p-4 rounded-full ${showChat ? 'bg-blue-600' : 'bg-gray-700 hover:bg-gray-600'}`}>
+                    <button onClick={() => setShowChat(!showChat)} className={`p-4 rounded-full ${showChat ? 'bg-sky-500' : 'bg-gray-700 hover:bg-gray-600'}`}>
                         <MessageSquare className="w-6 h-6" />
                     </button>
                     <button onClick={endCall} className="p-4 rounded-full bg-red-600 hover:bg-red-700">
@@ -230,7 +230,7 @@ const VideoCallPage = () => {
                             <div key={i} className={`flex flex-col ${msg.senderName === user?.firstName ? 'items-end' : 'items-start'}`}>
                                 <div className={`max-w-[85%] p-3 rounded-xl text-sm ${
                                     msg.senderName === user?.firstName 
-                                    ? 'bg-blue-600 text-white rounded-br-none' 
+                                    ? 'bg-sky-500 text-white rounded-br-none' 
                                     : 'bg-gray-100 text-gray-900 rounded-bl-none'
                                 }`}>
                                     <div className="text-xs opacity-75 mb-1 font-bold">{msg.senderName}</div>
@@ -244,12 +244,12 @@ const VideoCallPage = () => {
                     </div>
                     <form onSubmit={sendMessage} className="p-4 border-t bg-gray-50 flex gap-2">
                         <input 
-                            className="flex-1 p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" 
+                            className="flex-1 p-2 border rounded-lg focus:ring-2 focus:ring-sky-400 outline-none" 
                             placeholder="Type a message..." 
                             value={newMessage}
                             onChange={(e) => setNewMessage(e.target.value)}
                         />
-                        <button type="submit" className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        <button type="submit" className="p-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600">
                             <Send className="w-5 h-5" />
                         </button>
                     </form>

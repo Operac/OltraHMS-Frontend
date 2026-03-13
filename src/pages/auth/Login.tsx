@@ -81,7 +81,7 @@ const Login = () => {
     return (
         <div className="min-h-screen w-full flex bg-[#F8FAFC]">
             {/* Left Side - Hero/Brand */}
-            <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-blue-600 to-indigo-700 relative overflow-hidden items-center justify-center p-12 text-white">
+            <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-sky-500 to-indigo-700 relative overflow-hidden items-center justify-center p-12 text-white">
                 {/* Abstract Background Shapes */}
                 <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
                     <motion.div 
@@ -119,7 +119,7 @@ const Login = () => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.4 }}
-                        className="text-xl text-blue-100 leading-relaxed mb-8"
+                        className="text-xl text-sky-200 leading-relaxed mb-8"
                     >
                         The next-generation Hospital Management System designed for efficiency, security, and patient care excellence.
                     </motion.p>
@@ -132,7 +132,7 @@ const Login = () => {
                     >
                         {['Secure Records', 'Smart Scheduling', 'Telemedicine'].map((item, i) => (
                             <div key={i} className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full text-sm border border-white/10">
-                                <CheckCircle className="w-4 h-4 text-blue-300" />
+                                <CheckCircle className="w-4 h-4 text-sky-300" />
                                 {item}
                             </div>
                         ))}
@@ -190,11 +190,11 @@ const Login = () => {
                             >
                                 <label className="block text-sm font-medium text-gray-700 mb-1.5 ml-1">Email</label>
                                 <div className="relative group">
-                                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-blue-600 transition-colors" />
+                                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-sky-500 transition-colors" />
                                     <input
                                         type="email"
                                         required
-                                        className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-600 transition-all outline-none font-medium text-gray-900 placeholder:text-gray-400"
+                                        className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-sky-100 focus:border-sky-500 transition-all outline-none font-medium text-gray-900 placeholder:text-gray-400"
                                         placeholder="Enter your email"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
@@ -209,14 +209,14 @@ const Login = () => {
                             >
                                 <div className="flex justify-between items-center mb-1.5 ml-1">
                                     <label className="block text-sm font-medium text-gray-700">Password</label>
-                                    <a href="#" className="text-sm font-semibold text-blue-600 hover:text-blue-700">Forgot password?</a>
+                                    <a href="#" className="text-sm font-semibold text-sky-500 hover:text-sky-600">Forgot password?</a>
                                 </div>
                                 <div className="relative group">
-                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-blue-600 transition-colors" />
+                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-sky-500 transition-colors" />
                                     <input
                                         type={showPassword ? "text" : "password"}
                                         required
-                                        className="w-full pl-11 pr-12 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-600 transition-all outline-none font-medium text-gray-900 placeholder:text-gray-400"
+                                        className="w-full pl-11 pr-12 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-sky-100 focus:border-sky-500 transition-all outline-none font-medium text-gray-900 placeholder:text-gray-400"
                                         placeholder="••••••••"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
@@ -238,7 +238,7 @@ const Login = () => {
                             transition={{ delay: 0.6 }}
                             type="submit"
                             disabled={loading}
-                            className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl font-bold shadow-lg shadow-blue-500/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                            className="w-full py-4 bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 text-white rounded-xl font-bold shadow-lg shadow-sky-500/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                         >
                             {loading ? (
                                 <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -256,7 +256,7 @@ const Login = () => {
                         Don't have an account?{' '}
                         <button 
                             onClick={() => navigate('/register')}
-                            className="font-semibold text-blue-600 hover:text-blue-700 hover:underline"
+                            className="font-semibold text-sky-500 hover:text-sky-600 hover:underline"
                         >
                             Create free account
                         </button>

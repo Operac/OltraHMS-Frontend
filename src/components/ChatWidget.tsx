@@ -117,11 +117,11 @@ const ChatWidget = () => {
                 <div className="mb-4 w-80 md:w-96 bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden flex flex-col h-[500px] animate-in slide-in-from-bottom-5 fade-in duration-200">
                     
                     {/* Header */}
-                    <div className="bg-blue-600 text-white p-4 flex justify-between items-center shrink-0">
+                    <div className="bg-sky-500 text-white p-4 flex justify-between items-center shrink-0">
                         <div className="flex items-center gap-2 relative">
                              <button 
                                 onClick={() => setShowChannels(!showGenerals)}
-                                className="font-bold flex items-center gap-1 hover:bg-blue-700/50 px-2 py-1 rounded transition-colors"
+                                className="font-bold flex items-center gap-1 hover:bg-sky-600/50 px-2 py-1 rounded transition-colors"
                             >
                                 {channels.find(c => c.id === currentChannel)?.label}
                                 <ChevronDown size={14} />
@@ -138,7 +138,7 @@ const ChatWidget = () => {
                                                 setShowChannels(false);
                                                 setMessages([]); // Clear before load
                                             }}
-                                            className={`block w-full text-left px-4 py-2 text-sm hover:bg-gray-50 ${currentChannel === c.id ? 'font-bold text-blue-600' : ''}`}
+                                            className={`block w-full text-left px-4 py-2 text-sm hover:bg-gray-50 ${currentChannel === c.id ? 'font-bold text-sky-500' : ''}`}
                                         >
                                             {c.label}
                                         </button>
@@ -146,7 +146,7 @@ const ChatWidget = () => {
                                 </div>
                             )}
                         </div>
-                        <button onClick={() => setIsOpen(false)} className="hover:bg-blue-700/50 p-1 rounded">
+                        <button onClick={() => setIsOpen(false)} className="hover:bg-sky-600/50 p-1 rounded">
                             <X size={20} />
                         </button>
                     </div>
@@ -160,9 +160,9 @@ const ChatWidget = () => {
                             return (
                                 <div key={idx} className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
                                     <div className={`max-w-[80%] rounded-lg px-3 py-2 text-sm shadow-sm
-                                        ${isMe ? 'bg-blue-600 text-white' : 'bg-white text-gray-800 border border-gray-200'}
+                                        ${isMe ? 'bg-sky-500 text-white' : 'bg-white text-gray-800 border border-gray-200'}
                                     `}>
-                                        {!isMe && <div className="text-xs font-bold text-blue-600 mb-0.5">{msg.senderName}</div>}
+                                        {!isMe && <div className="text-xs font-bold text-sky-500 mb-0.5">{msg.senderName}</div>}
                                         {msg.content}
                                     </div>
                                     <span className="text-[10px] text-gray-400 mt-1 px-1">
@@ -181,12 +181,12 @@ const ChatWidget = () => {
                             value={inputText}
                             onChange={(e) => setInputText(e.target.value)}
                             placeholder={`Message #${currentChannel}...`}
-                            className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                            className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-400"
                         />
                         <button 
                             type="submit" 
                             disabled={!inputText.trim()}
-                            className="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                            className="bg-sky-500 text-white p-2 rounded-lg hover:bg-sky-600 disabled:opacity-50 transition-colors"
                         >
                             <Send size={18} />
                         </button>
@@ -198,7 +198,7 @@ const ChatWidget = () => {
             {!isOpen && (
                 <button
                     onClick={() => setIsOpen(true)}
-                    className="bg-blue-600 text-white p-4 rounded-full shadow-lg hover:scale-110 active:scale-95 transition-all flex items-center justify-center"
+                    className="bg-sky-500 text-white p-4 rounded-full shadow-lg hover:scale-110 active:scale-95 transition-all flex items-center justify-center"
                 >
                     <MessageCircle size={24} />
                 </button>

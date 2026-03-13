@@ -89,7 +89,7 @@ const RequestImaging = () => {
         <div className="p-6 max-w-3xl mx-auto">
             <header className="mb-8">
                 <h1 className="text-2xl font-bold flex items-center gap-2 text-gray-800">
-                    <Activity className="text-blue-600" /> Request Imaging
+                    <Activity className="text-sky-500" /> Request Imaging
                 </h1>
                 <p className="text-gray-600">Order X-Rays, MRI, CT Scans for patients.</p>
             </header>
@@ -101,14 +101,14 @@ const RequestImaging = () => {
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Patient</label>
                         {patient ? (
-                            <div className="flex items-center justify-between p-3 bg-blue-50 border border-blue-100 rounded-lg">
+                            <div className="flex items-center justify-between p-3 bg-sky-50 border border-sky-100 rounded-lg">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 bg-blue-200 rounded-full flex items-center justify-center text-blue-700 font-bold">
+                                    <div className="w-10 h-10 bg-sky-200 rounded-full flex items-center justify-center text-sky-600 font-bold">
                                         {patient.firstName[0]}{patient.lastName[0]}
                                     </div>
                                     <div>
                                         <p className="font-semibold text-gray-900">{patient.firstName} {patient.lastName}</p>
-                                        <p className="text-xs text-blue-600">{patient.patientNumber}</p>
+                                        <p className="text-xs text-sky-500">{patient.patientNumber}</p>
                                     </div>
                                 </div>
                                 <button 
@@ -127,7 +127,7 @@ const RequestImaging = () => {
                                     value={patientId}
                                     onChange={(e) => setPatientId(e.target.value)}
                                     onBlur={() => { if(patientId) loadPatient(patientId); }}
-                                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-400 focus:border-sky-400"
                                 />
                                 <Search className="w-5 h-5 text-gray-400 absolute left-3 top-2.5" />
                                 <p className="text-xs text-gray-500 mt-1">Enter ID and click away to search.</p>
@@ -142,7 +142,7 @@ const RequestImaging = () => {
                             required
                             value={testId}
                             onChange={(e) => setTestId(e.target.value)}
-                            className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-sky-400 focus:border-sky-400"
                         >
                             <option value="">Select a test...</option>
                             {tests.map(test => (
@@ -166,7 +166,7 @@ const RequestImaging = () => {
                                         value={p}
                                         checked={priority === p}
                                         onChange={(e) => setPriority(e.target.value)}
-                                        className="text-blue-600 focus:ring-blue-500"
+                                        className="text-sky-500 focus:ring-sky-400"
                                     />
                                     <span className={`text-sm font-medium ${p === 'STAT' ? 'text-red-600' : 'text-gray-700'}`}>
                                         {p}
@@ -183,7 +183,7 @@ const RequestImaging = () => {
                             rows={3}
                             value={notes}
                             onChange={(e) => setNotes(e.target.value)}
-                            className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-sky-400 focus:border-sky-400"
                             placeholder="Reason for exam, symptoms..."
                         />
                     </div>
@@ -192,7 +192,7 @@ const RequestImaging = () => {
                         <button
                             type="submit"
                             disabled={submitting || !patientId}
-                            className="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                            className="px-6 py-2 bg-sky-500 text-white rounded-lg font-medium hover:bg-sky-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                         >
                             {submitting ? 'Submitting...' : <><CheckCircle size={18} /> Submit Request</>}
                         </button>
