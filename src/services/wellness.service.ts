@@ -181,6 +181,7 @@ export const wellnessService = {
 
     logMedication: async (medicationId: string, data: {
         status: string;
+        scheduledTime?: string;
         takenAt?: string;
         notes?: string;
     }) => {
@@ -209,6 +210,11 @@ export const wellnessService = {
         return response.data;
     },
 
+    deleteMood: async (id: string) => {
+        const response = await api.delete(`/wellness/moods/${id}`);
+        return response.data;
+    },
+
     // Sleep
     getSleep: async () => {
         const response = await api.get('/wellness/sleep');
@@ -222,6 +228,11 @@ export const wellnessService = {
         notes?: string;
     }) => {
         const response = await api.post('/wellness/sleep', data);
+        return response.data;
+    },
+
+    deleteSleep: async (id: string) => {
+        const response = await api.delete(`/wellness/sleep/${id}`);
         return response.data;
     },
 
@@ -240,6 +251,11 @@ export const wellnessService = {
         notes?: string;
     }) => {
         const response = await api.post('/wellness/symptoms', data);
+        return response.data;
+    },
+
+    deleteSymptom: async (id: string) => {
+        const response = await api.delete(`/wellness/symptoms/${id}`);
         return response.data;
     },
 

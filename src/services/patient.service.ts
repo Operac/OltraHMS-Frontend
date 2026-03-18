@@ -61,7 +61,7 @@ export const PatientService = {
   },
 
   getDashboardStats: async () => {
-    const response = await api.get('/patient/dashboard');
+    const response = await api.get('/patients/dashboard');
     return response.data;
   },
 

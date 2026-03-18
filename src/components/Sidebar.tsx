@@ -71,6 +71,7 @@ const Sidebar = ({ onClose }: SidebarProps = {}) => {
     if (role === 'RECEPTIONIST') {
       return [
         ...common,
+        { icon: Activity, label: 'Queue Management', path: '/receptionist/queue' },
         { icon: Users, label: 'Patients', path: '/patients' },
         { icon: Calendar, label: 'Appointments', path: '/appointments' },
         { icon: Settings, label: 'Settings', path: '/settings' },

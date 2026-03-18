@@ -29,6 +29,7 @@ export const InpatientCare = ({ patientId, admissionId }: InpatientCareProps) =>
     const [fluidType, setFluidType] = useState('Overview');
     const [fluidAmount, setFluidAmount] = useState('');
     const [fluidDirection, setFluidDirection] = useState<'INTAKE' | 'OUTPUT'>('INTAKE');
+    const [customFluidType, setCustomFluidType] = useState('');
 
     // Charts
     const [charts, setCharts] = useState<{ fluids: FluidBalance[] }>({ fluids: [] });
@@ -38,6 +39,7 @@ export const InpatientCare = ({ patientId, admissionId }: InpatientCareProps) =>
     const [newRoundNote, setNewRoundNote] = useState('');
 
     useEffect(() => {
+        console.log('[InpatientCare] useEffect triggered, patientId:', patientId, 'admissionId:', admissionId);
         if (patientId) {
             fetchData();
             fetchCharts();
@@ -46,16 +48,25 @@ export const InpatientCare = ({ patientId, admissionId }: InpatientCareProps) =>
                 // InpatientService.getRounds(admissionId).then(setRounds);
                 setRounds([]); // Mock
             }
+        } else {
+            console.warn('[InpatientCare] No patientId provided');
+            setLoading(false);
         }
     }, [patientId, admissionId]);
 
     const fetchData = async () => {
         try {
             setLoading(true);
+            console.log('[InpatientCare] Fetching medications for patient:', patientId);
             const res = await InpatientService.getScheduledMedications(patientId);
+            console.log('[InpatientCare] Medications fetched:', res);
             setData(res);
-        } catch (error) {
-            toast.error("Failed to load medications");
+        } catch (error: any) {
+            console.error('[InpatientCare] Error fetching medications:', error);
+            const errorMessage = error.response?.data?.message || error.message || 'Failed to load medications';
+            toast.error(errorMessage);
+            // Set empty data to allow the UI to render even on error
+            setData({ prescriptions: [], administrations: [] });
         } finally {
             setLoading(false);
         }
@@ -63,10 +74,14 @@ export const InpatientCare = ({ patientId, admissionId }: InpatientCareProps) =>
 
     const fetchCharts = async () => {
         try {
+            console.log('[InpatientCare] Fetching charts for patient:', patientId);
             const res = await InpatientService.getPatientCharts(patientId);
-            setCharts({ fluids: res.fluids });
-        } catch (error) {
-            console.error("Failed to load charts");
+            console.log('[InpatientCare] Charts fetched:', res);
+            setCharts({ fluids: res.fluids || [] });
+        } catch (error: any) {
+            console.error('[InpatientCare] Error fetching charts:', error);
+            // Set empty charts on error
+            setCharts({ fluids: [] });
         }
     };
 
@@ -92,7 +107,7 @@ export const InpatientCare = ({ patientId, admissionId }: InpatientCareProps) =>
             await InpatientService.logFluid({
                 patientId,
                 type: fluidDirection,
-                fluidType: fluidType === 'Other' ? 'Custom' : fluidType, // Simplify for demo
+                fluidType: fluidType === 'Other' ? customFluidType : fluidType,
                 amount: Number(fluidAmount)
             });
             toast.success("Fluid recorded");
@@ -238,7 +253,12 @@ export const InpatientCare = ({ patientId, admissionId }: InpatientCareProps) =>
                                     <select 
                                         className="w-full rounded-md border-gray-300 shadow-sm focus:border-sky-400 focus:ring-sky-400 py-2 px-3 border"
                                         value={fluidType}
-                                        onChange={(e) => setFluidType(e.target.value)}
+                                        onChange={(e) => {
+                                            setFluidType(e.target.value);
+                                            if (e.target.value !== 'Other') {
+                                                setCustomFluidType('');
+                                            }
+                                        }}
                                     >
                                         <option>Normal Saline</option>
                                         <option>Dextrose 5%</option>
@@ -247,6 +267,16 @@ export const InpatientCare = ({ patientId, admissionId }: InpatientCareProps) =>
                                         <option>Drain</option>
                                         <option>Other</option>
                                     </select>
+                                    {fluidType === 'Other' && (
+                                        <input 
+                                            type="text" 
+                                            className="mt-2 w-full rounded-md border-gray-300 shadow-sm focus:border-sky-400 focus:ring-sky-400 py-2 px-3 border"
+                                            placeholder="Enter fluid type name"
+                                            value={customFluidType}
+                                            onChange={(e) => setCustomFluidType(e.target.value)}
+                                            required
+                                        />
+                                    )}
                                 </div>
 
                                 <div>

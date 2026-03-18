@@ -69,8 +69,8 @@ const Doctors = () => {
                             </span>
                             <div className="flex items-center gap-1 text-yellow-500 text-sm mb-4">
                                 <Star className="w-4 h-4 fill-current" />
-                                <span className="font-medium">4.8</span>
-                                <span className="text-gray-400">(124 reviews)</span>
+                                <span className="font-medium">{doc.rating ? doc.rating.toFixed(1) : 'N/A'}</span>
+                                <span className="text-gray-400">({doc.reviewCount || 0} reviews)</span>
                             </div>
                         </div>
                         <div className="p-4 border-t border-gray-100 mt-auto bg-gray-50">

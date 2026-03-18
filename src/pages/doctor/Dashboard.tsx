@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { getDashboardStats } from '../../services/doctor.service';
+import { queueSocket } from '../../services/socketService';
 import { Calendar, Clock, FileText } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const DoctorDashboard = () => {
     const { user } = useAuth();
@@ -28,6 +30,30 @@ const DoctorDashboard = () => {
              }
         };
         loadDashboard();
+        
+        // Connect to socket for real-time updates
+        if (user?.staffId) {
+            queueSocket.connect();
+            queueSocket.joinDoctor(user.staffId);
+            
+            const handleQueueEvent = (data: any) => {
+                console.log('Doctor queue event:', data);
+                loadDashboard();
+                
+                if (data.type === 'PATIENT_CHECKED_IN' && data.doctorId === user.staffId) {
+                    toast.success(`New patient in queue: ${data.patientName}`);
+                } else if (data.type === 'PATIENT_CALLED') {
+                    toast(`${data.patientName} is being called`, { icon: '📢' });
+                }
+            };
+            
+            queueSocket.on('queue-event', handleQueueEvent);
+            
+            return () => {
+                queueSocket.off('queue-event', handleQueueEvent);
+                queueSocket.disconnect();
+            };
+        }
     }, [user]);
 
     return (

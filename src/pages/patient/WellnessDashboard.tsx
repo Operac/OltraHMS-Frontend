@@ -165,6 +165,7 @@ const WellnessDashboard = () => {
                     onCreate={handleCreateGoal}
                     showModal={showGoalModal}
                     setShowModal={setShowGoalModal}
+                    onRefresh={fetchAllData}
                 />
             )}
 
@@ -336,7 +337,18 @@ function OverviewTab({ summary, vitals, moods, sleep, onNavigate }: any) {
 // =============================================================================
 // HABITS TAB
 // =============================================================================
-function HabitsTab({ goals, onCheckIn, setShowModal }: any) {
+function HabitsTab({ goals, onCheckIn, setShowModal, onRefresh }: any) {
+    const handleDeleteGoal = async (id: string) => {
+        if (!confirm('Are you sure you want to delete this habit?')) return;
+        try {
+            await wellnessService.deleteGoal(id);
+            onRefresh?.();
+        } catch (err) {
+            console.error(err);
+            alert('Failed to delete habit');
+        }
+    };
+
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
@@ -357,15 +369,24 @@ function HabitsTab({ goals, onCheckIn, setShowModal }: any) {
                     return (
                         <div key={goal.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
                             <div className="flex justify-between items-start mb-3">
-                                <div>
+                                <div className="flex-1">
                                     <h3 className="font-bold text-gray-800">{goal.description}</h3>
                                     <p className="text-xs text-gray-500">{goal.category} • {goal.frequency}</p>
                                 </div>
-                                {goal.streak > 0 && (
-                                    <span className="bg-orange-100 text-orange-600 text-xs px-2 py-1 rounded-full">
-                                        🔥 {goal.streak}
-                                    </span>
-                                )}
+                                <div className="flex items-center gap-2">
+                                    {goal.streak > 0 && (
+                                        <span className="bg-orange-100 text-orange-600 text-xs px-2 py-1 rounded-full">
+                                            🔥 {goal.streak}
+                                        </span>
+                                    )}
+                                    <button 
+                                        onClick={() => handleDeleteGoal(goal.id)}
+                                        className="text-red-400 hover:text-red-600 p-1"
+                                        title="Delete"
+                                    >
+                                        <X size={16} />
+                                    </button>
+                                </div>
                             </div>
                             <div className="mb-3">
                                 <div className="flex justify-between text-sm mb-1">
@@ -407,7 +428,18 @@ function HabitsTab({ goals, onCheckIn, setShowModal }: any) {
 // =============================================================================
 // VITALS TAB
 // =============================================================================
-function VitalsTab({ vitals, onAdd }: { vitals: WellnessVitals[], onAdd: () => void, onRefresh?: () => void }) {
+function VitalsTab({ vitals, onAdd, onRefresh }: { vitals: WellnessVitals[], onAdd: () => void, onRefresh?: () => void }) {
+    const handleDelete = async (id: string) => {
+        if (!confirm('Are you sure you want to delete this vital reading?')) return;
+        try {
+            await wellnessService.deleteVitals(id);
+            onRefresh?.();
+        } catch (err) {
+            console.error(err);
+            alert('Failed to delete vital reading');
+        }
+    };
+
     const getVitalIcon = (type: string) => {
         switch(type) {
             case 'BLOOD_PRESSURE': return <Heart className="text-red-500" />;
@@ -465,7 +497,16 @@ function VitalsTab({ vitals, onAdd }: { vitals: WellnessVitals[], onAdd: () => v
                         {readings.slice(0, 5).map((v) => (
                             <div key={v.id} className="flex justify-between items-center py-2 border-b border-gray-50 last:border-0">
                                 <span className="text-gray-600">{new Date(v.recordedAt).toLocaleDateString()}</span>
-                                <span className="font-bold">{getVitalValue(v)}</span>
+                                <div className="flex items-center gap-2">
+                                    <span className="font-bold">{getVitalValue(v)}</span>
+                                    <button 
+                                        onClick={() => handleDelete(v.id)}
+                                        className="text-red-400 hover:text-red-600 p-1"
+                                        title="Delete"
+                                    >
+                                        <X size={14} />
+                                    </button>
+                                </div>
                             </div>
                         ))}
                     </div>
@@ -489,10 +530,29 @@ function VitalsTab({ vitals, onAdd }: { vitals: WellnessVitals[], onAdd: () => v
 function MedicationsTab({ medications, onAdd, onRefresh }: { medications: WellnessMedication[], onAdd: () => void, onRefresh: () => void }) {
     const handleLog = async (medId: string, status: string) => {
         try {
-            await wellnessService.logMedication(medId, { status });
+            // Include scheduledTime - default to current time if not available
+            const scheduledTime = new Date().toISOString();
+            await wellnessService.logMedication(medId, { 
+                status,
+                scheduledTime,
+                takenAt: status === 'TAKEN' ? new Date().toISOString() : undefined,
+                notes: ''
+            });
             onRefresh();
         } catch (err) {
             console.error(err);
+            alert('Failed to log medication. Please try again.');
+        }
+    };
+
+    const handleDelete = async (id: string) => {
+        if (!confirm('Are you sure you want to delete this medication?')) return;
+        try {
+            await wellnessService.deleteMedication(id);
+            onRefresh();
+        } catch (err) {
+            console.error(err);
+            alert('Failed to delete medication');
         }
     };
 
@@ -512,16 +572,25 @@ function MedicationsTab({ medications, onAdd, onRefresh }: { medications: Wellne
                 {medications.map((med) => (
                     <div key={med.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
                         <div className="flex justify-between items-start mb-3">
-                            <div>
+                            <div className="flex-1">
                                 <h3 className="font-bold text-gray-800">{med.name}</h3>
                                 <p className="text-sm text-gray-500">{med.dosage} • {med.frequency.replace('_', ' ')}</p>
                                 <p className="text-xs text-gray-400">Times: {JSON.parse(med.times).join(', ')}</p>
                             </div>
-                            <span className={`px-2 py-1 rounded-full text-xs ${
-                                med.status === 'ACTIVE' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
-                            }`}>
-                                {med.status}
-                            </span>
+                            <div className="flex items-center gap-2">
+                                <span className={`px-2 py-1 rounded-full text-xs ${
+                                    med.status === 'ACTIVE' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
+                                }`}>
+                                    {med.status}
+                                </span>
+                                <button 
+                                    onClick={() => handleDelete(med.id)}
+                                    className="text-red-400 hover:text-red-600 p-1"
+                                    title="Delete"
+                                >
+                                    <X size={16} />
+                                </button>
+                            </div>
                         </div>
                         
                         {med.status === 'ACTIVE' && (
@@ -557,7 +626,18 @@ function MedicationsTab({ medications, onAdd, onRefresh }: { medications: Wellne
 // =============================================================================
 // MOOD TAB
 // =============================================================================
-function MoodTab({ moods, onAdd }: { moods: WellnessMood[], onAdd: () => void, onRefresh?: () => void }) {
+function MoodTab({ moods, onAdd, onRefresh }: { moods: WellnessMood[], onAdd: () => void, onRefresh?: () => void }) {
+    const handleDelete = async (id: string) => {
+        if (!confirm('Are you sure you want to delete this mood entry?')) return;
+        try {
+            await wellnessService.deleteMood(id);
+            onRefresh?.();
+        } catch (err) {
+            console.error(err);
+            alert('Failed to delete mood entry');
+        }
+    };
+
     const getMoodEmoji = (score: number) => {
         if (score >= 9) return '😊';
         if (score >= 7) return '🙂';
@@ -588,12 +668,21 @@ function MoodTab({ moods, onAdd }: { moods: WellnessMood[], onAdd: () => void, o
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {moods.slice(0, 14).map((mood) => (
                     <div key={mood.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-                        <div className="flex items-center gap-3 mb-2">
-                            <span className="text-2xl">{getMoodEmoji(mood.moodScore)}</span>
-                            <div>
-                                <p className="font-bold">{mood.moodScore}/10</p>
-                                <p className="text-xs text-gray-500">{new Date(mood.recordedAt).toLocaleDateString()}</p>
+                        <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-3">
+                                <span className="text-2xl">{getMoodEmoji(mood.moodScore)}</span>
+                                <div>
+                                    <p className="font-bold">{mood.moodScore}/10</p>
+                                    <p className="text-xs text-gray-500">{new Date(mood.recordedAt).toLocaleDateString()}</p>
+                                </div>
                             </div>
+                            <button 
+                                onClick={() => handleDelete(mood.id)}
+                                className="text-red-400 hover:text-red-600 p-1"
+                                title="Delete"
+                            >
+                                <X size={16} />
+                            </button>
                         </div>
                         {mood.stressLevel !== null && (
                             <p className="text-xs text-gray-500">Stress: {mood.stressLevel}/10</p>
@@ -616,7 +705,18 @@ function MoodTab({ moods, onAdd }: { moods: WellnessMood[], onAdd: () => void, o
 // =============================================================================
 // SLEEP TAB
 // =============================================================================
-function SleepTab({ sleep, onAdd }: { sleep: WellnessSleep[], onAdd: () => void, onRefresh?: () => void }) {
+function SleepTab({ sleep, onAdd, onRefresh }: { sleep: WellnessSleep[], onAdd: () => void, onRefresh?: () => void }) {
+    const handleDelete = async (id: string) => {
+        if (!confirm('Are you sure you want to delete this sleep entry?')) return;
+        try {
+            await wellnessService.deleteSleep(id);
+            onRefresh?.();
+        } catch (err) {
+            console.error(err);
+            alert('Failed to delete sleep entry');
+        }
+    };
+
     const formatDuration = (minutes: number) => {
         const h = Math.floor(minutes / 60);
         const m = minutes % 60;
@@ -645,12 +745,21 @@ function SleepTab({ sleep, onAdd }: { sleep: WellnessSleep[], onAdd: () => void,
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {sleep.slice(0, 14).map((s) => (
                     <div key={s.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-                        <div className="flex items-center gap-3 mb-2">
-                            <MoonIcon className="text-indigo-500" size={24} />
-                            <div>
-                                <p className="font-bold">{s.duration ? formatDuration(s.duration) : '--'}</p>
-                                <p className="text-xs text-gray-500">{new Date(s.recordedAt).toLocaleDateString()}</p>
+                        <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-3">
+                                <MoonIcon className="text-indigo-500" size={24} />
+                                <div>
+                                    <p className="font-bold">{s.duration ? formatDuration(s.duration) : '--'}</p>
+                                    <p className="text-xs text-gray-500">{new Date(s.recordedAt).toLocaleDateString()}</p>
+                                </div>
                             </div>
+                            <button 
+                                onClick={() => handleDelete(s.id)}
+                                className="text-red-400 hover:text-red-600 p-1"
+                                title="Delete"
+                            >
+                                <X size={16} />
+                            </button>
                         </div>
                         {s.quality && (
                             <div className="flex items-center gap-2">
@@ -676,7 +785,18 @@ function SleepTab({ sleep, onAdd }: { sleep: WellnessSleep[], onAdd: () => void,
 // =============================================================================
 // SYMPTOMS TAB
 // =============================================================================
-function SymptomsTab({ symptoms, onAdd }: { symptoms: WellnessSymptom[], onAdd: () => void, onRefresh?: () => void }) {
+function SymptomsTab({ symptoms, onAdd, onRefresh }: { symptoms: WellnessSymptom[], onAdd: () => void, onRefresh?: () => void }) {
+    const handleDelete = async (id: string) => {
+        if (!confirm('Are you sure you want to delete this symptom entry?')) return;
+        try {
+            await wellnessService.deleteSymptom(id);
+            onRefresh?.();
+        } catch (err) {
+            console.error(err);
+            alert('Failed to delete symptom entry');
+        }
+    };
+
     const getSeverityColor = (severity: number) => {
         if (severity >= 7) return 'bg-red-100 text-red-700';
         if (severity >= 4) return 'bg-yellow-100 text-yellow-700';
@@ -713,9 +833,18 @@ function SymptomsTab({ symptoms, onAdd }: { symptoms: WellnessSymptom[], onAdd: 
                                     {symptom.location && ` • ${symptom.location}`}
                                 </p>
                             </div>
-                            <span className={`px-2 py-1 rounded-full text-sm ${getSeverityColor(symptom.severity)}`}>
-                                {symptom.severity}/10
-                            </span>
+                            <div className="flex items-center gap-2">
+                                <span className={`px-2 py-1 rounded-full text-sm ${getSeverityColor(symptom.severity)}`}>
+                                    {symptom.severity}/10
+                                </span>
+                                <button 
+                                    onClick={() => handleDelete(symptom.id)}
+                                    className="text-red-400 hover:text-red-600 p-1"
+                                    title="Delete"
+                                >
+                                    <X size={16} />
+                                </button>
+                            </div>
                         </div>
                         {symptom.notes && <p className="text-sm text-gray-600 mt-2">{symptom.notes}</p>}
                     </div>

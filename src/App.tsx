@@ -43,6 +43,7 @@ import LabDashboard from './pages/lab/LabDashboard';
 import ReceptionistDashboard from './pages/receptionist/Dashboard';
 import ReceptionistRegistration from './pages/receptionist/Registration';
 import ReceptionistBooking from './pages/receptionist/Booking';
+import QueueDashboard from './pages/receptionist/QueueDashboard';
 import PharmacyDashboard from './pages/pharmacy/Dashboard';
 import FinanceDashboard from './pages/finance/Dashboard';
 import AdmissionDashboard from './pages/admission/Dashboard';
@@ -282,6 +283,13 @@ function App() {
             <ProtectedRoute allowedRoles={['RECEPTIONIST', 'ADMIN']}>
               <MainLayout>
                 <ReceptionistBooking />
+              </MainLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/receptionist/queue" element={
+            <ProtectedRoute allowedRoles={['RECEPTIONIST', 'ADMIN']}>
+              <MainLayout>
+                <QueueDashboard />
               </MainLayout>
             </ProtectedRoute>
           } />

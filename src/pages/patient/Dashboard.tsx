@@ -111,13 +111,16 @@ const PatientDashboard = () => {
                             <Activity className="w-4 h-4" />
                             View Records
                         </Link>
-                         {/* Show Join Call if active appointment exists */}
-                         {stats?.queueStatus?.appointmentId && (
-                             <Link to={`/consultation/video/${stats.queueStatus.appointmentId}`} className="bg-green-500 text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-green-600 transition-all shadow-sm flex items-center gap-2 text-sm animate-pulse">
-                                <Video className="w-4 h-4" />
-                                Join Video Call
-                            </Link>
-                         )}
+                         {/* Show Join Call if active appointment exists (queue status OR upcoming telemedicine) */}
+                          {(stats?.queueStatus?.appointmentId || 
+                            (stats?.nextAppointment && 
+                             stats.nextAppointment.type === 'TELEMEDICINE' && 
+                             new Date(stats.nextAppointment.date) <= new Date(Date.now() + 30*60*1000))) && (
+                              <Link to={`/consultation/video/${stats.queueStatus?.appointmentId || stats.nextAppointment?.id}`} className="bg-green-500 text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-green-600 transition-all shadow-sm flex items-center gap-2 text-sm animate-pulse">
+                                 <Video className="w-4 h-4" />
+                                 Join Video Call
+                             </Link>
+                          )}
                     </div>
                 </div>
                 {/* Decorative Pattern */}
@@ -147,8 +150,11 @@ const PatientDashboard = () => {
                              <p className="text-sm text-gray-500 mt-1">
                                 Est. Wait: <span className="text-sky-500 font-semibold">{stats.queueStatus.estimatedWaitTime} mins</span>
                              </p>
-                             <div className="mt-4 pt-3 border-t border-gray-100">
+                             <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
                                 <p className="text-xs text-gray-400">Dr. Availability: Online</p>
+                                <Link to={`/consultation/video/${stats.queueStatus.appointmentId}`} className="bg-green-500 text-white text-xs px-3 py-1.5 rounded-lg font-medium hover:bg-green-600 flex items-center gap-1">
+                                    <Video className="w-3 h-3" /> Join Call
+                                </Link>
                              </div>
                         </div>
                     ) : stats?.nextAppointment ? (
@@ -158,9 +164,18 @@ const PatientDashboard = () => {
                              <p className="text-xs text-gray-500">
                                 {new Date(stats.nextAppointment.date).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })} at {new Date(stats.nextAppointment.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                              </p>
-                             <div className="mt-4 pt-3 border-t border-gray-100">
-                                <Link to="/appointments" className="text-sky-500 text-xs font-medium inline-block hover:underline">Manage &rarr;</Link>
-                             </div>
+                             {stats.nextAppointment.type === 'TELEMEDICINE' && (
+                                 <div className="mt-4 pt-3 border-t border-gray-100">
+                                    <Link to={`/consultation/video/${stats.nextAppointment.id}`} className="bg-green-500 text-white text-xs px-3 py-1.5 rounded-lg font-medium hover:bg-green-600 flex items-center gap-1 w-fit">
+                                        <Video className="w-3 h-3" /> Join Video Call
+                                    </Link>
+                                 </div>
+                             )}
+                             {stats.nextAppointment.type !== 'TELEMEDICINE' && (
+                                 <div className="mt-4 pt-3 border-t border-gray-100">
+                                    <Link to="/appointments" className="text-sky-500 text-xs font-medium inline-block hover:underline">Manage &rarr;</Link>
+                                 </div>
+                             )}
                         </div>
                     ) : (
                         <div>
