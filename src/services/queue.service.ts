@@ -45,7 +45,15 @@ export const queueService = {
 
     // Add walk-in patient
     addWalkIn: async (data: {
-        patientId: string;
+        patientId?: string;
+        patientData?: {
+            firstName: string;
+            lastName: string;
+            phone: string;
+            email?: string;
+            dateOfBirth?: string;
+            gender?: string;
+        };
         doctorId?: string;
         departmentId?: string;
         reason?: string;
