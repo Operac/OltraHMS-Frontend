@@ -1,5 +1,6 @@
 // PWA Registration Service
 // Handles Service Worker registration and lifecycle management
+// Note: PWA is optional - app works without it
 
 const SW_URL = '/sw.js';
 

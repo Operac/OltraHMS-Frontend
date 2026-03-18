@@ -5,9 +5,11 @@ import App from './App.tsx'
 import { registerPWA, setupNetworkListeners, isOnline } from './services/pwaRegistration'
 import { syncAllPendingData } from './services/offlineStorage'
 
-// Register PWA Service Worker
-registerPWA().then((pwa) => {
-  console.log('PWA Registration:', pwa.offlineReady ? 'Ready for offline use' : 'Online only');
+// Register PWA Service Worker (optional - silently fails if not available)
+registerPWA().then(() => {
+  // Silent - app works without PWA
+}).catch(() => {
+  // Silent failure - PWA is optional
 });
 
 // Setup network listeners for offline support
