@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { CheckCircle, Calculator, Pencil } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { AdminService } from '../../services/admin.service';
+import { SettingsService, getCurrencySymbol } from '../../services/settings.service';
 
 const PayrollManagement = () => {
     const [payrolls, setPayrolls] = useState<any[]>([]);
@@ -9,6 +10,7 @@ const PayrollManagement = () => {
     const [showEditModal, setShowEditModal] = useState(false);
     const [selectedPayroll, setSelectedPayroll] = useState<any>(null);
     const [editForm, setEditForm] = useState({ bonuses: '', deductions: '', tax: '' });
+    const [currencySymbol, setCurrencySymbol] = useState('₦');
     
     // Filter/Generate State
     const [selectedMonth, setSelectedMonth] = useState(new Date().toLocaleString('default', { month: 'long' }));
@@ -22,7 +24,17 @@ const PayrollManagement = () => {
 
     useEffect(() => {
         loadPayrolls();
+        loadCurrencySettings();
     }, [selectedMonth, selectedYear]);
+
+    const loadCurrencySettings = async () => {
+        try {
+            const settings = await SettingsService.getHospitalSettings();
+            setCurrencySymbol(settings.currencySymbol || getCurrencySymbol(settings.currencyCode) || '₦');
+        } catch (error) {
+            console.error("Failed to load currency settings");
+        }
+    };
 
     const loadPayrolls = async () => {
         setLoading(true);
@@ -150,15 +162,15 @@ const PayrollManagement = () => {
                                     </div>
                                 </td>
                                 <td className="px-6 py-4 text-right font-mono text-sm">
-                                    ${p.baseSalary?.toLocaleString()}
+                                    {currencySymbol}{p.baseSalary?.toLocaleString()}
                                 </td>
                                 <td className="px-6 py-4 text-right text-xs text-gray-500">
-                                    <div className="text-green-600">+${p.bonuses}</div>
-                                    <div className="text-red-500">-${p.deductions} (Ded)</div>
-                                    <div className="text-red-500">-${p.tax} (Tax)</div>
+                                    <div className="text-green-600">+{currencySymbol}{p.bonuses}</div>
+                                    <div className="text-red-500">-{currencySymbol}{p.deductions} (Ded)</div>
+                                    <div className="text-red-500">-{currencySymbol}{p.tax} (Tax)</div>
                                 </td>
                                 <td className="px-6 py-4 text-right font-bold text-gray-900 font-mono">
-                                    ${p.netSalary?.toLocaleString()}
+                                    {currencySymbol}{p.netSalary?.toLocaleString()}
                                 </td>
                                 <td className="px-6 py-4">
                                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
@@ -201,7 +213,7 @@ const PayrollManagement = () => {
                         <form onSubmit={handleUpdatePayroll} className="space-y-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Base Salary</label>
-                                <input type="text" disabled className="w-full p-2 border rounded bg-gray-100" value={`${selectedPayroll?.baseSalary?.toLocaleString()}`} />
+                                <input type="text" disabled className="w-full p-2 border rounded bg-gray-100" value={`${currencySymbol}${selectedPayroll?.baseSalary?.toLocaleString()}`} />
                             </div>
                             <div className="grid grid-cols-3 gap-4">
                                 <div>
@@ -218,7 +230,7 @@ const PayrollManagement = () => {
                                 </div>
                             </div>
                             <div className="text-sm text-gray-500 text-right">
-                                Net Salary: <span className="font-bold text-gray-900">${(Number(selectedPayroll?.baseSalary) + Number(editForm.bonuses) - Number(editForm.deductions) - Number(editForm.tax)).toLocaleString()}</span>
+                                Net Salary: <span className="font-bold text-gray-900">{currencySymbol}{(Number(selectedPayroll?.baseSalary) + Number(editForm.bonuses) - Number(editForm.deductions) - Number(editForm.tax)).toLocaleString()}</span>
                             </div>
                             <div className="flex justify-end gap-2 mt-6">
                                 <button type="button" onClick={() => setShowEditModal(false)} className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">Cancel</button>

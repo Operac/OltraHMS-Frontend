@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react';
 import { Download, Calendar } from 'lucide-react';
 import { HRService } from '../services/hr.service';
+import { SettingsService, getCurrencySymbol } from '../services/settings.service';
 
 const MyPayslips = () => {
     const [payrolls, setPayrolls] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [currencySymbol, setCurrencySymbol] = useState('$');
 
     useEffect(() => {
         loadData();
+        loadCurrencySettings();
     }, []);
 
     const loadData = async () => {
@@ -18,6 +21,15 @@ const MyPayslips = () => {
             console.error("Failed to load payslips");
         } finally {
             setLoading(false);
+        }
+    };
+
+    const loadCurrencySettings = async () => {
+        try {
+            const settings = await SettingsService.getHospitalSettings();
+            setCurrencySymbol(settings.currencySymbol || getCurrencySymbol(settings.currencyCode) || '$');
+        } catch (error) {
+            console.error("Failed to load currency settings");
         }
     };
 
@@ -48,7 +60,7 @@ const MyPayslips = () => {
                                     {p.month} {p.year}
                                 </td>
                                 <td className="px-6 py-4 text-right font-bold text-gray-900 font-mono">
-                                    ${p.netSalary?.toLocaleString()}
+                                    {currencySymbol}{p.netSalary?.toLocaleString()}
                                 </td>
                                 <td className="px-6 py-4">
                                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${

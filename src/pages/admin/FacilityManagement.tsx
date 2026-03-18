@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, BedDouble, Building2 } from 'lucide-react';
 import { getWards, createWard, deleteWard, createBed, deleteBed } from '../../services/ward.service';
+import { SettingsService, getCurrencySymbol } from '../../services/settings.service';
 import type { Ward } from '../../services/ward.service';
 
 export default function FacilityManagement() {
   const [wards, setWards] = useState<Ward[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currencySymbol, setCurrencySymbol] = useState('₦');
 
   // Modal states
   const [showWardModal, setShowWardModal] = useState(false);
@@ -32,7 +34,17 @@ export default function FacilityManagement() {
 
   useEffect(() => {
     fetchWards();
+    loadCurrencySettings();
   }, []);
+
+  const loadCurrencySettings = async () => {
+    try {
+      const settings = await SettingsService.getHospitalSettings();
+      setCurrencySymbol(settings.currencySymbol || getCurrencySymbol(settings.currencyCode) || '₦');
+    } catch (error) {
+      console.error("Failed to load currency settings");
+    }
+  };
 
   const handleCreateWard = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -126,7 +138,7 @@ export default function FacilityManagement() {
                   <div className="flex items-center text-sm text-gray-500 space-x-4 mt-1">
                     <span className="capitalize">{ward.type.toLowerCase()} Ward</span>
                     <span>•</span>
-                    <span>Base Price: ${ward.basePrice}/day</span>
+                    <span>Base Price: {currencySymbol}{ward.basePrice}/day</span>
                     <span>•</span>
                     <span>{ward.beds.length} / {ward.capacity} Beds Configured</span>
                   </div>
@@ -180,7 +192,7 @@ export default function FacilityManagement() {
                       />
                       <span className="font-semibold text-gray-900">{bed.number}</span>
                       <span className="text-xs text-gray-500 mt-1">
-                        {bed.price ? `₦${bed.price}/day` : 'Standard'}
+                        {bed.price ? `${currencySymbol}${bed.price}/day` : 'Standard'}
                       </span>
                     </div>
                   ))}

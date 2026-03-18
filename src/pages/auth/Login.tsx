@@ -82,7 +82,69 @@ const Login = () => {
     };
 
     return (
-        <div className="min-h-screen w-full flex bg-[#F8FAFC]">
+        <>
+            {/* Full Screen Loading Overlay */}
+            <AnimatePresence>
+                {loading && (
+                    <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-sky-500 to-indigo-700"
+                    >
+                        <div className="text-center">
+                            {/* Animated Logo */}
+                            <motion.div 
+                                animate={{ 
+                                    scale: [1, 1.1, 1],
+                                    rotate: [0, 5, -5, 0]
+                                }}
+                                transition={{ 
+                                    duration: 2, 
+                                    repeat: Infinity,
+                                    ease: "easeInOut"
+                                }}
+                                className="w-20 h-20 bg-white/20 backdrop-blur-md rounded-3xl flex items-center justify-center mx-auto mb-6 border border-white/30"
+                            >
+                                <Activity className="w-10 h-10 text-white" />
+                            </motion.div>
+                            
+                            {/* Loading Text */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.2 }}
+                            >
+                                <h2 className="text-2xl font-bold text-white mb-2">Welcome to OltraHMS</h2>
+                            </motion.div>
+                            
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 0.4 }}
+                                className="flex items-center justify-center gap-1"
+                            >
+                                <span className="text-sky-200">Signing you in</span>
+                                <motion.span
+                                    animate={{ opacity: [0, 1, 0] }}
+                                    transition={{ duration: 1, repeat: Infinity }}
+                                >...</motion.span>
+                            </motion.div>
+                            
+                            {/* Animated Loader Bar */}
+                            <div className="mt-6 w-48 h-1 bg-white/20 rounded-full mx-auto overflow-hidden">
+                                <motion.div 
+                                    className="h-full bg-white rounded-full"
+                                    animate={{ width: ["0%", "100%"] }}
+                                    transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                                />
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            <div className="min-h-screen w-full flex bg-[#F8FAFC]">
             {/* Left Side - Hero/Brand */}
             <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-sky-500 to-indigo-700 relative overflow-hidden items-center justify-center p-12 text-white">
                 {/* Abstract Background Shapes */}
@@ -267,6 +329,7 @@ const Login = () => {
                 </motion.div>
             </div>
         </div>
+        </>
     );
 };
 

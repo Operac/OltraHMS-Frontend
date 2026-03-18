@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Plus, Building2, Pencil, Trash2, User } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { DepartmentService } from '../../services/department.service';
 import { AdminService } from '../../services/admin.service';
 import type { Department } from '../../services/department.service';
@@ -61,15 +62,18 @@ const DepartmentList = () => {
             };
             if (editingId) {
                 await DepartmentService.update(editingId, payload);
+                toast.success("Department updated successfully");
             } else {
                 await DepartmentService.create(payload);
+                toast.success("Department created successfully");
             }
             setShowModal(false);
             setFormData({ name: '', description: '', headOfDeptId: '' });
             setEditingId(null);
             loadDepartments();
-        } catch (error) {
-            console.error("Failed to save department");
+        } catch (error: any) {
+            console.error("Failed to save department:", error);
+            toast.error(error.response?.data?.message || "Failed to save department");
         }
     };
 

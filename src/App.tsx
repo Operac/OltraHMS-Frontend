@@ -28,6 +28,7 @@ import AdminDashboard from './pages/admin/Dashboard';
 import FacilityManagement from './pages/admin/FacilityManagement';
 import AuditLogs from './pages/admin/AuditLogs';
 import PayrollManagement from './pages/admin/PayrollManagement';
+import HospitalSettingsPage from './pages/admin/HospitalSettings';
 import LeaveManagement from './pages/admin/LeaveManagement';
 import LeaveSettings from './pages/admin/LeaveSettings';
 import DepartmentList from './pages/admin/DepartmentList';
@@ -167,6 +168,14 @@ function App() {
             <ProtectedRoute allowedRoles={['ADMIN']}>
               <MainLayout>
                 <LeaveSettings />
+              </MainLayout>
+            </ProtectedRoute>
+          } />
+
+          <Route path="/admin/settings" element={
+            <ProtectedRoute allowedRoles={['ADMIN']}>
+              <MainLayout>
+                <HospitalSettingsPage />
               </MainLayout>
             </ProtectedRoute>
           } />

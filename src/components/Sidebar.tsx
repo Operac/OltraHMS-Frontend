@@ -32,6 +32,7 @@ const Sidebar = ({ onClose }: SidebarProps = {}) => {
         { icon: DollarSign, label: 'Payroll', path: '/admin/payroll' },
         { icon: Calendar, label: 'Leaves', path: '/admin/leaves' },
         { icon: Settings, label: 'Leave Settings', path: '/admin/leaves/settings' },
+        { icon: Settings, label: 'Hospital Settings', path: '/admin/settings' },
         { icon: Activity, label: 'Radiology', path: '/radiology' },
         { icon: Activity, label: 'Surgery & OT', path: '/surgery' },
         { icon: Activity, label: 'Operating Theaters', path: '/admin/theaters' },
