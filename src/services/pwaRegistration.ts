@@ -17,7 +17,7 @@ const isBrowser = typeof window !== 'undefined';
 
 export async function registerPWA(): Promise<PWARegistration> {
   if (!isBrowser || !('serviceWorker' in navigator)) {
-    console.warn('Service Workers not supported in this environment');
+    // Silent - service workers not supported
     return {
       ready: Promise.reject(new Error('Service Workers not supported')),
       offlineReady: false
@@ -25,6 +25,16 @@ export async function registerPWA(): Promise<PWARegistration> {
   }
 
   try {
+    // Check if SW file exists before attempting registration
+    const response = await fetch(SW_URL, { method: 'HEAD' });
+    if (!response.ok) {
+      // SW file doesn't exist - skip registration silently
+      return {
+        ready: Promise.reject(new Error('Service Worker not found')),
+        offlineReady: false
+      };
+    }
+
     // Register the service worker
     registration = await navigator.serviceWorker.register(SW_URL, {
       scope: '/'
@@ -63,7 +73,7 @@ export async function registerPWA(): Promise<PWARegistration> {
       offlineReady: true
     };
   } catch (error) {
-    console.error('Service Worker registration failed:', error);
+    // Silent failure - PWA is optional
     return {
       ready: Promise.reject(error),
       offlineReady: false
