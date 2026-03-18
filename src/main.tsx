@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 import { registerPWA, setupNetworkListeners, isOnline } from './services/pwaRegistration'
-import { syncAllPendingData, offlineStorage } from './services/offlineStorage'
+import { syncAllPendingData } from './services/offlineStorage'
 
 // Register PWA Service Worker
 registerPWA().then((pwa) => {

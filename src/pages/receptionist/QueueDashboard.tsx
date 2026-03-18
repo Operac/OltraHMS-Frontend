@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { queueService } from '../../services/queue.service';
 import { queueSocket } from '../../services/socketService';
-import { Users, UserPlus, Phone, Clock, AlertCircle, CheckCircle, X, RefreshCw, ArrowRight, Building } from 'lucide-react';
+import { Users, UserPlus, Phone, Clock, AlertCircle, CheckCircle, RefreshCw, Building } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 interface QueueStats {
@@ -9,14 +9,6 @@ interface QueueStats {
     totalWaiting: number;
     totalInProgress: number;
     totalDoctors: number;
-}
-
-interface Patient {
-    id: string;
-    firstName: string;
-    lastName: string;
-    patientNumber: string;
-    phone?: string;
 }
 
 interface Doctor {

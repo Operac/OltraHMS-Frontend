@@ -159,15 +159,6 @@ function generateFooter(): number[] {
   return commands;
 }
 
-// Convert ArrayBuffer to Base64 for printing
-function arrayBufferToBase64(buffer: number[]): string {
-  let binary = '';
-  for (let i = 0; i < buffer.length; i++) {
-    binary += String.fromCharCode(buffer[i]);
-  }
-  return btoa(binary);
-}
-
 // Print ticket to thermal printer
 export async function printTicket(data: TicketData): Promise<boolean> {
   try {
