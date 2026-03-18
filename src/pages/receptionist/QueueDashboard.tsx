@@ -34,7 +34,6 @@ const QueueDashboard = () => {
     const [walkInPriority, setWalkInPriority] = useState<'normal' | 'emergency'>('normal');
     const [patientSearchQuery, setPatientSearchQuery] = useState('');
     const [patientSearchResults, setPatientSearchResults] = useState<any[]>([]);
-    const [selectedPatient, setSelectedPatient] = useState<any>(null);
     const [isNewPatient, setIsNewPatient] = useState(false);
     const [newPatientData, setNewPatientData] = useState({
         firstName: '',
@@ -61,7 +60,6 @@ const QueueDashboard = () => {
 
     // Handle patient selection
     const handlePatientSelect = (patient: any) => {
-        setSelectedPatient(patient);
         setWalkInPatientId(patient.id);
         setPatientSearchQuery(`${patient.firstName} ${patient.lastName} (${patient.patientNumber})`);
         setPatientSearchResults([]);
@@ -205,7 +203,6 @@ const QueueDashboard = () => {
         setWalkInReason('');
         setWalkInPriority('normal');
         setPatientSearchQuery('');
-        setSelectedPatient(null);
         setIsNewPatient(false);
         setNewPatientData({
             firstName: '',
@@ -413,7 +410,7 @@ const QueueDashboard = () => {
                         <div className="flex gap-4 mb-4">
                             <button
                                 type="button"
-                                onClick={() => { setIsNewPatient(false); setSelectedPatient(null); setPatientSearchQuery(''); }}
+                                onClick={() => { setIsNewPatient(false); setPatientSearchQuery(''); }}
                                 className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
                                     !isNewPatient ? 'bg-sky-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                 }`}
