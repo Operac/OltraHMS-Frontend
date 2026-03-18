@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, UserX, UserCheck, Shield, Banknote } from 'lucide-react';
+import { Plus, UserX, UserCheck, Shield, Banknote, Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { AdminService } from '../../services/admin.service';
 
@@ -7,10 +7,11 @@ const StaffList = () => {
     const [staff, setStaff] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
     
     // Form State
     const [formData, setFormData] = useState({
-        firstName: '', lastName: '', email: '', password: '', role: 'DOCTOR', departmentId: '', specialization: ''
+        firstName: '', lastName: '', email: '', password: '', role: 'DOCTOR', departmentId: '', specialization: '', baseSalary: ''
     });
 
     // HR Form State
@@ -43,7 +44,10 @@ const StaffList = () => {
         e.preventDefault();
         try {
             await toast.promise(
-                AdminService.createStaff(formData),
+                AdminService.createStaff({
+                    ...formData,
+                    baseSalary: formData.baseSalary ? Number(formData.baseSalary) : undefined
+                }),
                 {
                     loading: 'Creating staff member...',
                     success: 'Staff member created successfully!',
@@ -52,7 +56,7 @@ const StaffList = () => {
             );
             setShowModal(false);
             loadStaff();
-            setFormData({ firstName: '', lastName: '', email: '', password: '', role: 'DOCTOR', departmentId: '', specialization: '' });
+            setFormData({ firstName: '', lastName: '', email: '', password: '', role: 'DOCTOR', departmentId: '', specialization: '', baseSalary: '' });
         } catch (error) {
             console.error(error);
         }
@@ -193,7 +197,12 @@ const StaffList = () => {
                                 <input placeholder="Last Name" required className="p-2 border rounded" value={formData.lastName} onChange={e => setFormData({...formData, lastName: e.target.value})} />
                             </div>
                             <input placeholder="Email" type="email" required className="w-full p-2 border rounded" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} />
-                            <input placeholder="Password" type="password" required className="w-full p-2 border rounded" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} />
+                            <div className="relative">
+                                <input placeholder="Password" type={showPassword ? "text" : "password"} required className="w-full p-2 border rounded pr-10" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} />
+                                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                </button>
+                            </div>
                             
                             <div className="grid grid-cols-2 gap-4">
                                 <select className="p-2 border rounded" value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})}>
@@ -205,6 +214,12 @@ const StaffList = () => {
                                     <option value="ADMIN">Admin</option>
                                 </select>
                                 <input placeholder="Specialization (Optional)" className="p-2 border rounded" value={formData.specialization} onChange={e => setFormData({...formData, specialization: e.target.value})} />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Base Salary (Optional)</label>
+                                <input type="number" placeholder="e.g., 50000" className="w-full p-2 border rounded" value={formData.baseSalary} onChange={e => setFormData({...formData, baseSalary: e.target.value})} />
+                                <p className="text-xs text-gray-500 mt-1">Enter annual or monthly base salary</p>
                             </div>
 
                             <div className="flex justify-end gap-2 mt-6">

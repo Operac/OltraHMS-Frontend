@@ -132,6 +132,11 @@ export const wellnessService = {
         const response = await api.patch(`/wellness/goals/${id}/checkin`, { value });
         return response.data;
     },
+    
+    deleteGoal: async (id: string) => {
+        const response = await api.delete(`/wellness/goals/${id}`);
+        return response.data;
+    },
 
     // Vitals
     getVitals: async (type?: string) => {

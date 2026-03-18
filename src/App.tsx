@@ -301,7 +301,7 @@ function App() {
 
           {/* Radiology Routes */}
           <Route path="/radiology" element={
-            <ProtectedRoute allowedRoles={['DOCTOR', 'ADMIN', 'LAB_TECH']}>
+            <ProtectedRoute allowedRoles={['DOCTOR', 'ADMIN', 'LAB_TECH', 'RADIOLOGIST']}>
               <MainLayout>
                 <RadiologyDashboard />
               </MainLayout>
@@ -324,7 +324,7 @@ function App() {
             </ProtectedRoute>
           } />
           <Route path="/surgery/book" element={
-            <ProtectedRoute allowedRoles={['DOCTOR', 'ADMIN']}>
+            <ProtectedRoute allowedRoles={['DOCTOR', 'ADMIN', 'NURSE']}>
               <MainLayout>
                 <BookSurgery />
               </MainLayout>

@@ -1,19 +1,44 @@
 import { useState, useEffect } from 'react';
-import { Plus, Building2, Pencil, Trash2 } from 'lucide-react';
+import { Plus, Building2, Pencil, Trash2, User } from 'lucide-react';
 import { DepartmentService } from '../../services/department.service';
+import { AdminService } from '../../services/admin.service';
 import type { Department } from '../../services/department.service';
+
+interface StaffMember {
+    id: string;
+    user: {
+        firstName: string;
+        lastName: string;
+    };
+    role: string;
+}
 
 const DepartmentList = () => {
     const [departments, setDepartments] = useState<Department[]>([]);
+    const [staff, setStaff] = useState<StaffMember[]>([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
-    const [formData, setFormData] = useState({ name: '', description: '' });
+    const [formData, setFormData] = useState({ name: '', description: '', headOfDeptId: '' });
 
     const [editingId, setEditingId] = useState<string | null>(null);
 
     useEffect(() => {
         loadDepartments();
+        loadStaff();
     }, []);
+
+    const loadStaff = async () => {
+        try {
+            const data = await AdminService.getAllStaff();
+            // Filter to only include potential heads (doctors, nurses, etc.)
+            const potentialHeads = data.filter((s: StaffMember) => 
+                ['DOCTOR', 'NURSE', 'PHARMACIST', 'LAB_TECH', 'RADIOLOGIST', 'RECEPTIONIST'].includes(s.role)
+            );
+            setStaff(potentialHeads);
+        } catch (error) {
+            console.error("Failed to load staff");
+        }
+    };
 
     const loadDepartments = async () => {
         try {
@@ -29,13 +54,18 @@ const DepartmentList = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
+            const payload = {
+                name: formData.name,
+                description: formData.description,
+                headOfDeptId: formData.headOfDeptId || null
+            };
             if (editingId) {
-                await DepartmentService.update(editingId, formData);
+                await DepartmentService.update(editingId, payload);
             } else {
-                await DepartmentService.create(formData);
+                await DepartmentService.create(payload);
             }
             setShowModal(false);
-            setFormData({ name: '', description: '' });
+            setFormData({ name: '', description: '', headOfDeptId: '' });
             setEditingId(null);
             loadDepartments();
         } catch (error) {
@@ -44,7 +74,11 @@ const DepartmentList = () => {
     };
 
     const handleEdit = (dept: Department) => {
-        setFormData({ name: dept.name, description: dept.description || '' });
+        setFormData({ 
+            name: dept.name, 
+            description: dept.description || '',
+            headOfDeptId: dept.headOfDeptId || ''
+        });
         setEditingId(dept.id);
         setShowModal(true);
     };
@@ -60,7 +94,7 @@ const DepartmentList = () => {
     };
 
     const openCreateModal = () => {
-        setFormData({ name: '', description: '' });
+        setFormData({ name: '', description: '', headOfDeptId: '' });
         setEditingId(null);
         setShowModal(true);
     }
@@ -142,6 +176,24 @@ const DepartmentList = () => {
                                     value={formData.description}
                                     onChange={e => setFormData({ ...formData, description: e.target.value })}
                                 />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    <User className="w-4 h-4 inline mr-1" />
+                                    Head of Department
+                                </label>
+                                <select
+                                    value={formData.headOfDeptId}
+                                    onChange={e => setFormData({ ...formData, headOfDeptId: e.target.value })}
+                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400 outline-none"
+                                >
+                                    <option value="">-- Select Department Head --</option>
+                                    {staff.map(s => (
+                                        <option key={s.id} value={s.id}>
+                                            {s.user.firstName} {s.user.lastName} ({s.role})
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
                             <div className="flex gap-3 justify-end mt-6">
                                 <button

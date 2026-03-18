@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { PatientService } from '../../services/patient.service';
+import { wellnessService } from '../../services/wellness.service';
 import api from '../../services/api';
-import { Calendar, Activity, Pill, CreditCard, ChevronRight, Video, TestTube } from 'lucide-react';
+import { Calendar, Activity, Pill, CreditCard, ChevronRight, Video, TestTube, Heart, Thermometer } from 'lucide-react';
 
 interface DashboardStats {
     nextAppointment: any | null;
@@ -11,6 +12,7 @@ interface DashboardStats {
     outstandingBalance: number;
     recentActivity: any[];
     vitals: any | null;
+    lastVitals: any | null;
     queueStatus: any | null;
     medicationSchedule: {
         prescriptions: any[];
@@ -43,14 +45,15 @@ const PatientDashboard = () => {
         const fetchStats = async () => {
             try {
                 // Fetch in parallel
-                const [queue, records, invoices, prescriptions, profile, medSchedule, dashboardStats] = await Promise.all([
+                const [queue, records, invoices, prescriptions, profile, medSchedule, dashboardStats, vitals] = await Promise.all([
                     PatientService.getQueueStatus().catch(() => null), 
                     PatientService.getMedicalRecords().catch(() => []), 
                     PatientService.getInvoices().catch(() => []), 
                     PatientService.getPrescriptions().catch(() => []), 
                     PatientService.getEmergencyProfile().catch(() => null),
                     PatientService.getMedicationSchedule().catch(() => null),
-                    PatientService.getDashboardStats().catch(() => null)
+                    PatientService.getDashboardStats().catch(() => null),
+                    wellnessService.getVitals().catch(() => [])
                 ]);
 
                 // Calculate Outstanding Balance
@@ -62,6 +65,9 @@ const PatientDashboard = () => {
                 // Process Recent Activity (Last 5 records)
                 const sortedRecords = Array.isArray(records) ? records.slice(0, 5) : [];
 
+                // Get last recorded vitals (most recent)
+                const lastVitals = vitals && vitals.length > 0 ? vitals[0] : null;
+
                 setStats({
                     nextAppointment: dashboardStats?.nextAppointment || null,
                     queueStatus: queue?.appointmentId ? queue : null,
@@ -69,6 +75,7 @@ const PatientDashboard = () => {
                     outstandingBalance: balance,
                     recentActivity: sortedRecords,
                     vitals: profile,
+                    lastVitals: lastVitals,
                     medicationSchedule: medSchedule
                 });
             } catch (error) {
@@ -189,6 +196,43 @@ const PatientDashboard = () => {
                          </div>
                      ) : (
                          <div className="mt-4 text-gray-400 text-sm">Profile incomplete.</div>
+                     )}
+                </div>
+
+                {/* Last Vitals Card */}
+                <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 group">
+                     <div className="flex items-center justify-between mb-4">
+                        <div className="w-10 h-10 bg-rose-50 rounded-full flex items-center justify-center text-rose-500 group-hover:bg-rose-100 transition-colors">
+                            <Heart className="w-5 h-5" />
+                        </div>
+                        <span className="text-xs font-bold text-rose-500 bg-rose-50 px-2 py-1 rounded-full uppercase tracking-wider"> Last Vitals </span>
+                    </div>
+                    
+                     {stats?.lastVitals ? (
+                         <div className="space-y-3">
+                             <div className="flex justify-between items-center px-2 py-1 bg-gray-50 rounded-lg">
+                                 <span className="text-gray-500 text-sm flex items-center gap-1"><Heart size={14} /> Blood Pressure</span>
+                                 <span className="font-bold text-gray-900">{stats.lastVitals.bloodPressureSystolic}/{stats.lastVitals.bloodPressureDiastolic}</span>
+                             </div>
+                             <div className="flex justify-between items-center px-2 py-1 bg-gray-50 rounded-lg">
+                                 <span className="text-gray-500 text-sm flex items-center gap-1"><Activity size={14} /> Heart Rate</span>
+                                 <span className="font-bold text-gray-900">{stats.lastVitals.heartRate} bpm</span>
+                             </div>
+                             <div className="flex justify-between items-center px-2 py-1 bg-gray-50 rounded-lg">
+                                 <span className="text-gray-500 text-sm flex items-center gap-1"><Thermometer size={14} /> Temperature</span>
+                                 <span className="font-bold text-gray-900">{stats.lastVitals.temperature}°C</span>
+                             </div>
+                              <p className="text-xs text-gray-400 mt-2 px-1">
+                                Recorded: {stats.lastVitals.recordedAt ? new Date(stats.lastVitals.recordedAt).toLocaleString() : 'N/A'}
+                              </p>
+                         </div>
+                     ) : (
+                         <div className="mt-4 text-gray-400 text-sm">
+                            <p>No vitals recorded yet.</p>
+                            <Link to="/wellness" className="text-sky-500 text-xs font-medium hover:underline mt-2 inline-block">
+                                Record your first vitals →
+                            </Link>
+                        </div>
                      )}
                 </div>
 

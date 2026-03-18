@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
-import { CheckCircle, Calculator } from 'lucide-react';
+import { CheckCircle, Calculator, Pencil } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { AdminService } from '../../services/admin.service';
 
 const PayrollManagement = () => {
     const [payrolls, setPayrolls] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [selectedPayroll, setSelectedPayroll] = useState<any>(null);
+    const [editForm, setEditForm] = useState({ bonuses: '', deductions: '', tax: '' });
     
     // Filter/Generate State
     const [selectedMonth, setSelectedMonth] = useState(new Date().toLocaleString('default', { month: 'long' }));
@@ -62,6 +65,34 @@ const PayrollManagement = () => {
             loadPayrolls();
         } catch (error) {
             toast.error("Failed to update status");
+        }
+    };
+
+    const openEditModal = (p: any) => {
+        setSelectedPayroll(p);
+        setEditForm({
+            bonuses: p.bonuses?.toString() || '0',
+            deductions: p.deductions?.toString() || '0',
+            tax: p.tax?.toString() || '0'
+        });
+        setShowEditModal(true);
+    };
+
+    const handleUpdatePayroll = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!selectedPayroll) return;
+
+        try {
+            await AdminService.updatePayroll(selectedPayroll.id, {
+                bonuses: Number(editForm.bonuses),
+                deductions: Number(editForm.deductions),
+                tax: Number(editForm.tax)
+            });
+            toast.success("Payroll updated successfully");
+            setShowEditModal(false);
+            loadPayrolls();
+        } catch (error) {
+            toast.error("Failed to update payroll");
         }
     };
 
@@ -138,12 +169,21 @@ const PayrollManagement = () => {
                                 </td>
                                 <td className="px-6 py-4 text-right">
                                     {p.status === 'PENDING' && (
-                                        <button 
-                                            onClick={() => handleMarkPaid(p.id)}
-                                            className="text-white bg-green-500 hover:bg-green-600 px-3 py-1 rounded text-xs flex items-center gap-1 ml-auto"
-                                        >
-                                            <CheckCircle className="w-3 h-3" /> Mark Paid
-                                        </button>
+                                        <div className="flex gap-2 justify-end">
+                                            <button 
+                                                onClick={() => openEditModal(p)}
+                                                className="text-gray-500 hover:text-sky-500 p-1"
+                                                title="Edit additions/deductions"
+                                            >
+                                                <Pencil className="w-4 h-4" />
+                                            </button>
+                                            <button 
+                                                onClick={() => handleMarkPaid(p.id)}
+                                                className="text-white bg-green-500 hover:bg-green-600 px-3 py-1 rounded text-xs flex items-center gap-1"
+                                            >
+                                                <CheckCircle className="w-3 h-3" /> Mark Paid
+                                            </button>
+                                        </div>
                                     )}
                                     {p.status === 'PAID' && <span className="text-xs text-gray-400">Paid on {new Date(p.paymentDate).toLocaleDateString()}</span>}
                                 </td>
@@ -152,6 +192,42 @@ const PayrollManagement = () => {
                     </tbody>
                 </table>
             </div>
+
+            {/* Edit Payroll Modal */}
+            {showEditModal && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+                    <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+                        <h2 className="text-lg font-bold mb-4">Edit Payroll - {selectedPayroll?.staff?.user?.firstName} {selectedPayroll?.staff?.user?.lastName}</h2>
+                        <form onSubmit={handleUpdatePayroll} className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Base Salary</label>
+                                <input type="text" disabled className="w-full p-2 border rounded bg-gray-100" value={`${selectedPayroll?.baseSalary?.toLocaleString()}`} />
+                            </div>
+                            <div className="grid grid-cols-3 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Bonuses</label>
+                                    <input type="number" className="w-full p-2 border rounded" value={editForm.bonuses} onChange={e => setEditForm({...editForm, bonuses: e.target.value})} />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Deductions</label>
+                                    <input type="number" className="w-full p-2 border rounded" value={editForm.deductions} onChange={e => setEditForm({...editForm, deductions: e.target.value})} />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Tax</label>
+                                    <input type="number" className="w-full p-2 border rounded" value={editForm.tax} onChange={e => setEditForm({...editForm, tax: e.target.value})} />
+                                </div>
+                            </div>
+                            <div className="text-sm text-gray-500 text-right">
+                                Net Salary: <span className="font-bold text-gray-900">${(Number(selectedPayroll?.baseSalary) + Number(editForm.bonuses) - Number(editForm.deductions) - Number(editForm.tax)).toLocaleString()}</span>
+                            </div>
+                            <div className="flex justify-end gap-2 mt-6">
+                                <button type="button" onClick={() => setShowEditModal(false)} className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">Cancel</button>
+                                <button type="submit" className="px-4 py-2 bg-sky-500 text-white rounded hover:bg-sky-600">Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

@@ -68,9 +68,10 @@ const PatientSettings = () => {
             if (user) {
                 login(token!, { ...user, ...updated.user }); // careful with matching user shape
             }
-            setMessage({ type: 'success', text: 'Profile updated successfully.' });
-        } catch (error) {
-            setMessage({ type: 'error', text: 'Failed to update profile.' });
+            setMessage({ type: 'success', text: 'Profile updated successfully!' });
+        } catch (error: any) {
+            const errorMsg = error.response?.data?.message || 'Failed to update profile. Please try again.';
+            setMessage({ type: 'error', text: errorMsg });
         }
     };
 
@@ -79,35 +80,51 @@ const PatientSettings = () => {
         setMessage(null);
         try {
             await PatientService.updateEmergencyProfile(emergency);
-            setMessage({ type: 'success', text: 'Emergency profile updated.' });
-        } catch (error) {
-            setMessage({ type: 'error', text: 'Failed to update emergency info.' });
+            setMessage({ type: 'success', text: 'Emergency contact updated successfully!' });
+        } catch (error: any) {
+            const errorMsg = error.response?.data?.message || 'Failed to update emergency contact. Please try again.';
+            setMessage({ type: 'error', text: errorMsg });
         }
     };
 
     const handleAddDependent = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
+            // Validate DOB
+            if (!newDependent.dob) {
+                setMessage({ type: 'error', text: 'Please select a date of birth.' });
+                return;
+            }
+            
+            const dobDate = new Date(newDependent.dob);
+            const today = new Date();
+            if (dobDate >= today) {
+                setMessage({ type: 'error', text: 'Date of birth must be in the past.' });
+                return;
+            }
+            
             await PatientService.addDependent(newDependent);
             setNewDependent({ firstName: '', lastName: '', relationship: '', gender: 'MALE', dob: '' });
             setShowAddDependent(false);
             const refresh = await PatientService.getDependents();
             setDependents(refresh);
-            setMessage({ type: 'success', text: 'Family member added.' });
-        } catch (error) {
-            setMessage({ type: 'error', text: 'Failed to add dependent.' });
+            setMessage({ type: 'success', text: 'Family member added successfully!' });
+        } catch (error: any) {
+            const errorMsg = error.response?.data?.message || 'Failed to add family member. Please check the form and try again.';
+            setMessage({ type: 'error', text: errorMsg });
         }
     };
 
     const handleRemoveDependent = async (id: string) => {
-        if(!confirm('Remove this family member?')) return;
+        if(!confirm('Are you sure you want to remove this family member?')) return;
         try {
             await PatientService.removeDependent(id);
              const refresh = await PatientService.getDependents();
             setDependents(refresh);
-             setMessage({ type: 'success', text: 'Family member removed.' });
-        } catch (error) {
-             setMessage({ type: 'error', text: 'Failed to remove dependent.' });
+             setMessage({ type: 'success', text: 'Family member removed successfully.' });
+        } catch (error: any) {
+             const errorMsg = error.response?.data?.message || 'Failed to remove family member. Please try again.';
+             setMessage({ type: 'error', text: errorMsg });
         }
     };
 

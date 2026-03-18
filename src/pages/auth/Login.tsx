@@ -65,6 +65,9 @@ const Login = () => {
                     case 'NURSE':
                         window.location.href = '/inpatient';
                         break;
+                    case 'RADIOLOGIST':
+                        window.location.href = '/radiology';
+                        break;
                     default:
                         navigate('/app');
                 }

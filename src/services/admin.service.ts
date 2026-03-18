@@ -92,6 +92,11 @@ export const AdminService = {
         return response.data;
     },
 
+    updatePayroll: async (id: string, data: { bonuses?: number; deductions?: number; tax?: number }) => {
+        const response = await api.patch(`/payroll/${id}`, data);
+        return response.data;
+    },
+
     // Audit Logs
     getAuditLogs: async () => {
         const response = await api.get('/admin/audit-logs');

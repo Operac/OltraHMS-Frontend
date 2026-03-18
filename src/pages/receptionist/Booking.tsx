@@ -20,6 +20,7 @@ const Booking = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [patients, setPatients] = useState<any[]>([]);
     const [selectedPatient, setSelectedPatient] = useState<any>(null);
+    const [searching, setSearching] = useState(false);
 
     // Step 2: Details
     const [doctors, setDoctors] = useState<any[]>([]);
@@ -35,6 +36,18 @@ const Booking = () => {
         loadDoctors();
     }, []);
 
+    useEffect(() => {
+        // Auto-search when query changes (debounced)
+        const timer = setTimeout(() => {
+            if (searchQuery.trim().length >= 2) {
+                handleSearch();
+            } else {
+                setPatients([]);
+            }
+        }, 300);
+        return () => clearTimeout(timer);
+    }, [searchQuery]);
+
     const loadDoctors = async () => {
         try {
             const data = await listDoctors();
@@ -44,13 +57,18 @@ const Booking = () => {
         }
     };
 
-    const handleSearch = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleSearch = async (e?: React.FormEvent) => {
+        if (e) e.preventDefault();
+        if (!searchQuery.trim()) return;
+        
+        setSearching(true);
         try {
             const results = await searchPatients(searchQuery);
             setPatients(results);
         } catch (err) {
             console.error("Search failed", err);
+        } finally {
+            setSearching(false);
         }
     };
 
@@ -131,7 +149,9 @@ const Booking = () => {
                             </form>
 
                             <div className="space-y-3">
-                                {patients.map(patient => (
+                                {searching ? (
+                                    <div className="text-center text-gray-500 py-4">Searching...</div>
+                                ) : patients.map(patient => (
                                     <div 
                                         key={patient.id} 
                                         onClick={() => handleSelectPatient(patient)}

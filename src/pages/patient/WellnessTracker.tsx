@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { wellnessService } from '../../services/wellness.service';
 import type { WellnessGoal } from '../../services/wellness.service';
-import { Plus, Flame, Trophy, CheckCircle, Activity, Droplets, Moon, Brain, Apple } from 'lucide-react';
+import { Plus, Flame, Trophy, CheckCircle, Activity, Droplets, Moon, Brain, Apple, Trash2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 const WellnessTracker = () => {
@@ -78,6 +78,17 @@ const WellnessTracker = () => {
         }
     };
 
+    const handleDelete = async (id: string) => {
+        if (!confirm('Are you sure you want to delete this habit?')) return;
+        try {
+            await wellnessService.deleteGoal(id);
+            setGoals(goals.filter(g => g.id !== id));
+        } catch (err) {
+            console.error(err);
+            fetchGoals();
+        }
+    };
+
     const getIcon = (category: string) => {
         switch (category) {
             case 'Nutrition': return <Apple className="text-green-500" />;
@@ -141,9 +152,18 @@ const WellnessTracker = () => {
                         <div key={goal.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 relative overflow-hidden group hover:shadow-md transition-shadow">
                             
                             {/* Streak Badge */}
-                            <div className="absolute top-4 right-4 flex items-center gap-1 text-xs font-bold text-orange-500 bg-orange-50 px-2 py-1 rounded-full">
-                                <Flame size={12} className="fill-current" />
-                                {goal.streak} Day Streak
+                            <div className="absolute top-4 right-4 flex items-center gap-1">
+                                <div className="flex items-center gap-1 text-xs font-bold text-orange-500 bg-orange-50 px-2 py-1 rounded-full">
+                                    <Flame size={12} className="fill-current" />
+                                    {goal.streak} Day Streak
+                                </div>
+                                <button 
+                                    onClick={() => handleDelete(goal.id)}
+                                    className="text-gray-400 hover:text-red-500 p-1 rounded-full hover:bg-red-50 transition-colors"
+                                    title="Delete habit"
+                                >
+                                    <Trash2 size={14} />
+                                </button>
                             </div>
 
                             <div className="flex items-start gap-4 mb-4">

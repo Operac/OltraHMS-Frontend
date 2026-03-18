@@ -43,6 +43,7 @@ const Sidebar = ({ onClose }: SidebarProps = {}) => {
       return [
         ...common,
         { icon: Users, label: 'My Patients', path: '/patients' }, // Maybe filter patients?
+        { icon: BedDouble, label: 'Inpatients', path: '/inpatient' },
         { icon: Calendar, label: 'Schedule', path: '/appointments' },
         { icon: Video, label: 'Telemedicine', path: '/doctor/telemedicine' },
         { icon: Activity, label: 'Radiology', path: '/radiology' },
@@ -99,6 +100,13 @@ const Sidebar = ({ onClose }: SidebarProps = {}) => {
         return [
           { icon: Activity, label: 'Lab Dashboard', path: '/lab-tech' },
           { icon: Activity, label: 'Radiology', path: '/radiology' },
+          { icon: Settings, label: 'Profile', path: '/settings' },
+        ];
+    }
+
+    if (role === 'RADIOLOGIST') {
+        return [
+          { icon: Activity, label: 'Radiology Dashboard', path: '/radiology' },
           { icon: Settings, label: 'Profile', path: '/settings' },
         ];
     }
