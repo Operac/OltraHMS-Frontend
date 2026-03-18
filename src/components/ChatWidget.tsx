@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import io, { Socket } from 'socket.io-client';
-import { MessageCircle, X, Send, ChevronDown } from 'lucide-react';
+import { MessageCircle, X, Send, ChevronDown, Volume2, VolumeX } from 'lucide-react';
 import api from '../services/api';
 
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3000';
@@ -24,6 +24,8 @@ const ChatWidget = () => {
     const [inputText, setInputText] = useState('');
     const [currentChannel, setCurrentChannel] = useState('general');
     const [showGenerals, setShowChannels] = useState(false);
+    const [unreadCount, setUnreadCount] = useState(0);
+    const [soundEnabled, setSoundEnabled] = useState(true);
     
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -37,12 +39,26 @@ const ChatWidget = () => {
         newSocket.emit('join-room', currentChannel);
 
         newSocket.on('receive-message', (data: any) => {
-            setMessages(prev => [...prev, {
-                content: data.message,
-                senderName: data.senderName,
-                timestamp: data.timestamp,
-                senderId: 'remote' // We don't verify id from socket event yet for color
-            }]);
+            const isFromMe = data.senderId === user.id;
+            
+            // Play sound notification for incoming messages (when chat is open or closed)
+            if (!isFromMe && soundEnabled) {
+                playNotificationSound();
+            }
+            
+            // Only add to messages if chat is open AND in the same channel
+            // OR increment unread count if chat is closed or different channel
+            if (isOpen && data.roomId === currentChannel) {
+                setMessages(prev => [...prev, {
+                    content: data.message,
+                    senderName: data.senderName,
+                    senderId: data.senderId,
+                    timestamp: data.timestamp
+                }]);
+            } else if (!isFromMe) {
+                // Increment unread count for messages in other channels or when chat is closed
+                setUnreadCount(prev => prev + 1);
+            }
         });
         
         // Load history
@@ -53,10 +69,23 @@ const ChatWidget = () => {
         };
     }, [isOpen, currentChannel, user]);
 
-    // Scroll to bottom
+    // Clear unread count when opening chat
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [messages, isOpen]);
+        if (isOpen) {
+            setUnreadCount(0);
+        }
+    }, [isOpen]);
+
+    // Play notification sound
+    const playNotificationSound = () => {
+        try {
+            const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2teleV4gWqrb5bBlHTpjl9npsWMgQmCh1+CyZh1BYJ7V4rRjHT5fmdLfr2MdP1+Z0d6vYh1BX5jP369iHT9fl8/er2IdP1+Xz96vYh0/X5fP3q9iHT9fl8/er2IdP1+Xz96vYh0/X5fP3q9iHT9fl8/er2IdP1+Xz96vYh0/X5fP3q9iHT9fl8/er2IdP1+Xz96vYh0/X5fP3q9iHT9fl8/er2IdP1+Xz96vYh0/X5fP3q9iHT9fl8/er2IdP1+Xz96vYh0/X5fP3q9iHT9fl8/er2IdP1+Xz96vYh0/X5fP3q9iHT9fl8/er2IdP1+Xz96vYh0/X5fP3q9iHT9fl8/er2IdP1+Xz96vYh0/X5fP3q9iHT9fl8/er2IdP1+Xz96vYh0/X5fP3q9iHT9fl8/er2IdP1+Xz96vYh0/X5fP3q9iHT9fl8/er2IdP1+Xz96vYh0/X5fP3q9iHT9fl8/er2IdP1+Xz96vYh0');
+            audio.volume = 0.3;
+            audio.play().catch(() => {}); // Ignore errors
+        } catch (e) {
+            // Ignore audio errors
+        }
+    };
 
     const loadHistory = async (channel: string) => {
         try {
@@ -119,7 +148,7 @@ const ChatWidget = () => {
                     {/* Header */}
                     <div className="bg-sky-500 text-white p-4 flex justify-between items-center shrink-0">
                         <div className="flex items-center gap-2 relative">
-                             <button 
+                            <button 
                                 onClick={() => setShowChannels(!showGenerals)}
                                 className="font-bold flex items-center gap-1 hover:bg-sky-600/50 px-2 py-1 rounded transition-colors"
                             >
@@ -129,7 +158,7 @@ const ChatWidget = () => {
                             
                             {/* Channel Dropdown */}
                             {showGenerals && (
-                                <div className="absolute top-full left-0 mt-2 w-40 bg-white rounded-lg shadow-xl border border-gray-100 py-1 text-gray-800">
+                                <div className="absolute top-full left-0 mt-2 w-40 bg-white rounded-lg shadow-xl border border-gray-100 py-1 text-gray-800 z-50">
                                     {channels.map(c => (
                                         <button
                                             key={c.id}
@@ -146,9 +175,18 @@ const ChatWidget = () => {
                                 </div>
                             )}
                         </div>
-                        <button onClick={() => setIsOpen(false)} className="hover:bg-sky-600/50 p-1 rounded">
-                            <X size={20} />
-                        </button>
+                        <div className="flex items-center gap-2">
+                            <button 
+                                onClick={() => setSoundEnabled(!soundEnabled)} 
+                                className="hover:bg-sky-600/50 p-1 rounded transition-colors"
+                                title={soundEnabled ? 'Mute notifications' : 'Enable notifications'}
+                            >
+                                {soundEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
+                            </button>
+                            <button onClick={() => setIsOpen(false)} className="hover:bg-sky-600/50 p-1 rounded">
+                                <X size={20} />
+                            </button>
+                        </div>
                     </div>
 
                     {/* Messages */}
@@ -198,9 +236,14 @@ const ChatWidget = () => {
             {!isOpen && (
                 <button
                     onClick={() => setIsOpen(true)}
-                    className="bg-sky-500 text-white p-4 rounded-full shadow-lg hover:scale-110 active:scale-95 transition-all flex items-center justify-center"
+                    className="bg-sky-500 text-white p-4 rounded-full shadow-lg hover:scale-110 active:scale-95 transition-all flex items-center justify-center relative"
                 >
                     <MessageCircle size={24} />
+                    {unreadCount > 0 && (
+                        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-pulse">
+                            {unreadCount > 9 ? '9+' : unreadCount}
+                        </span>
+                    )}
                 </button>
             )}
         </div>
