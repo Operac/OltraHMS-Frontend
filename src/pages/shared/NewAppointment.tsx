@@ -5,7 +5,8 @@ import {
   Check, ChevronRight, ChevronLeft, Search 
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { format, addMinutes } from 'date-fns';
+import { format, addMinutes, parse, getDay } from 'date-fns';
+import { SettingsService } from '../../services/settings.service';
 
 const steps = ['Select Patient', 'Select Doctor', 'Select Time', 'Confirm'];
 
@@ -45,6 +46,7 @@ const NewAppointment = () => {
     const [selectedTime, setSelectedTime] = useState<string>('');
     const [appointmentType, setAppointmentType] = useState<string>('');
     const [reason, setReason] = useState('');
+    const [hospitalSettings, setHospitalSettings] = useState<any>(null);
 
 
     // Fetch Initial Data
@@ -52,6 +54,10 @@ const NewAppointment = () => {
         const fetchData = async () => {
             try {
                 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+                // Fetch hospital settings for time slots
+                const settingsRes = await SettingsService.getHospitalSettings();
+                setHospitalSettings(settingsRes);
+                
                 // Fetch doctors initially
                 const docRes = await axios.get(`${API_URL}/staff/doctors`, {
                      headers: { Authorization: `Bearer ${token}` }
@@ -258,8 +264,56 @@ const NewAppointment = () => {
                     </div>
                 );
             case 2:
-                // Simple Time Slot Generator
-                const timeSlots = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30'];
+                // Dynamic Time Slot Generator based on hospital settings
+                const generateTimeSlots = () => {
+                    if (!hospitalSettings) {
+                        // Fallback to old behavior if settings not loaded
+                        return ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30'];
+                    }
+                    
+                    const selectedDateObj = new Date(selectedDate);
+                    const dayOfWeek = getDay(selectedDateObj); // 0 = Sunday, 1 = Monday, etc.
+                    const dayMap: { [key: number]: string } = {
+                        0: 'sunday', 1: 'monday', 2: 'tuesday', 3: 'wednesday',
+                        4: 'thursday', 5: 'friday', 6: 'saturday'
+                    };
+                    const dayKey = dayMap[dayOfWeek];
+                    const isOpenKey = `${dayKey}IsOpen` as keyof typeof hospitalSettings;
+                    const openKey = `${dayKey}Open` as keyof typeof hospitalSettings;
+                    const closeKey = `${dayKey}Close` as keyof typeof hospitalSettings;
+                    
+                    // Check if hospital is open on this day
+                    if (!hospitalSettings[isOpenKey]) {
+                        return [];
+                    }
+                    
+                    const openTime = hospitalSettings[openKey] || '09:00';
+                    const closeTime = hospitalSettings[closeKey] || '17:00';
+                    const slotDuration = hospitalSettings.timeSlotDuration || 30;
+                    
+                    const slots: string[] = [];
+                    const [openHour, openMin] = openTime.split(':').map(Number);
+                    const [closeHour, closeMin] = closeTime.split(':').map(Number);
+                    
+                    let currentTime = new Date(selectedDate);
+                    currentTime.setHours(openHour, openMin, 0, 0);
+                    
+                    const endTime = new Date(selectedDate);
+                    endTime.setHours(closeHour, closeMin, 0, 0);
+                    
+                    while (currentTime < endTime) {
+                        slots.push(format(currentTime, 'HH:mm'));
+                        currentTime = addMinutes(currentTime, slotDuration);
+                    }
+                    
+                    return slots;
+                };
+                
+                const timeSlots = generateTimeSlots();
+                
+                // Show warning if no slots available
+                const isHospitalClosed = timeSlots.length === 0 && hospitalSettings;
+                
                 return (
                     <div className="space-y-6">
                         <div>
@@ -274,17 +328,27 @@ const NewAppointment = () => {
                         </div>
                          <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">Available Slots</label>
-                            <div className="grid grid-cols-3 md:grid-cols-5 gap-3">
-                                {timeSlots.map(time => (
-                                    <button
-                                        key={time}
-                                        onClick={() => setSelectedTime(time)}
-                                        className={`py-2 px-3 text-sm rounded-lg border ${selectedTime === time ? 'bg-sky-500 text-white border-sky-500' : 'hover:bg-gray-50'}`}
-                                    >
-                                        {time}
-                                    </button>
-                                ))}
-                            </div>
+                            {isHospitalClosed ? (
+                                <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-700 text-center">
+                                    Hospital is closed on this day. Please select another date.
+                                </div>
+                            ) : timeSlots.length === 0 ? (
+                                <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg text-gray-500 text-center">
+                                    Loading available slots...
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-3 md:grid-cols-5 gap-3">
+                                    {timeSlots.map(time => (
+                                        <button
+                                            key={time}
+                                            onClick={() => setSelectedTime(time)}
+                                            className={`py-2 px-3 text-sm rounded-lg border ${selectedTime === time ? 'bg-sky-500 text-white border-sky-500' : 'hover:bg-gray-50'}`}
+                                        >
+                                            {time}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                         <div>
                              <label className="block text-sm font-medium text-gray-700 mb-2">Appointment Type</label>

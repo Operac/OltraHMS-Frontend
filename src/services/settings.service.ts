@@ -4,6 +4,7 @@ export interface HospitalSettings {
   id: string;
   currencyCode: string;
   currencySymbol: string;
+  timeSlotDuration: number; // in minutes (default 30)
   mondayOpen: string;
   mondayClose: string;
   mondayIsOpen: boolean;
