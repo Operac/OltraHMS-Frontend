@@ -5,7 +5,7 @@ import {
   Check, ChevronRight, ChevronLeft, Search 
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { format, addMinutes, parse, getDay } from 'date-fns';
+import { format, addMinutes, getDay } from 'date-fns';
 import { SettingsService } from '../../services/settings.service';
 
 const steps = ['Select Patient', 'Select Doctor', 'Select Time', 'Confirm'];
