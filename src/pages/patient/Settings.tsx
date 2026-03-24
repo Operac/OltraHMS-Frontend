@@ -357,7 +357,6 @@ const PatientSettings = () => {
                     newInsurance={newInsurance}
                     setNewInsurance={setNewInsurance}
                     handleAddInsurance={handleAddInsurance}
-                    setMessage={setMessage}
                 />
             )}
         </div>
@@ -367,7 +366,7 @@ const PatientSettings = () => {
 export default PatientSettings;
 
 // Insurance Tab Component
-const InsuranceTab = ({ insurances, showAddInsurance, setShowAddInsurance, newInsurance, setNewInsurance, handleAddInsurance, setMessage }: any) => {
+const InsuranceTab = ({ insurances, showAddInsurance, setShowAddInsurance, newInsurance, setNewInsurance, handleAddInsurance }: any) => {
     const statusColors: any = {
         PENDING: 'bg-yellow-100 text-yellow-800',
         ACTIVE: 'bg-green-100 text-green-800',
