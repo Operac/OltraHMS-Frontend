@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { User, Save, AlertCircle, CheckCircle, Heart, Users, Plus, Trash2 } from 'lucide-react';
+import { User, Save, AlertCircle, CheckCircle, Heart, Users, Plus, Trash2, Shield } from 'lucide-react';
 import { PatientService } from '../../services/patient.service';
 
 const PatientSettings = () => {
     const { token, login, user } = useAuth();
     const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState<'profile' | 'emergency' | 'family'>('profile');
+    const [activeTab, setActiveTab] = useState<'profile' | 'emergency' | 'family' | 'insurance'>('profile');
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
     // Form States
@@ -14,9 +14,12 @@ const PatientSettings = () => {
     const [emergency, setEmergency] = useState<any>({});
     const [dependents, setDependents] = useState<any[]>([]);
     
-    // Dependent Form State
-    const [newDependent, setNewDependent] = useState({ firstName: '', lastName: '', relationship: '', gender: 'MALE', dob: '' });
+    // Insurance State
+    const [insurances, setInsurances] = useState<any[]>([]);
+    const [showAddInsurance, setShowAddInsurance] = useState(false);
+    const [newInsurance, setNewInsurance] = useState({ provider: '', planName: '', policyNumber: '', groupNumber: '', coveragePercentage: 100, validFrom: '', validUntil: '' });
     const [showAddDependent, setShowAddDependent] = useState(false);
+    const [newDependent, setNewDependent] = useState({ firstName: '', lastName: '', relationship: '', gender: 'MALE', dob: '' });
 
     useEffect(() => {
         if (!token) return;
@@ -26,9 +29,10 @@ const PatientSettings = () => {
     const fetchAllData = async () => {
         try {
             setLoading(true);
-            const [profileData, dependentsList] = await Promise.all([
+            const [profileData, dependentsList, insuranceList] = await Promise.all([
                  PatientService.getProfile(), // Should return user info + emergency profile
-                 PatientService.getDependents().catch(() => []) 
+                 PatientService.getDependents().catch(() => []),
+                 PatientService.getInsurancePolicies().catch(() => [])
             ]);
 
             setProfile({
@@ -51,6 +55,7 @@ const PatientSettings = () => {
             });
             
             setDependents(dependentsList);
+            setInsurances(insuranceList);
         } catch (error) {
             console.error("Failed to load settings", error);
         } finally {
@@ -128,6 +133,21 @@ const PatientSettings = () => {
         }
     };
 
+    const handleAddInsurance = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            await PatientService.addInsurancePolicy(newInsurance);
+            setNewInsurance({ provider: '', planName: '', policyNumber: '', groupNumber: '', coveragePercentage: 100, validFrom: '', validUntil: '' });
+            setShowAddInsurance(false);
+            const refresh = await PatientService.getInsurancePolicies();
+            setInsurances(refresh);
+            setMessage({ type: 'success', text: 'Insurance policy added successfully!' });
+        } catch (error: any) {
+            const errorMsg = error.response?.data?.message || 'Failed to add insurance. Please try again.';
+            setMessage({ type: 'error', text: errorMsg });
+        }
+    };
+
     if (loading) return <div className="p-10 text-center">Loading settings...</div>;
 
     return (
@@ -156,6 +176,13 @@ const PatientSettings = () => {
                 >
                     <span className="flex items-center gap-2"><Users className="w-4 h-4" /> Family & Dependents</span>
                     {activeTab === 'family' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-teal-600 rounded-t-full"></div>}
+                </button>
+                <button 
+                    onClick={() => setActiveTab('insurance')}
+                    className={`pb-4 px-6 font-medium text-sm transition-colors relative ${activeTab === 'insurance' ? 'text-indigo-600' : 'text-gray-500 hover:text-gray-700'}`}
+                >
+                    <span className="flex items-center gap-2"><Shield className="w-4 h-4" /> Insurance</span>
+                    {activeTab === 'insurance' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-indigo-600 rounded-t-full"></div>}
                 </button>
             </div>
 
@@ -320,8 +347,114 @@ const PatientSettings = () => {
                     </div>
                 </div>
             )}
+
+            {/* Insurance Tab */}
+            {activeTab === 'insurance' && (
+                <InsuranceTab 
+                    insurances={insurances} 
+                    showAddInsurance={showAddInsurance} 
+                    setShowAddInsurance={setShowAddInsurance}
+                    newInsurance={newInsurance}
+                    setNewInsurance={setNewInsurance}
+                    handleAddInsurance={handleAddInsurance}
+                    setMessage={setMessage}
+                />
+            )}
         </div>
     );
 };
 
 export default PatientSettings;
+
+// Insurance Tab Component
+const InsuranceTab = ({ insurances, showAddInsurance, setShowAddInsurance, newInsurance, setNewInsurance, handleAddInsurance, setMessage }: any) => {
+    const statusColors: any = {
+        PENDING: 'bg-yellow-100 text-yellow-800',
+        ACTIVE: 'bg-green-100 text-green-800',
+        VERIFIED: 'bg-blue-100 text-blue-800',
+        REJECTED: 'bg-red-100 text-red-800',
+        EXPIRED: 'bg-gray-100 text-gray-800',
+    };
+
+    return (
+        <div className="space-y-6 animate-fadeIn">
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex justify-between items-center">
+                <div>
+                    <h3 className="font-bold text-gray-900">My Insurance Policies</h3>
+                    <p className="text-gray-500 text-sm">Manage your health insurance coverage.</p>
+                </div>
+                <button onClick={() => setShowAddInsurance(!showAddInsurance)} className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 font-medium text-sm flex items-center gap-2 transition-colors">
+                    <Plus className="w-4 h-4" /> Add Insurance
+                </button>
+            </div>
+
+            {showAddInsurance && (
+                <div className="bg-indigo-50 p-6 rounded-xl border border-indigo-100 animate-slideDown">
+                    <h4 className="font-bold text-indigo-900 mb-4">Add New Insurance Policy</h4>
+                    <form onSubmit={handleAddInsurance} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <input required type="text" placeholder="Insurance Provider (e.g., NHIS, Hygeia)" value={newInsurance.provider} onChange={e => setNewInsurance({...newInsurance, provider: e.target.value})} className="px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                        <input type="text" placeholder="Plan Name (e.g., Gold, Silver)" value={newInsurance.planName} onChange={e => setNewInsurance({...newInsurance, planName: e.target.value})} className="px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                        <input required type="text" placeholder="Policy Number" value={newInsurance.policyNumber} onChange={e => setNewInsurance({...newInsurance, policyNumber: e.target.value})} className="px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                        <input type="text" placeholder="Group Number" value={newInsurance.groupNumber} onChange={e => setNewInsurance({...newInsurance, groupNumber: e.target.value})} className="px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                        <input required type="number" placeholder="Coverage %" value={newInsurance.coveragePercentage} onChange={e => setNewInsurance({...newInsurance, coveragePercentage: parseInt(e.target.value)})} className="px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-indigo-500" min="0" max="100" />
+                        <input required type="date" placeholder="Valid From" value={newInsurance.validFrom} onChange={e => setNewInsurance({...newInsurance, validFrom: e.target.value})} className="px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                        <input required type="date" placeholder="Valid Until" value={newInsurance.validUntil} onChange={e => setNewInsurance({...newInsurance, validUntil: e.target.value})} className="px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                        
+                        <div className="md:col-span-2 flex justify-end gap-2 pt-2">
+                            <button type="button" onClick={() => setShowAddInsurance(false)} className="text-gray-600 px-4 py-2 rounded-lg hover:bg-gray-100 text-sm font-medium">Cancel</button>
+                            <button type="submit" className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 text-sm font-medium">Add Policy</button>
+                        </div>
+                    </form>
+                </div>
+            )}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {insurances.length > 0 ? (
+                    insurances.map((ins: any) => (
+                        <div key={ins.id} className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                            <div className="flex justify-between items-start mb-3">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                                        <Shield className="w-5 h-5 text-indigo-600" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-900">{ins.provider}</h4>
+                                        <p className="text-sm text-gray-500">{ins.planName || 'Standard Plan'}</p>
+                                    </div>
+                                </div>
+                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[ins.status] || 'bg-gray-100 text-gray-800'}`}>
+                                    {ins.status}
+                                </span>
+                            </div>
+                            <div className="space-y-2 text-sm">
+                                <div className="flex justify-between">
+                                    <span className="text-gray-500">Policy Number</span>
+                                    <span className="font-medium text-gray-900">{ins.policyNumber}</span>
+                                </div>
+                                {ins.groupNumber && (
+                                    <div className="flex justify-between">
+                                        <span className="text-gray-500">Group Number</span>
+                                        <span className="font-medium text-gray-900">{ins.groupNumber}</span>
+                                    </div>
+                                )}
+                                <div className="flex justify-between">
+                                    <span className="text-gray-500">Coverage</span>
+                                    <span className="font-medium text-gray-900">{ins.coveragePercentage || 100}%</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-gray-500">Valid Until</span>
+                                    <span className="font-medium text-gray-900">{ins.validUntil ? new Date(ins.validUntil).toLocaleDateString() : 'N/A'}</span>
+                                </div>
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <div className="col-span-full p-8 text-center bg-white border border-dashed border-gray-200 rounded-xl text-gray-500">
+                        <Shield className="w-10 h-10 mx-auto mb-2 text-gray-300" />
+                        No insurance policies added yet.
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};

@@ -147,7 +147,7 @@ const DepartmentList = () => {
                         <div className="flex items-center justify-between text-sm pt-4 border-t border-gray-100">
                             <div className="text-gray-500">
                                 Head: <span className="font-medium text-gray-900">
-                                    {dept.headOfDept ? `${dept.headOfDept.user.firstName} ${dept.headOfDept.user.lastName}` : 'Unassigned'}
+                                    {dept.headOfDept?.user?.firstName ? `${dept.headOfDept.user.firstName} ${dept.headOfDept.user.lastName}` : 'Unassigned'}
                                 </span>
                             </div>
                             <div className="text-gray-500">

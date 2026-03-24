@@ -163,5 +163,21 @@ export const PatientService = {
   getAppointment: async (id: string) => {
       const response = await api.get(`/appointments/${id}`);
       return response.data;
+  },
+
+  // --- Insurance ---
+  getInsurancePolicies: async () => {
+    const response = await api.get('/patient-experience/insurance');
+    return response.data;
+  },
+
+  addInsurancePolicy: async (data: any) => {
+    const response = await api.post('/patient-experience/insurance', data);
+    return response.data;
+  },
+
+  updateInsurancePolicy: async (id: string, data: any) => {
+    const response = await api.patch(`/patient-experience/insurance/${id}`, data);
+    return response.data;
   }
 };
