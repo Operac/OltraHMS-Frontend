@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import { 
@@ -7,6 +7,24 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { format, addMinutes, getDay } from 'date-fns';
 import { SettingsService } from '../../services/settings.service';
+import type { HospitalSettings } from '../../services/settings.service';
+
+// TypeScript interfaces for type safety
+interface Patient {
+  id: string;
+  firstName: string;
+  lastName: string;
+  patientNumber?: string;
+  phone?: string;
+}
+
+interface Doctor {
+  id: string;
+  name: string;
+  specialization: string;
+}
+
+type AppointmentType = 'FIRST_VISIT' | 'FOLLOW_UP' | 'EMERGENCY' | 'TELEMEDICINE' | '';
 
 const steps = ['Select Patient', 'Select Doctor', 'Select Time', 'Confirm'];
 
@@ -28,31 +46,33 @@ const NewAppointment = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    // Data State
-    const [patients, setPatients] = useState<any[]>([]);
-    const [doctors, setDoctors] = useState<any[]>([]);
+    // Data State - now with proper typing
+    const [patients, setPatients] = useState<Patient[]>([]);
+    const [doctors, setDoctors] = useState<Doctor[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
 
-    // Selection State
-    const [selectedPatient, setSelectedPatient] = useState<any>(
+    // Selection State - now with proper typing
+    const [selectedPatient, setSelectedPatient] = useState<Patient | null>(
         isPatient ? { 
-            id: user?.id, 
-            firstName: user?.firstName, 
-            lastName: user?.lastName 
+            id: user?.id || '', 
+            firstName: user?.firstName || '', 
+            lastName: user?.lastName || '' 
         } : null
     );
-    const [selectedDoctor, setSelectedDoctor] = useState<any>(null);
+    const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
     const [selectedDate, setSelectedDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'));
     const [selectedTime, setSelectedTime] = useState<string>('');
-    const [appointmentType, setAppointmentType] = useState<string>('');
+    const [appointmentType, setAppointmentType] = useState<AppointmentType>('');
     const [reason, setReason] = useState('');
-    const [hospitalSettings, setHospitalSettings] = useState<any>(null);
+    const [hospitalSettings, setHospitalSettings] = useState<HospitalSettings | null>(null);
 
 
     // Fetch Initial Data
     useEffect(() => {
         const fetchData = async () => {
             try {
+                if (!token) return;
+                
                 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
                 // Fetch hospital settings for time slots
                 const settingsRes = await SettingsService.getHospitalSettings();
@@ -65,9 +85,8 @@ const NewAppointment = () => {
                 setDoctors(docRes.data);
                 
                 // Pre-select doctor if ID is in URL
-                // Pre-select doctor if ID is in URL
                 if (preSelectedDoctorId) {
-                    const foundDoc = docRes.data.find((d: any) => d.id === preSelectedDoctorId);
+                    const foundDoc = docRes.data.find((d: Doctor) => d.id === preSelectedDoctorId);
                     if (foundDoc) {
                         setSelectedDoctor(foundDoc);
                         // Skip to time selection if patient
@@ -75,7 +94,7 @@ const NewAppointment = () => {
                     }
                 } else if (isDoctor && user?.staffId) {
                     // Auto-select self if Doctor
-                    const myProfile = docRes.data.find((d: any) => d.id === user.staffId);
+                    const myProfile = docRes.data.find((d: Doctor) => d.id === user.staffId);
                     if (myProfile) {
                         setSelectedDoctor(myProfile);
                     }
@@ -86,11 +105,11 @@ const NewAppointment = () => {
             }
         };
         fetchData();
-    }, [token]);
+    }, [token, preSelectedDoctorId, isPatient, isDoctor, user?.staffId]);
 
     // Fetch Pre-selected Patient
     useEffect(() => {
-        if (preSelectedPatientId && !isPatient) {
+        if (preSelectedPatientId && !isPatient && token) {
             const fetchPatient = async () => {
                 try {
                     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
@@ -181,6 +200,11 @@ const NewAppointment = () => {
 
 
     const handleSubmit = async () => {
+        if (!selectedDoctor?.id) {
+            setError('Please select a doctor');
+            return;
+        }
+        
         setLoading(true);
         try {
              const startTime = new Date(`${selectedDate}T${selectedTime}`);
@@ -188,11 +212,11 @@ const NewAppointment = () => {
 
              const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
              await axios.post(`${API_URL}/appointments`, {
-                 patientId: isPatient ? undefined : selectedPatient.id, // Optional for patient
+                 patientId: isPatient ? undefined : selectedPatient?.id, // Optional for patient
                  doctorId: selectedDoctor.id, 
                  startTime: startTime.toISOString(),
                  endTime: endTime.toISOString(),
-                 type: appointmentType, 
+                 type: appointmentType || 'FIRST_VISIT', 
                  reason
 
              }, {
@@ -287,9 +311,9 @@ const NewAppointment = () => {
                         return [];
                     }
                     
-                    const openTime = hospitalSettings[openKey] || '09:00';
-                    const closeTime = hospitalSettings[closeKey] || '17:00';
-                    const slotDuration = hospitalSettings.timeSlotDuration || 30;
+                    const openTime = String(hospitalSettings[openKey] || '09:00');
+                    const closeTime = String(hospitalSettings[closeKey] || '17:00');
+                    const slotDuration = Number(hospitalSettings.timeSlotDuration) || 30;
                     
                     const slots: string[] = [];
                     const [openHour, openMin] = openTime.split(':').map(Number);
@@ -355,7 +379,7 @@ const NewAppointment = () => {
                              <select
                                 className="w-full p-2 border rounded-lg bg-white"
                                 value={appointmentType}
-                                onChange={e => setAppointmentType(e.target.value)}
+                                onChange={e => setAppointmentType(e.target.value as AppointmentType)}
                              >
                                 <option value="">Select Type</option>
                                 <option value="FIRST_VISIT">First Visit</option>
