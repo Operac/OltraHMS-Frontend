@@ -58,6 +58,8 @@ import PatientWellnessView from './pages/doctor/PatientWellnessView';
 import Settings from './pages/Settings';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import PatientOnboarding from './pages/patient/PatientOnboarding'; // New Import
 import LandingPage from './pages/LandingPage';
 import Theaters from './pages/admin/Theaters';
@@ -73,6 +75,8 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/register" element={<Register />} /> {/* New Route */}
           <Route path="/onboarding" element={<PatientOnboarding />} />
           
@@ -398,13 +402,13 @@ function App() {
             </ProtectedRoute>
            } />
 
-            <Route path="/medications" element={
+          <Route path="/medications" element={
             <ProtectedRoute allowedRoles={['PATIENT']}>
               <MainLayout>
                 <Medications />
               </MainLayout>
             </ProtectedRoute>
-           } />
+          } />
 
            <Route path="/billing" element={
             <ProtectedRoute allowedRoles={['PATIENT']}>

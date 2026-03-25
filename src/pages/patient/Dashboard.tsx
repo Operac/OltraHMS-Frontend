@@ -18,6 +18,7 @@ interface DashboardStats {
         prescriptions: any[];
         administrations: any[];
     } | null;
+    pendingLabTests: any[];
 }
 
 const PatientDashboard = () => {
@@ -35,17 +36,11 @@ const PatientDashboard = () => {
         }
     };
 
-    const handleBookLab = (labRequestId: string) => {
-        // Redirect to appointment booking page instead of direct POST since 
-        // full details (doctor, time) are required by the backend.
-        window.location.href = `/appointments/new?type=LAB&reason=Lab Request Fulfillment ${labRequestId}`;
-    };
-
     useEffect(() => {
         const fetchStats = async () => {
             try {
                 // Fetch in parallel
-                const [queue, records, invoices, prescriptions, profile, medSchedule, dashboardStats, vitals] = await Promise.all([
+                const [queue, records, invoices, prescriptions, profile, medSchedule, dashboardStats, vitals, labResults] = await Promise.all([
                     PatientService.getQueueStatus().catch(() => null), 
                     PatientService.getMedicalRecords().catch(() => []), 
                     PatientService.getInvoices().catch(() => []), 
@@ -53,7 +48,8 @@ const PatientDashboard = () => {
                     PatientService.getEmergencyProfile().catch(() => null),
                     PatientService.getMedicationSchedule().catch(() => null),
                     PatientService.getDashboardStats().catch(() => null),
-                    wellnessService.getVitals().catch(() => [])
+                    wellnessService.getVitals().catch(() => []),
+                    PatientService.getLabResults().catch(() => [])
                 ]);
 
                 // Calculate Outstanding Balance
@@ -76,7 +72,8 @@ const PatientDashboard = () => {
                     recentActivity: sortedRecords,
                     vitals: profile,
                     lastVitals: lastVitals,
-                    medicationSchedule: medSchedule
+                    medicationSchedule: medSchedule,
+                    pendingLabTests: labResults || []
                 });
             } catch (error) {
                 console.error('Failed to fetch dashboard data', error);
@@ -362,16 +359,25 @@ const PatientDashboard = () => {
                     <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
                         <TestTube className="w-5 h-5 text-teal-600" /> Pending Lab Tests
                     </h3>
-                    {/* Placeholder for Lab Data - assuming it comes in similar stats object */}
-                    <div className="bg-teal-50 p-4 rounded-lg text-center">
-                        <p className="text-sm text-teal-800 font-medium mb-2">You have 1 pending lab test.</p>
-                        <button 
-                            onClick={() => handleBookLab('mock-id')}
-                            className="text-xs bg-teal-600 text-white px-4 py-2 rounded-md hover:bg-teal-700 transition-colors"
-                        >
-                            Book Lab Test
-                        </button>
-                    </div>
+                    {stats?.pendingLabTests && stats.pendingLabTests.length > 0 ? (
+                        <div className="space-y-3">
+                            {stats.pendingLabTests.map((lab: any, idx: number) => (
+                                <div key={idx} className="bg-teal-50 p-3 rounded-lg flex items-center justify-between">
+                                    <div>
+                                        <p className="font-medium text-teal-900">{lab.testName || 'Lab Test'}</p>
+                                        <p className="text-xs text-teal-600">Ordered: {new Date(lab.orderedAt).toLocaleDateString()}</p>
+                                    </div>
+                                    <span className={`text-xs px-2 py-1 rounded ${lab.status === 'COMPLETED' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                                        {lab.status}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="bg-teal-50 p-4 rounded-lg text-center">
+                            <p className="text-sm text-teal-800">No pending lab tests.</p>
+                        </div>
+                    )}
                 </div>
             </div>
 

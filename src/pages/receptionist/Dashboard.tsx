@@ -174,7 +174,7 @@ const ReceptionistDashboard = () => {
                 <div className="bg-orange-50 rounded-xl shadow-sm border border-orange-100 overflow-hidden mb-6">
                     <div className="p-4 border-b border-orange-100 flex items-center gap-2 text-orange-800">
                         <CheckCircle className="w-5 h-5" />
-                        <h2 className="text-lg font-semibold">Waiting Room (Cheked In)</h2>
+                        <h2 className="text-lg font-semibold">Waiting Room (Checked In)</h2>
                     </div>
                     <div className="overflow-x-auto">
                         <table className="w-full">

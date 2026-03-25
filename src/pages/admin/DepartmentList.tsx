@@ -78,13 +78,18 @@ const DepartmentList = () => {
     };
 
     const handleEdit = (dept: Department) => {
-        setFormData({ 
-            name: dept.name, 
-            description: dept.description || '',
-            headOfDeptId: dept.headOfDeptId || ''
-        });
-        setEditingId(dept.id);
-        setShowModal(true);
+        try {
+            setFormData({ 
+                name: dept.name || '', 
+                description: dept.description || '',
+                headOfDeptId: dept.headOfDeptId || ''
+            });
+            setEditingId(dept.id);
+            setShowModal(true);
+        } catch (error) {
+            console.error('Error opening edit modal:', error);
+            toast.error('Failed to open edit form');
+        }
     };
 
     const handleDelete = async (id: string) => {
@@ -160,9 +165,11 @@ const DepartmentList = () => {
 
             {showModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-                    <div className="bg-white rounded-xl max-w-md w-full p-6">
-                        <h2 className="text-xl font-bold mb-4">{editingId ? 'Edit Department' : 'Add Department'}</h2>
-                        <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="bg-white rounded-xl max-w-md w-full max-h-[90vh] overflow-hidden flex flex-col">
+                        <div className="p-6 border-b">
+                            <h2 className="text-xl font-bold">{editingId ? 'Edit Department' : 'Add Department'}</h2>
+                        </div>
+                        <form onSubmit={handleSubmit} className="p-6 space-y-4 overflow-y-auto flex-1">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
                                 <input

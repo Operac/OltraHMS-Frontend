@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
-import { User, Mail, Save, AlertCircle, CheckCircle, Calendar, DollarSign } from 'lucide-react';
+import { User, Mail, Save, AlertCircle, CheckCircle, Calendar, DollarSign, Lock, Eye, EyeOff } from 'lucide-react';
 import PatientSettings from './patient/Settings';
 import MyLeaves from '../components/MyLeaves';
 import MyPayslips from '../components/MyPayslips';
@@ -18,6 +18,14 @@ const Settings = () => {
         firstName: '',
         lastName: '',
         email: ''
+    });
+    // Password change state
+    const [showPassword, setShowPassword] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [passwordData, setPasswordData] = useState({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
     });
     // ... rest of existing code for Staff ...
     const [loading, setLoading] = useState(false);
@@ -67,6 +75,45 @@ const Settings = () => {
         }
     };
 
+    const handlePasswordChange = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+        setMessage(null);
+
+        if (passwordData.newPassword !== passwordData.confirmPassword) {
+            setMessage({ type: 'error', text: 'New passwords do not match' });
+            setLoading(false);
+            return;
+        }
+
+        if (passwordData.newPassword.length < 8) {
+            setMessage({ type: 'error', text: 'Password must be at least 8 characters' });
+            setLoading(false);
+            return;
+        }
+
+        try {
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+            await axios.post(`${API_URL}/auth/change-password`, {
+                currentPassword: passwordData.currentPassword,
+                newPassword: passwordData.newPassword
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            setMessage({ type: 'success', text: 'Password changed successfully!' });
+            setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+        } catch (err: any) {
+            console.error(err);
+            setMessage({ 
+                type: 'error', 
+                text: err.response?.data?.message || 'Failed to change password.' 
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="p-6 max-w-2xl">
             <h2 className="text-2xl font-bold text-gray-800 mb-6">Profile Settings</h2>
@@ -90,6 +137,12 @@ const Settings = () => {
                     >
                         <User className="w-4 h-4" /> Profile
                     </button>
+                    <button 
+                        onClick={() => setActiveTab('SECURITY')}
+                        className={`px-4 py-2 font-medium text-sm border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'SECURITY' ? 'border-sky-500 text-sky-500' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+                    >
+                        <Lock className="w-4 h-4" /> Security
+                    </button>
                     {(user?.role !== 'PATIENT' && user?.role !== 'ADMIN') && (
                         <>
                             <button 
@@ -110,6 +163,89 @@ const Settings = () => {
 
                 {activeTab === 'LEAVES' && <MyLeaves />}
                 {activeTab === 'PAYROLL' && <MyPayslips />}
+
+                {activeTab === 'SECURITY' && (
+                <>
+                {message && (
+                    <div className={`p-4 rounded-lg mb-6 flex items-center gap-2 ${
+                        message.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
+                    }`}>
+                        {message.type === 'success' ? <CheckCircle className="w-5 h-5"/> : <AlertCircle className="w-5 h-5"/ >}
+                        {message.text}
+                    </div>
+                )}
+
+                <form onSubmit={handlePasswordChange} className="space-y-6">
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-gray-700">Current Password</label>
+                        <div className="relative">
+                            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                value={passwordData.currentPassword}
+                                onChange={(e) => setPasswordData({...passwordData, currentPassword: e.target.value})}
+                                className="w-full pl-10 pr-12 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400 outline-none"
+                                required
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                            >
+                                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-gray-700">New Password</label>
+                        <div className="relative">
+                            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                            <input
+                                type={showNewPassword ? "text" : "password"}
+                                value={passwordData.newPassword}
+                                onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
+                                className="w-full pl-10 pr-12 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400 outline-none"
+                                required
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowNewPassword(!showNewPassword)}
+                                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                            >
+                                {showNewPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                            </button>
+                        </div>
+                        <p className="text-xs text-gray-500">Minimum 8 characters</p>
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-gray-700">Confirm New Password</label>
+                        <div className="relative">
+                            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                            <input
+                                type={showNewPassword ? "text" : "password"}
+                                value={passwordData.confirmPassword}
+                                onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})}
+                                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400 outline-none"
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    <div className="pt-4">
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="bg-sky-500 text-white px-6 py-2 rounded-lg hover:bg-sky-600 font-medium flex items-center gap-2 transition-colors disabled:opacity-50"
+                        >
+                            <Lock className="w-5 h-5" />
+                            {loading ? 'Changing...' : 'Change Password'}
+                        </button>
+                    </div>
+                </form>
+                </>
+                )}
 
                 {activeTab === 'PROFILE' && (
                 <>

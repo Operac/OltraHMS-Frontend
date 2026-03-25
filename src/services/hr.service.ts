@@ -21,5 +21,12 @@ export const HRService = {
     getMyPayrolls: async () => {
         const response = await api.get('/payroll/my');
         return response.data;
+    },
+
+    downloadPayslip: async (payrollId: string) => {
+        const response = await api.get(`/payroll/${payrollId}/pdf`, {
+            responseType: 'blob'
+        });
+        return response.data;
     }
 };

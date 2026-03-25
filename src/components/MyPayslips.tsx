@@ -73,7 +73,20 @@ const MyPayslips = () => {
                                     {p.paymentDate ? new Date(p.paymentDate).toLocaleDateString() : '-'}
                                 </td>
                                 <td className="px-6 py-4 text-right">
-                                    <button className="text-sky-500 hover:text-sky-700 text-xs flex items-center gap-1 ml-auto">
+                                    <button 
+                                        onClick={() => {
+                                            HRService.downloadPayslip(p.id).then(blob => {
+                                                const url = window.URL.createObjectURL(blob);
+                                                const a = document.createElement('a');
+                                                a.href = url;
+                                                a.download = `payslip-${p.month}-${p.year}.pdf`;
+                                                document.body.appendChild(a);
+                                                a.click();
+                                                window.URL.revokeObjectURL(url);
+                                            }).catch(() => alert('Failed to download payslip'));
+                                        }}
+                                        className="text-sky-500 hover:text-sky-700 text-xs flex items-center gap-1 ml-auto"
+                                    >
                                         <Download className="w-4 h-4" /> PDF
                                     </button>
                                 </td>

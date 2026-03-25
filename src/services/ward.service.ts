@@ -46,3 +46,8 @@ export const deleteBed = async (id: string) => {
   const response = await api.delete(`/wards/beds/${id}`);
   return response.data;
 };
+
+export const updateBedStatus = async (id: string, status: string) => {
+  const response = await api.patch(`/wards/beds/${id}/status`, { status });
+  return response.data;
+};

@@ -3,7 +3,7 @@ import AdminDashboard from './admin/Dashboard';
 import DoctorDashboard from './doctor/Dashboard';
 import PatientDashboard from './patient/Dashboard';
 import ReceptionistDashboard from './receptionist/Dashboard';
-import InpatientDashboard from './inpatient/Dashboard';
+import NurseDashboard from './nurse/Dashboard';
 import FinanceDashboard from './finance/Dashboard';
 import LabDashboard from './lab/LabDashboard';
 import PharmacyDashboard from './pharmacy/Dashboard';
@@ -27,7 +27,7 @@ const Dashboard = () => {
         case 'PATIENT':
             return <PatientDashboard />;
         case 'NURSE':
-            return <InpatientDashboard />;
+            return <NurseDashboard />;
         case 'RECEPTIONIST':
             return <ReceptionistDashboard />;
         case 'ACCOUNTANT':

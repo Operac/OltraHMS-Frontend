@@ -175,15 +175,15 @@ const RadiologyDashboard = () => {
             {/* Upload Modal */}
             {selectedRequest && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-                    <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden">
-                        <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                    <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col">
+                        <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50 flex-shrink-0">
                             <h3 className="font-semibold text-lg">Upload Radiology Report</h3>
                             <button onClick={() => setSelectedRequest(null)} className="text-gray-400 hover:text-gray-600">
                                 <X size={20} />
                             </button>
                         </div>
                         
-                        <form onSubmit={handleUpload} className="p-6 space-y-4">
+                        <form onSubmit={handleUpload} className="p-6 space-y-4 overflow-y-auto flex-1">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Patient</label>
                                 <div className="text-gray-900 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, BedDouble, Building2 } from 'lucide-react';
-import { getWards, createWard, deleteWard, createBed, deleteBed } from '../../services/ward.service';
+import { getWards, createWard, deleteWard, createBed, deleteBed, updateBedStatus } from '../../services/ward.service';
 import { SettingsService, getCurrencySymbol } from '../../services/settings.service';
 import type { Ward } from '../../services/ward.service';
 
@@ -100,6 +100,15 @@ export default function FacilityManagement() {
     }
   };
 
+  const handleUpdateBedStatus = async (bedId: string, newStatus: string) => {
+    try {
+      await updateBedStatus(bedId, newStatus);
+      fetchWards();
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Failed to update bed status');
+    }
+  };
+
   if (isLoading) return <div className="p-6">Loading facility data...</div>;
 
   return (
@@ -175,12 +184,25 @@ export default function FacilityManagement() {
                   {ward.beds.map((bed) => (
                     <div 
                       key={bed.id} 
-                      className={`relative group p-4 rounded-xl border flex flex-col items-center justify-center text-center
+                      className={`relative group p-4 rounded-xl border flex flex-col items-center justify-center text-center cursor-pointer hover:shadow-md transition-shadow
                         ${bed.status === 'VACANT_CLEAN' ? 'bg-green-50 border-green-200' : 
+                          bed.status === 'VACANT_DIRTY' ? 'bg-orange-50 border-orange-200' :
                           bed.status === 'OCCUPIED' ? 'bg-sky-50 border-sky-200' : 'bg-gray-50 border-gray-200'}`}
+                      onClick={() => {
+                        if (bed.status === 'VACANT_DIRTY') {
+                          if (confirm('Mark this bed as clean?')) {
+                            handleUpdateBedStatus(bed.id, 'VACANT_CLEAN');
+                          }
+                        } else if (bed.status === 'VACANT_CLEAN') {
+                          if (confirm('Mark this bed as needing cleaning?')) {
+                            handleUpdateBedStatus(bed.id, 'VACANT_DIRTY');
+                          }
+                        }
+                      }}
+                      title={bed.status === 'VACANT_DIRTY' ? 'Click to mark as clean' : bed.status === 'VACANT_CLEAN' ? 'Click to mark as dirty' : 'Bed is occupied'}
                     >
                       <button 
-                        onClick={() => handleDeleteBed(bed.id, bed.number)}
+                        onClick={(e) => { e.stopPropagation(); handleDeleteBed(bed.id, bed.number); }}
                         className="absolute top-2 right-2 p-1 text-red-500 opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-md shadow-sm"
                         title="Delete Bed"
                       >
@@ -188,10 +210,16 @@ export default function FacilityManagement() {
                       </button>
                       <BedDouble className={`w-6 h-6 mb-2 
                         ${bed.status === 'VACANT_CLEAN' ? 'text-green-600' : 
+                          bed.status === 'VACANT_DIRTY' ? 'text-orange-500' :
                           bed.status === 'OCCUPIED' ? 'text-sky-500' : 'text-gray-400'}`} 
                       />
                       <span className="font-semibold text-gray-900">{bed.number}</span>
                       <span className="text-xs text-gray-500 mt-1">
+                        {bed.status === 'VACANT_CLEAN' ? '✓ Clean' : 
+                         bed.status === 'VACANT_DIRTY' ? '⚠ Needs cleaning' :
+                         bed.status === 'OCCUPIED' ? 'Occupied' : bed.status}
+                      </span>
+                      <span className="text-xs text-gray-400 mt-1">
                         {bed.price ? `${currencySymbol}${bed.price}/day` : 'Standard'}
                       </span>
                     </div>

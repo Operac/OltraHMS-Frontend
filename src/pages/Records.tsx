@@ -5,11 +5,12 @@ import PatientMedicalRecords from './patient/Records'; // Corrected import path
 const Records = () => {
     const { user } = useAuth();
 
-    if (user?.role === 'DOCTOR') {
+    // ADMIN and NURSE users should see the doctor's view to access all records
+    if (user?.role === 'ADMIN' || user?.role === 'DOCTOR' || user?.role === 'NURSE') {
         return <DoctorMedicalRecords />;
     }
 
-    if (user?.role === 'PATIENT' || user?.role === 'ADMIN') {
+    if (user?.role === 'PATIENT') {
         return <PatientMedicalRecords />;
     }
 

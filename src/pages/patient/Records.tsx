@@ -16,7 +16,7 @@ interface MedicalRecord {
     diagnosis: string;
     notes: string;
     prescriptions: any[];
-    labResults: any[];
+    labOrders: any[];
 }
 
 const Records = () => {
@@ -49,7 +49,7 @@ const Records = () => {
 
     // Derived Data for Tabs
     const getAllLabs = () => {
-        return records.flatMap(r => r.labResults?.map(l => ({ ...l, recordDate: r.visitDate, doctor: r.doctor })) || []);
+        return records.flatMap(r => r.labOrders?.map(l => ({ ...l, recordDate: r.visitDate, doctor: r.doctor })) || []);
     };
 
     const getAllPrescriptions = () => {
@@ -181,13 +181,20 @@ const Records = () => {
                                         <Beaker className="w-6 h-6" />
                                     </div>
                                     <div>
-                                        <h4 className="font-bold text-gray-900">{lab.testType}</h4>
+                                        <h4 className="font-bold text-gray-900">{lab.testName || 'Lab Test'}</h4>
                                         <div className="mt-1 flex items-center gap-2">
-                                             <span className="text-sm text-gray-500">Result:</span>
-                                             <span className="font-medium text-gray-900 bg-gray-100 px-2 py-0.5 rounded text-sm">{lab.result}</span>
+                                             <span className="text-sm text-gray-500">Status:</span>
+                                             <span className={`font-medium px-2 py-0.5 rounded text-sm ${lab.status === 'COMPLETED' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                                                {lab.status}
+                                             </span>
                                         </div>
+                                        {lab.result?.resultData && (
+                                            <p className="text-xs text-gray-500 mt-1">
+                                                Result: {typeof lab.result.resultData === 'object' ? JSON.stringify(lab.result.resultData) : lab.result.resultData}
+                                            </p>
+                                        )}
                                         <p className="text-xs text-gray-400 mt-2">
-                                            Ordered on {format(new Date(lab.recordDate), 'MMM d, yyyy')} by Dr. {lab.doctor?.lastName}
+                                            Ordered on {format(new Date(lab.recordDate || lab.orderedAt), 'MMM d, yyyy')} by Dr. {lab.doctor?.lastName || 'Unknown'}
                                         </p>
                                     </div>
                                 </div>
