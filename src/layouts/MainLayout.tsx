@@ -107,21 +107,21 @@ const MainLayout = ({ children }: MainLayoutProps) => {
       )}
 
       {/* Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-30 w-64 transform bg-white transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${
+      <div className={`fixed inset-y-0 left-0 z-30 w-72 transform bg-white transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
           <Sidebar onClose={() => setSidebarOpen(false)} />
       </div>
       
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="flex items-center justify-between h-16 px-6 bg-white border-b border-gray-200 z-10">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <header className="flex items-center justify-between h-16 px-4 sm:px-6 bg-white border-b border-gray-200 z-10">
           <div className="flex items-center gap-4">
             <button 
-                onClick={() => setSidebarOpen(true)}
-                className="text-gray-500 focus:outline-none lg:hidden -ml-2 p-2 hover:bg-gray-100 rounded-lg"
-            >
-                <Menu className="w-6 h-6" />
-            </button>
+                    onClick={() => setSidebarOpen(true)}
+                    className="text-gray-500 focus:outline-none lg:hidden -ml-2 p-2 sm:p-3 hover:bg-gray-100 rounded-lg touch-manipulation"
+                >
+                    <Menu className="w-6 h-6" />
+                </button>
             <div className="relative w-full max-w-sm hidden sm:block">
               <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
                 <Search className="w-5 h-5" />
@@ -139,9 +139,9 @@ const MainLayout = ({ children }: MainLayoutProps) => {
             <div className="relative" ref={notificationRef}>
                 <button 
                     onClick={() => setShowNotifications(!showNotifications)}
-                    className="p-2 text-gray-400 hover:text-sky-500 rounded-full hover:bg-gray-100 transition-colors relative"
+                    className="p-2 sm:p-3 text-gray-400 hover:text-sky-500 rounded-full hover:bg-gray-100 transition-colors relative touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center"
                 >
-                    <Bell className="w-6 h-6" />
+                    <Bell className="w-5 h-5 sm:w-6 sm:h-6" />
                     {unreadCount > 0 && (
                         <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
                             {unreadCount > 9 ? '9+' : unreadCount}
@@ -151,7 +151,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
 
                 {/* Dropdown */}
                 {showNotifications && (
-                    <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-lg border border-gray-200 z-50 overflow-hidden">
+                    <div className="absolute right-0 mt-2 w-72 sm:w-80 max-w-[calc(100vw-2rem)] bg-white rounded-xl shadow-lg border border-gray-200 z-50 overflow-hidden">
                         <div className="p-3 border-b border-gray-100 flex justify-between items-center bg-gray-50">
                             <h3 className="font-bold text-gray-700 text-sm">Notifications</h3>
                             {unreadCount > 0 && (
@@ -219,7 +219,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
           </div>
         </header>
         
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-6">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-4 sm:p-6">
           {children}
         </main>
         <ChatWidget />

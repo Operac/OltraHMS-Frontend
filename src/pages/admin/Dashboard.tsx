@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 const StatCard = ({ title, value, icon: Icon, color, trend }: any) => (
   <motion.div 
     whileHover={{ y: -5 }}
-    className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm"
+    className="bg-white p-4 sm:p-6 rounded-xl border border-gray-200 shadow-sm overflow-hidden"
   >
     <div className="flex items-start justify-between">
       <div>
@@ -63,7 +63,7 @@ const AdminDashboard = () => {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
                 <StatCard 
                     title="Total Patients" 
                     value={loading ? '...' : stats.totalPatients} 
@@ -94,12 +94,12 @@ const AdminDashboard = () => {
                 />
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm min-h-[300px]">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+                <div className="bg-white p-4 sm:p-6 rounded-xl border border-gray-200 shadow-sm overflow-hidden min-h-[250px] sm:min-h-[300px]">
                     <h3 className="text-lg font-bold text-gray-900 mb-4">Hospital Occupancy</h3>
                     <div className="flex items-center justify-center h-full text-gray-400">Chart Placeholder</div>
                 </div>
-                <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm min-h-[300px]">
+                <div className="bg-white p-4 sm:p-6 rounded-xl border border-gray-200 shadow-sm overflow-hidden min-h-[250px] sm:min-h-[300px]">
                     <h3 className="text-lg font-bold text-gray-900 mb-4">Recent Activity</h3>
                     <div className="space-y-4">
                         {[1,2,3].map(i => (

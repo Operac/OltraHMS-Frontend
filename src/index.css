@@ -1,1 +1,85 @@
 @import "tailwindcss";
+
+/* Global Mobile-Friendly Styles */
+* {
+  box-sizing: border-box;
+}
+
+/* Prevent horizontal scroll on all devices */
+html {
+  overflow-x: hidden;
+}
+
+body {
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Fix for flex containers causing overflow */
+.flex-container {
+  min-width: 0;
+}
+
+/* Ensure all flex children don't overflow */
+.flex > * {
+  min-width: 0;
+}
+
+/* Improve touch targets on mobile */
+@media (max-width: 768px) {
+  button, 
+  [role="button"],
+  a,
+  input,
+  select,
+  textarea {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Larger tap targets for primary actions */
+  button, 
+  .btn {
+    padding: 12px 20px;
+  }
+}
+
+/* Smooth scrolling for anchor links */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Prevent text selection on UI elements (optional, improves mobile feel) */
+button, 
+[role="button"],
+nav,
+header {
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+/* Improve form inputs on mobile */
+input, 
+select, 
+textarea {
+  font-size: 16px; /* Prevents iOS zoom on focus */
+}
+
+/* Scrollbar styling - more compact for mobile */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
