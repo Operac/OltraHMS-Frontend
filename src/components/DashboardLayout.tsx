@@ -31,13 +31,9 @@ const DashboardLayout = ({ children, role, title }: DashboardLayoutProps) => {
     // If a specific role is required and user lacks it (and is not an ADMIN override case if applicable)
     // For simplicity, strict check if role is provided.
     // However, Dashboard might be shared.
-    if (role && user.role !== role && user.role !== Role.ADMIN) { 
+    if (role && user.role !== role && role !== Role.ADMIN) {
          // Allow ADMIN to access mostly everything, or strictly handle it.
-         // If role is "ADMIN", only ADMIN can access.
-         if (role === Role.ADMIN && user.role !== Role.ADMIN) {
-             return <Navigate to="/unauthorized" replace />;
-         }
-         // If role is "DOCTOR" and user is "NURSE", redirect.
+         // If role is not ADMIN and user doesn't have the required role, redirect.
     }
 
     return (

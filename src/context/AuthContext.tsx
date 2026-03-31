@@ -1,12 +1,12 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import type { ReactNode } from 'react';
-import { Role } from '../constants/roles';
+import type { RoleType } from '../constants/roles';
 
 interface User {
   id: string;
   email: string;
-  role: Role;
+  role: RoleType;
   firstName: string;
   lastName: string;
   staffId?: string;

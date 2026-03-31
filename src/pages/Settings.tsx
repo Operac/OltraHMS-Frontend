@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Role } from '../constants/roles';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
@@ -143,7 +144,7 @@ const Settings = () => {
                     >
                         <Lock className="w-4 h-4" /> Security
                     </button>
-                    {(user?.role !== Role.PATIENT && user?.role !== Role.ADMIN) && (
+                    {user?.role !== Role.ADMIN && (
                         <>
                             <button 
                                 onClick={() => setActiveTab('LEAVES')}

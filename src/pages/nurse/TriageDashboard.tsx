@@ -1,16 +1,13 @@
 import { useState, useEffect } from 'react';
-import { 
-  Users, Stethoscope, Activity, Calendar, AlertCircle, CheckCircle, 
-  Search, UserPlus, Phone, Clock, RefreshCw, DollarSign, 
-  ChevronDown, ChevronUp, Trash2, Edit, Plus, Menu
+import {
+  Users, Stethoscope, Activity, AlertCircle, Edit
 } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
-import { Role } from '../../constants/roles';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
+type TriageLevel = 'RESUSCITATION' | 'EMERGENT' | 'URGENT' | 'LESS_URGENT' | 'NON_URGENT';
+
 const TriageDashboard = () => {
-  const { user } = useAuth();
   const [pendingPatients, setPendingPatients] = useState<any[]>([]);
   const [selectedPatient, setSelectedPatient] = useState<any>(null);
   const [triageForm, setTriageForm] = useState({
@@ -61,6 +58,16 @@ const TriageDashboard = () => {
       setLoading(false);
     }
   };
+
+  // Calculate MEWS score and update suggested level when vitals change
+  useEffect(() => {
+    const hasVitals = triageForm.bpSystolic || triageForm.bpDiastolic || triageForm.heartRate ||
+      triageForm.respiratoryRate || triageForm.temperature || triageForm.oxygenSaturation;
+    if (hasVitals) {
+      calculateMEWS();
+    }
+  }, [triageForm.bpSystolic, triageForm.bpDiastolic, triageForm.heartRate,
+      triageForm.respiratoryRate, triageForm.temperature, triageForm.oxygenSaturation]);
 
   // Calculate MEWS score
   const calculateMEWS = () => {
@@ -158,7 +165,7 @@ const TriageDashboard = () => {
         height: triageForm.height ? parseFloat(triageForm.height) : null
       };
 
-      const response = await axios.post(`${API_URL}/triage`, {
+      await axios.post(`${API_URL}/triage`, {
         patientId: selectedPatient.patient.id,
         chiefComplaint: triageForm.chiefComplaint,
         triageLevel: triageForm.triageLevel,
@@ -577,7 +584,7 @@ const TriageDashboard = () => {
                                 : suggestedLevel === 'EMERGENT' ? 'orange' 
                                 : suggestedLevel === 'URGENT' ? 'yellow' 
                                 : suggestedLevel === 'LESS_URGENT' ? 'blue' : 'green'}-600 font-bold`}>
-                                {suggestedLevels.find(l => l.value === suggestedLevel)?.label}
+                                {triageLevels.find((l: { value: string }) => l.value === suggestedLevel)?.label}
                               </span>
                             </p>
                             <p className="text-sm text-gray-500">

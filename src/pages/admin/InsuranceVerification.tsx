@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Shield, CheckCircle, XCircle, Clock, AlertTriangle, RefreshCw, ChevronDown, ChevronUp } from 'lucide-react';
+import { Shield, CheckCircle, XCircle, Clock, RefreshCw, ChevronDown, ChevronUp } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { InsuranceService } from '../../services/insurance.service';
 

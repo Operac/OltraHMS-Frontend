@@ -380,7 +380,6 @@ const InsuranceTab = ({ insurances, showAddInsurance, setShowAddInsurance, newIn
     };
 
     const canEdit = (status: string) => status === 'PENDING' || status === 'REJECTED';
-    const canDelete = (status: string) => status !== 'ACTIVE' || true; // allow delete, backend checks for active claims
 
     const handleStartEdit = (ins: any) => {
         setEditId(ins.id);
