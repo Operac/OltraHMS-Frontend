@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { io, Socket } from 'socket.io-client';
 import { PhoneOff, MessageSquare, Send, ExternalLink } from 'lucide-react';
 import api from '../../services/api';
+import { Role } from '../../constants/roles';
 
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:3000';
 
@@ -165,7 +166,13 @@ const VideoCallPage = () => {
                 console.error('Failed to end session:', err);
             }
             
-            navigate(-1);
+            // For doctors, redirect to consultation page to fill notes
+            // For patients, go back to their dashboard
+            if (user?.role === Role.DOCTOR) {
+                navigate(`/consultation/${appointmentId}`);
+            } else {
+                navigate('/patient/dashboard');
+            }
         }
     };
 

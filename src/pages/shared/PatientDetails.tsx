@@ -174,11 +174,11 @@ const PatientDetails = () => {
                         <div className="space-y-4">
                             <div className="flex items-center gap-3 text-sm">
                                 <Phone className="w-4 h-4 text-gray-400" />
-                                <span>{patient.phone}</span>
+                                <span>{patient.phone || 'No phone provided'}</span>
                             </div>
                             <div className="flex items-center gap-3 text-sm">
                                 <User className="w-4 h-4 text-gray-400" />
-                                <span>{patient.user.email}</span>
+                                <span>{patient.user?.email || (patient as any).email || 'No email provided'}</span>
                             </div>
                             <div className="flex items-center gap-3 text-sm">
                                 <MapPin className="w-4 h-4 text-gray-400" />

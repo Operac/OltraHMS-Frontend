@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Video, Calendar, User, Clock } from 'lucide-react';
+import { Video, Calendar, User, Clock, CheckCircle } from 'lucide-react';
 import api from '../../lib/api';
 import { format, parseISO } from 'date-fns';
 
@@ -107,13 +107,31 @@ const TelemedicineDashboard = () => {
                                 )}
                             </div>
 
-                            <button
-                                onClick={() => handleJoinCall(apt.id)}
-                                disabled={apt.status === 'CANCELLED'}
-                                className="w-full bg-teal-600 text-white py-2 rounded-lg hover:bg-teal-700 transition font-medium flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                <Video className="w-4 h-4" /> Start Call
-                            </button>
+                            {/* Show different buttons based on appointment status */}
+                            {apt.status === 'COMPLETED' ? (
+                                <button
+                                    onClick={() => navigate(`/consultation/${apt.id}`)}
+                                    className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition font-medium flex items-center justify-center gap-2"
+                                >
+                                    <CheckCircle className="w-4 h-4" /> View Notes
+                                </button>
+                            ) : apt.status === 'CANCELLED' ? (
+                                <button
+                                    disabled
+                                    className="w-full bg-gray-300 text-gray-500 py-2 rounded-lg font-medium flex items-center justify-center gap-2 cursor-not-allowed"
+                                >
+                                    Cancelled
+                                </button>
+                            ) : (
+                                // 30 minute grace period - can start call 30 min before appointment time
+                                <button
+                                    onClick={() => handleJoinCall(apt.id)}
+                                    disabled={new Date(apt.startTime) > new Date(Date.now() + 30*60*1000)}
+                                    className="w-full bg-teal-600 text-white py-2 rounded-lg hover:bg-teal-700 transition font-medium flex items-center justify-center gap-2 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                                >
+                                    <Video className="w-4 h-4" /> {new Date(apt.startTime) > new Date(Date.now() + 30*60*1000) ? 'Not Yet' : 'Start Call'}
+                                </button>
+                            )}
                         </div>
                     ))}
                 </div>

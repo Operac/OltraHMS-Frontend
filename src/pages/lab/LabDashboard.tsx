@@ -1,13 +1,19 @@
 import { useState, useEffect } from 'react';
 import { labService } from '../../services/lab.service';
 import type { LabOrder } from '../../services/lab.service';
-import { Activity, FileText, Upload, CheckCircle } from 'lucide-react';
+import { Activity, FileText, Upload, CheckCircle, Shield, DollarSign } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { useAuth } from '../../context/AuthContext';
+import { Role } from '../../constants/roles';
 
 const LabDashboard = () => {
+    const { user } = useAuth();
     const [orders, setOrders] = useState<LabOrder[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedOrder, setSelectedOrder] = useState<LabOrder | null>(null);
     const [uploading, setUploading] = useState(false);
+    const [waiveModal, setWaiveModal] = useState<{open: boolean, orderId: string | null}>({open: false, orderId: null});
+    const [waiveReason, setWaiveReason] = useState('');
     
     // Form State
     const [resultText, setResultText] = useState('');
@@ -92,7 +98,24 @@ const LabDashboard = () => {
                                 const paymentStatus = invoice ? invoice.status : 'UNBILLED';
                                 const isPaid = paymentStatus === 'PAID';
                                 const isEmergency = order.priority === 'STAT';
-                                const canProcess = isPaid || isEmergency;
+                                const servicePaymentStatus = order.paymentStatus || 'AWAITING_PAYMENT';
+                                const isCleared = servicePaymentStatus === 'CLEARED' || servicePaymentStatus === 'WAIVED';
+                                const canProcess = isPaid || isEmergency || isCleared;
+
+                                const getPaymentBadge = () => {
+                                    switch (servicePaymentStatus) {
+                                        case 'AWAITING_PAYMENT':
+                                            return <span className="px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">AWAITING PAYMENT</span>;
+                                        case 'PAYMENT_SUBMITTED':
+                                            return <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">SUBMITTED</span>;
+                                        case 'CLEARED':
+                                            return <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">CLEARED</span>;
+                                        case 'WAIVED':
+                                            return <span className="px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-700">WAIVED</span>;
+                                        default:
+                                            return <span className="px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">{servicePaymentStatus}</span>;
+                                    }
+                                };
 
                                 return (
                                 <tr key={order.id} className="hover:bg-gray-50">
@@ -117,13 +140,21 @@ const LabDashboard = () => {
                                         Dr. {order.medicalRecord.doctor.user.lastName}
                                     </td>
                                     <td className="p-4">
-                                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                            paymentStatus === 'PAID' ? 'bg-green-100 text-green-700' :
-                                            paymentStatus === 'UNBILLED' ? 'bg-gray-100 text-gray-600' :
-                                            'bg-yellow-100 text-yellow-700'
-                                        }`}>
-                                            {paymentStatus}
-                                        </span>
+                                        <div className="flex flex-col gap-1">
+                                            {getPaymentBadge()}
+                                            {invoice && (
+                                                <span className={`text-[10px] ${
+                                                    invoice.status === 'PAID' ? 'text-green-600' : 'text-gray-400'
+                                                }`}>
+                                                    Invoice: {invoice.status}
+                                                </span>
+                                            )}
+                                            {order.waiverReason && (
+                                                <span className="text-[10px] text-purple-500" title={order.waiverReason}>
+                                                    {order.waiverReason}
+                                                </span>
+                                            )}
+                                        </div>
                                     </td>
                                     <td className="p-4">
                                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -132,7 +163,7 @@ const LabDashboard = () => {
                                             {order.status.replace('_', ' ')}
                                         </span>
                                     </td>
-                                    <td className="p-4 text-right space-x-2 flex justify-end">
+                                    <td className="p-4 text-right space-x-2 flex justify-end flex-wrap">
                                         {paymentStatus === 'UNBILLED' && (
                                             <button
                                                 onClick={async () => {
@@ -140,12 +171,51 @@ const LabDashboard = () => {
                                                         try {
                                                             await labService.createInvoice(order.id, 0);
                                                             loadOrders();
-                                                        } catch(e) { alert('Failed to create invoice'); }
+                                                        } catch(e) { toast.error('Failed to create invoice'); }
                                                     }
                                                 }}
                                                 className="text-sm bg-teal-50 text-teal-600 px-3 py-1.5 rounded-lg hover:bg-teal-100 transition-colors"
                                             >
                                                 Create Bill
+                                            </button>
+                                        )}
+
+                                        {servicePaymentStatus === 'AWAITING_PAYMENT' && user?.role === Role.PATIENT && (
+                                            <button
+                                                onClick={async () => {
+                                                    try {
+                                                        await labService.submitPayment(order.id);
+                                                        toast.success('Payment submitted for confirmation');
+                                                        loadOrders();
+                                                    } catch(e: any) { toast.error(e.response?.data?.message || 'Failed'); }
+                                                }}
+                                                className="text-sm bg-blue-50 text-blue-600 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-colors"
+                                            >
+                                                Submit Payment
+                                            </button>
+                                        )}
+
+                                        {servicePaymentStatus === 'PAYMENT_SUBMITTED' && ['ADMIN', 'ACCOUNTANT', 'RECEPTIONIST'].includes(user?.role || '') && (
+                                            <button
+                                                onClick={async () => {
+                                                    try {
+                                                        await labService.clearPayment(order.id);
+                                                        toast.success('Payment cleared');
+                                                        loadOrders();
+                                                    } catch(e: any) { toast.error(e.response?.data?.message || 'Failed'); }
+                                                }}
+                                                className="text-sm bg-green-50 text-green-600 px-3 py-1.5 rounded-lg hover:bg-green-100 transition-colors flex items-center gap-1"
+                                            >
+                                                <DollarSign className="w-3 h-3" /> Clear Payment
+                                            </button>
+                                        )}
+
+                                        {servicePaymentStatus !== 'CLEARED' && servicePaymentStatus !== 'WAIVED' && user?.role === Role.ADMIN && (
+                                            <button
+                                                onClick={() => setWaiveModal({open: true, orderId: order.id})}
+                                                className="text-sm bg-purple-50 text-purple-600 px-3 py-1.5 rounded-lg hover:bg-purple-100 transition-colors flex items-center gap-1"
+                                            >
+                                                <Shield className="w-3 h-3" /> Waive
                                             </button>
                                         )}
 
@@ -243,6 +313,48 @@ const LabDashboard = () => {
                                 </button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Waiver Modal */}
+            {waiveModal.open && waiveModal.orderId && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+                    <div className="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl">
+                        <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+                            <Shield className="text-purple-500" /> Emergency Waiver
+                        </h2>
+                        <p className="text-sm text-gray-600 mb-4">
+                            This will waive the payment requirement for this lab order. Please provide a reason.
+                        </p>
+                        <textarea
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-purple-400 h-24 mb-4"
+                            placeholder="Reason for waiver (e.g., Emergency patient, VIP, etc.)"
+                            value={waiveReason}
+                            onChange={e => setWaiveReason(e.target.value)}
+                        />
+                        <div className="flex gap-3 justify-end">
+                            <button
+                                onClick={() => { setWaiveModal({open: false, orderId: null}); setWaiveReason(''); }}
+                                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg font-medium"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={async () => {
+                                    try {
+                                        await labService.waivePayment(waiveModal.orderId!, waiveReason || 'Emergency waiver');
+                                        toast.success('Payment waived');
+                                        setWaiveModal({open: false, orderId: null});
+                                        setWaiveReason('');
+                                        loadOrders();
+                                    } catch(e: any) { toast.error(e.response?.data?.message || 'Failed to waive'); }
+                                }}
+                                className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 font-medium"
+                            >
+                                Confirm Waiver
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

@@ -5,7 +5,19 @@ import toast from 'react-hot-toast';
 import { format } from 'date-fns';
 import ServiceManagement from './ServiceManagement';
 import ExpenseTracking from './ExpenseTracking';
+import { exportToCSV, exportToPDF } from '../../utils/export';
+import { Download, FileDown } from 'lucide-react';
 
+const invoiceColumns = [
+    { header: 'Invoice #', dataKey: 'invoiceNumber' },
+    { header: 'Patient Name', dataKey: (row: any) => `${row.patient?.firstName} ${row.patient?.lastName}` },
+    { header: 'Patient No.', dataKey: (row: any) => row.patient?.patientNumber },
+    { header: 'Date', dataKey: (row: any) => row.createdAt ? format(new Date(row.createdAt), 'MMM dd, yyyy') : '' },
+    { header: 'Total Amount', dataKey: 'total' },
+    { header: 'Balance', dataKey: 'balance' },
+    { header: 'Amount Paid', dataKey: 'amountPaid' },
+    { header: 'Status', dataKey: 'status' }
+];
 
 const FinanceDashboard = () => {
     const [activeTab, setActiveTab] = useState('INVOICES');
@@ -225,9 +237,17 @@ const FinanceDashboard = () => {
                         <div>
                             <div className="flex justify-between items-center mb-6">
                                 <h2 className="text-lg font-bold text-gray-800">Pending Invoices</h2>
-                                <button onClick={loadDashboardData} className="text-sm text-sky-500 hover:underline">
-                                    Refresh
-                                </button>
+                                <div className="flex items-center gap-3">
+                                    <button onClick={() => exportToCSV(invoices, 'pending_invoices', invoiceColumns)} className="flex items-center gap-1 text-sm bg-white border border-gray-200 text-gray-600 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors">
+                                        <Download className="w-4 h-4" /> CSV
+                                    </button>
+                                    <button onClick={() => exportToPDF(invoices, 'pending_invoices', 'Pending Invoices', invoiceColumns)} className="flex items-center gap-1 text-sm bg-white border border-gray-200 text-gray-600 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors">
+                                        <FileDown className="w-4 h-4" /> PDF
+                                    </button>
+                                    <button onClick={loadDashboardData} className="text-sm text-sky-500 hover:underline ml-2">
+                                        Refresh
+                                    </button>
+                                </div>
                             </div>
 
                             {loading ? (
@@ -289,10 +309,18 @@ const FinanceDashboard = () => {
                     {activeTab === 'REFUNDS' && (
                         <div>
                             <div className="flex justify-between items-center mb-6">
-                                <h2 className="text-lg font-bold text-gray-800">Paid Invoices - Process Refunds</h2>
-                                <button onClick={loadPaidInvoices} className="text-sm text-sky-500 hover:underline">
-                                    Refresh
-                                </button>
+                                <h2 className="text-lg font-bold text-gray-800">Paid Invoices</h2>
+                                <div className="flex items-center gap-3">
+                                    <button onClick={() => exportToCSV(paidInvoices, 'paid_invoices', invoiceColumns)} className="flex items-center gap-1 text-sm bg-white border border-gray-200 text-gray-600 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors">
+                                        <Download className="w-4 h-4" /> CSV
+                                    </button>
+                                    <button onClick={() => exportToPDF(paidInvoices, 'paid_invoices', 'Paid Invoices', invoiceColumns)} className="flex items-center gap-1 text-sm bg-white border border-gray-200 text-gray-600 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors">
+                                        <FileDown className="w-4 h-4" /> PDF
+                                    </button>
+                                    <button onClick={loadPaidInvoices} className="text-sm text-sky-500 hover:underline ml-2">
+                                        Refresh
+                                    </button>
+                                </div>
                             </div>
 
                             {loading ? (

@@ -1,6 +1,6 @@
 import { AdminService } from '../../services/admin.service';
 import { useState, useEffect } from 'react';
-import { Users, Activity, DollarSign, Calendar, TrendingUp } from 'lucide-react';
+import { Users, Activity, DollarSign, Calendar, TrendingUp, Bed } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const StatCard = ({ title, value, icon: Icon, color, trend }: any) => (
@@ -33,7 +33,8 @@ const AdminDashboard = () => {
         totalPatients: 0,
         activeStaff: 0,
         todayAppointments: 0,
-        revenuePending: 0
+        revenuePending: 0,
+        totalInpatients: 0
     });
     const [loading, setLoading] = useState(true);
 
@@ -77,6 +78,13 @@ const AdminDashboard = () => {
                     icon={Calendar} 
                     color="bg-teal-500" 
                     trend="Now" 
+                />
+                <StatCard 
+                    title="Total Inpatients" 
+                    value={loading ? '...' : stats.totalInpatients} 
+                    icon={Bed} 
+                    color="bg-purple-500" 
+                    trend="Current" 
                 />
                 <StatCard 
                     title="Active Staff" 

@@ -1,16 +1,17 @@
 import { useAuth } from '../context/AuthContext';
 import DoctorMedicalRecords from './doctor/MedicalRecords';
 import PatientMedicalRecords from './patient/Records'; // Corrected import path
+import { Role } from '../constants/roles';
 
 const Records = () => {
     const { user } = useAuth();
 
     // ADMIN and NURSE users should see the doctor's view to access all records
-    if (user?.role === 'ADMIN' || user?.role === 'DOCTOR' || user?.role === 'NURSE') {
+    if (user?.role === Role.ADMIN || user?.role === Role.DOCTOR || user?.role === Role.NURSE) {
         return <DoctorMedicalRecords />;
     }
 
-    if (user?.role === 'PATIENT') {
+    if (user?.role === Role.PATIENT) {
         return <PatientMedicalRecords />;
     }
 

@@ -4,6 +4,7 @@ import axios from 'axios';
 import { Play, CheckCircle2, Video, Activity, Pill, FlaskConical, Stethoscope, BarChart3, User, ShieldCheck, ArrowRight } from 'lucide-react';
 
 import { useAuth } from '../context/AuthContext';
+import { Role } from '../constants/roles';
 
 const LandingPage = () => {
     const navigate = useNavigate();
@@ -57,12 +58,12 @@ const LandingPage = () => {
                             <div className="flex items-center gap-6">
                             <button 
                                 onClick={() => {
-                                    if (user?.role === 'ADMIN') navigate('/admin');
-                                    else if (user?.role === 'DOCTOR') navigate('/doctor');
-                                    else if (user?.role === 'RECEPTIONIST') navigate('/receptionist');
-                                    else if (user?.role === 'PHARMACIST') navigate('/pharmacy');
-                                    else if (user?.role === 'LAB_TECH') navigate('/lab-tech');
-                                    else if (user?.role === 'NURSE') navigate('/inpatient');
+                                    if (user?.role === Role.ADMIN) navigate('/admin');
+                                    else if (user?.role === Role.DOCTOR) navigate('/doctor');
+                                    else if (user?.role === Role.RECEPTIONIST) navigate('/receptionist');
+                                    else if (user?.role === Role.PHARMACIST) navigate('/pharmacy');
+                                    else if (user?.role === Role.LAB_TECH) navigate('/lab-tech');
+                                    else if (user?.role === Role.NURSE) navigate('/inpatient');
                                     else navigate('/app');
                                 }} 
                                 className="text-sm font-semibold text-slate-600 hover:text-sky-600 transition-colors"
@@ -127,12 +128,12 @@ const LandingPage = () => {
                                     {isAuthenticated ? (
                                         <button 
                                             onClick={() => {
-                                                if (user?.role === 'ADMIN') navigate('/admin');
-                                                else if (user?.role === 'DOCTOR') navigate('/doctor');
-                                                else if (user?.role === 'RECEPTIONIST') navigate('/receptionist');
-                                                else if (user?.role === 'PHARMACIST') navigate('/pharmacy');
-                                                else if (user?.role === 'LAB_TECH') navigate('/lab-tech');
-                                                else if (user?.role === 'NURSE') navigate('/inpatient');
+                                                if (user?.role === Role.ADMIN) navigate('/admin');
+                                                else if (user?.role === Role.DOCTOR) navigate('/doctor');
+                                                else if (user?.role === Role.RECEPTIONIST) navigate('/receptionist');
+                                                else if (user?.role === Role.PHARMACIST) navigate('/pharmacy');
+                                                else if (user?.role === Role.LAB_TECH) navigate('/lab-tech');
+                                                else if (user?.role === Role.NURSE) navigate('/inpatient');
                                                 else navigate('/app');
                                             }}
                                             className="bg-white border-2 border-slate-200 hover:border-sky-300 hover:bg-sky-50 text-slate-700 px-8 py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-2"

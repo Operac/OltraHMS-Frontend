@@ -6,7 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 import { getPatientHistory, saveConsultation, updateAppointmentStatus } from '../../services/doctor.service';
 import { FinanceService } from '../../services/finance.service';
 import { 
-  User, Activity, Pill, FlaskConical, CheckCircle, Video, History, Building2 
+  User, Activity, Pill, FlaskConical, CheckCircle, Video, History, Building2, Sparkles, AlertTriangle 
 } from 'lucide-react';
 
 const Consultation = () => {
@@ -45,6 +45,7 @@ const Consultation = () => {
 
     const [newRx, setNewRx] = useState({ name: '', dosage: '', frequency: '', duration: '' });
     const [newLab, setNewLab] = useState({ test: '', priority: 'ROUTINE', isExternal: false });
+    const [aiSuggestions, setAiSuggestions] = useState<any>(null);
 
     useEffect(() => {
         const fetchContext = async () => {
@@ -93,24 +94,28 @@ const Consultation = () => {
     const handleSave = async (status: 'DRAFT' | 'COMPLETED') => {
         setSaving(true);
         try {
-            await toast.promise(
-                saveConsultation({
-                    appointmentId,
-                    patientId: patient?.id,
-                    doctorId: user?.staffId,
-                    soap,
-                    vitals: JSON.stringify(vitals), 
-                    prescriptions,
-                    labOrders,
-                    billingItems: [] 
-                }),
-                {
-                    loading: 'Saving consultation...',
-                    success: status === 'COMPLETED' ? 'Consultation completed!' : 'Draft saved successfully!',
-                    error: 'Failed to save record'
-                }
-            );
-            
+            const savePromise = saveConsultation({
+                appointmentId,
+                patientId: patient?.id,
+                doctorId: user?.staffId,
+                soap,
+                vitals: JSON.stringify(vitals), 
+                prescriptions,
+                labOrders,
+                billingItems: [] 
+            });
+
+            await toast.promise(savePromise, {
+                loading: 'Saving consultation...',
+                success: status === 'COMPLETED' ? 'Consultation completed!' : 'Draft saved successfully!',
+                error: 'Failed to save record'
+            });
+
+            const result = await savePromise;
+            if (result?.aiSuggestions) {
+                setAiSuggestions(result.aiSuggestions);
+            }
+
             if (status === 'COMPLETED') {
                 navigate('/'); // Go back to dashboard
             }
@@ -278,6 +283,68 @@ const Consultation = () => {
                             </ul>
                         )}
                     </div>
+
+                    {aiSuggestions && (
+                        <div className="bg-white p-5 rounded-xl border border-purple-200 shadow-sm">
+                            <div className="flex items-center gap-2 mb-4">
+                                <Sparkles className="w-4 h-4 text-purple-500" />
+                                <h3 className="font-bold text-gray-900">AI Suggestions</h3>
+                                <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
+                                    aiSuggestions.confidence === 'high' ? 'bg-green-100 text-green-700' :
+                                    aiSuggestions.confidence === 'medium' ? 'bg-yellow-100 text-yellow-700' :
+                                    'bg-gray-100 text-gray-600'
+                                }`}>
+                                    {aiSuggestions.confidence?.toUpperCase()}
+                                </span>
+                            </div>
+
+                            {aiSuggestions.redFlags?.length > 0 && (
+                                <div className="mb-3">
+                                    <div className="text-xs font-bold text-red-600 uppercase mb-1 flex items-center gap-1">
+                                        <AlertTriangle className="w-3 h-3" /> Red Flags
+                                    </div>
+                                    <ul className="space-y-1">
+                                        {aiSuggestions.redFlags.map((flag: string, i: number) => (
+                                            <li key={i} className="text-xs bg-red-50 text-red-700 px-2 py-1 rounded border border-red-100">{flag}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+
+                            {aiSuggestions.differentialDiagnosis?.length > 0 && (
+                                <div className="mb-3">
+                                    <div className="text-xs font-bold text-gray-500 uppercase mb-1">Differential Diagnosis</div>
+                                    <ul className="space-y-1">
+                                        {aiSuggestions.differentialDiagnosis.map((dx: string, i: number) => (
+                                            <li key={i} className="text-xs bg-purple-50 text-purple-700 px-2 py-1 rounded border border-purple-100">{dx}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+
+                            {aiSuggestions.suggestedTests?.length > 0 && (
+                                <div className="mb-3">
+                                    <div className="text-xs font-bold text-gray-500 uppercase mb-1">Suggested Tests</div>
+                                    <ul className="space-y-1">
+                                        {aiSuggestions.suggestedTests.map((test: string, i: number) => (
+                                            <li key={i} className="text-xs bg-sky-50 text-sky-700 px-2 py-1 rounded border border-sky-100">{test}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+
+                            {aiSuggestions.treatmentNotes && (
+                                <div>
+                                    <div className="text-xs font-bold text-gray-500 uppercase mb-1">Treatment Notes</div>
+                                    <p className="text-xs text-gray-600 bg-gray-50 p-2 rounded">{aiSuggestions.treatmentNotes}</p>
+                                </div>
+                            )}
+
+                            <p className="text-[10px] text-gray-400 mt-3 italic">
+                                AI-generated suggestions. Clinical judgment should always take precedence.
+                            </p>
+                        </div>
+                    )}
                 </div>
             </div>
 

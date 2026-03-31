@@ -1,7 +1,15 @@
 import { useState, useEffect } from 'react';
 import { FinanceService } from '../../services/finance.service';
 import toast from 'react-hot-toast';
-import { Plus, Edit, Trash2, X, Search, DollarSign, Building2 } from 'lucide-react';
+import { Plus, Edit, Trash2, X, Search, DollarSign, Building2, Download, FileDown } from 'lucide-react';
+import { exportToCSV, exportToPDF } from '../../utils/export';
+
+const serviceColumns = [
+    { header: 'Service Name', dataKey: 'name' },
+    { header: 'Type', dataKey: 'type' },
+    { header: 'Price', dataKey: (row: any) => row.isExternal ? 'External' : row.price },
+    { header: 'Status', dataKey: (row: any) => row.isExternal ? 'External / Referral' : 'In-House' }
+];
 
 const ServiceManagement = () => {
     const [services, setServices] = useState<any[]>([]);
@@ -84,14 +92,22 @@ const ServiceManagement = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center flex-wrap gap-4">
                 <h1 className="text-2xl font-bold text-gray-800">Service & Price List</h1>
-                <button 
-                    onClick={() => { setEditingService(null); setFormData({ name: '', type: 'LAB', price: '', code: '', isExternal: false }); setIsModalOpen(true); }}
-                    className="bg-sky-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-sky-600"
-                >
-                    <Plus size={20} /> Add Service
-                </button>
+                <div className="flex items-center gap-3">
+                    <button onClick={() => exportToCSV(filteredServices, 'services', serviceColumns)} className="flex items-center gap-1 text-sm bg-white border border-gray-200 text-gray-600 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+                        <Download className="w-4 h-4" /> CSV
+                    </button>
+                    <button onClick={() => exportToPDF(filteredServices, 'services', 'Service & Price List', serviceColumns)} className="flex items-center gap-1 text-sm bg-white border border-gray-200 text-gray-600 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+                        <FileDown className="w-4 h-4" /> PDF
+                    </button>
+                    <button 
+                        onClick={() => { setEditingService(null); setFormData({ name: '', type: 'LAB', price: '', code: '', isExternal: false }); setIsModalOpen(true); }}
+                        className="bg-sky-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-sky-600 ml-2"
+                    >
+                        <Plus size={20} /> Add Service
+                    </button>
+                </div>
             </div>
 
             {/* Filters */}

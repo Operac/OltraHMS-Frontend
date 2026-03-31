@@ -1,7 +1,10 @@
-import { LayoutDashboard, Users, UserPlus, Calendar, FileText, Settings, LogOut, Pill, CreditCard, Activity, Building2, BarChart, Video, DollarSign, Bed, BedDouble, Stethoscope, Heart, X } from 'lucide-react';
+import { LayoutDashboard, Users, UserPlus, Calendar, FileText, Settings, LogOut, Pill, CreditCard, Activity, Building2, BarChart, Video, DollarSign, Bed, BedDouble, Stethoscope, Heart, X, Shield } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
 import { useAuth } from '../context/AuthContext';
+import { Role } from '../constants/roles';
+import ConfirmModal from './ui/ConfirmModal';
+import { useState } from 'react';
 
 interface SidebarProps {
   onClose?: () => void;
@@ -10,14 +13,15 @@ interface SidebarProps {
 const Sidebar = ({ onClose }: SidebarProps = {}) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, logout } = useAuth(); // Assuming logout exists
+  const { user, logout } = useAuth();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const getNavItems = (role?: string) => {
     const common = [
       { icon: LayoutDashboard, label: 'Dashboard', path: '/app' },
     ];
 
-    if (role === 'ADMIN') {
+    if (role === Role.ADMIN) {
       return [
         ...common,
         { icon: Users, label: 'Patients', path: '/patients' },
@@ -37,10 +41,12 @@ const Sidebar = ({ onClose }: SidebarProps = {}) => {
         { icon: Activity, label: 'Surgery & OT', path: '/surgery' },
         { icon: Activity, label: 'Operating Theaters', path: '/admin/theaters' },
         { icon: Settings, label: 'Settings', path: '/settings' },
+        { icon: Shield, label: 'Insurance Verification', path: '/admin/insurance-verification' },
+        { icon: FileText, label: 'Insurance Claims', path: '/finance/insurance-claims' },
       ];
     }
 
-    if (role === 'DOCTOR') {
+    if (role === Role.DOCTOR) {
       return [
         ...common,
         { icon: Users, label: 'My Patients', path: '/patients' }, // Maybe filter patients?
@@ -54,7 +60,7 @@ const Sidebar = ({ onClose }: SidebarProps = {}) => {
       ];
     }
 
-    if (role === 'PATIENT') {
+    if (role === Role.PATIENT) {
         return [
           ...common,
           { icon: Calendar, label: 'My Appointments', path: '/appointments' },
@@ -68,7 +74,7 @@ const Sidebar = ({ onClose }: SidebarProps = {}) => {
         ];
     }
 
-    if (role === 'RECEPTIONIST') {
+    if (role === Role.RECEPTIONIST) {
       return [
         ...common,
         { icon: Activity, label: 'Queue Management', path: '/receptionist/queue' },
@@ -78,27 +84,28 @@ const Sidebar = ({ onClose }: SidebarProps = {}) => {
       ];
     }
 
-    if (role === 'NURSE') {
+    if (role === Role.NURSE) {
       return [
         ...common,
         { icon: Users, label: 'Patients', path: '/patients' },
         { icon: Activity, label: 'Inpatients', path: '/inpatient' }, // Access to wards
-        { icon: Stethoscope, label: 'Treatments', path: '/treatments' },
+        { icon: Stethoscope, label: 'Triage', path: '/nurse/triage' },
         { icon: Activity, label: 'Surgery & OT', path: '/surgery' },
         { icon: Calendar, label: 'Schedule', path: '/appointments' },
         { icon: Settings, label: 'Settings', path: '/settings' },
       ];
     }
 
-    if (role === 'ACCOUNTANT') {
-        return [
-          { icon: DollarSign, label: 'Finance Dashboard', path: '/finance' },
-          { icon: DollarSign, label: 'Payroll', path: '/admin/payroll' },
-          { icon: Settings, label: 'Settings', path: '/settings' },
-        ];
+    if (role === Role.ACCOUNTANT) {
+      return [
+        { icon: DollarSign, label: 'Finance Dashboard', path: '/finance' },
+        { icon: FileText, label: 'Insurance Claims', path: '/finance/insurance-claims' },
+        { icon: DollarSign, label: 'Payroll', path: '/admin/payroll' },
+        { icon: Settings, label: 'Settings', path: '/settings' },
+      ];
     }
 
-    if (role === 'LAB_TECH') {
+    if (role === Role.LAB_TECH) {
         return [
           { icon: Activity, label: 'Lab Dashboard', path: '/lab-tech' },
           { icon: Activity, label: 'Radiology', path: '/radiology' },
@@ -106,14 +113,14 @@ const Sidebar = ({ onClose }: SidebarProps = {}) => {
         ];
     }
 
-    if (role === 'RADIOLOGIST') {
+    if (role === Role.RADIOLOGIST) {
         return [
           { icon: Activity, label: 'Radiology Dashboard', path: '/radiology' },
           { icon: Settings, label: 'Profile', path: '/settings' },
         ];
     }
 
-    if (role === 'PHARMACIST') {
+    if (role === Role.PHARMACIST) {
         return [
           { icon: Pill, label: 'Pharmacy Dashboard', path: '/pharmacy' },
           { icon: Settings, label: 'Profile', path: '/settings' },
@@ -164,17 +171,27 @@ const Sidebar = ({ onClose }: SidebarProps = {}) => {
       </nav>
 
       <div className="p-4 border-t border-gray-200">
-        <button 
-            onClick={() => {
-                logout();
-                navigate('/login');
-            }}
+        <button
+            onClick={() => setShowLogoutModal(true)}
             className="flex items-center w-full px-4 py-3 sm:py-2 text-sm font-medium text-red-600 rounded-lg hover:bg-red-50 transition-colors min-h-[44px]"
-        >
+          >
           <LogOut className="w-5 h-5 mr-3" />
           Logout
         </button>
       </div>
+
+      <ConfirmModal
+        isOpen={showLogoutModal}
+        title="Logout"
+        message="Are you sure you want to logout? You will need to login again to access your account."
+        confirmText="Logout"
+        cancelText="Cancel"
+        onConfirm={() => {
+          logout();
+          navigate('/login');
+        }}
+        onCancel={() => setShowLogoutModal(false)}
+      />
     </div>
   );
 };

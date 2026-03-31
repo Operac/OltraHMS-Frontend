@@ -2,11 +2,14 @@ import { useState, useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
 import Sidebar from '../components/Sidebar';
 import ChatWidget from '../components/ChatWidget';
-import { Bell, Search, User, Check, Menu } from 'lucide-react';
+import { Bell, Search, User, Check, Menu, X, Calendar, User as UserIcon, Stethoscope } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { getNotifications, markAsRead, markAllAsRead, type Notification } from '../services/notification.service';
+import { searchGlobal, type SearchResult } from '../services/search.service';
+import { Role } from '../constants/roles';
 import clsx from 'clsx';
 import { formatDistanceToNow } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -14,10 +17,17 @@ interface MainLayoutProps {
 
 const MainLayout = ({ children }: MainLayoutProps) => {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [loadingNotifications, setLoadingNotifications] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [showSearchResults, setShowSearchResults] = useState(false);
+  const [searching, setSearching] = useState(false);
   const notificationRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLDivElement>(null);
 
   // Auto-logout Logic
   useEffect(() => {
@@ -51,6 +61,8 @@ const MainLayout = ({ children }: MainLayoutProps) => {
           setNotifications(data);
       } catch (err) {
           console.error("Failed to fetch notifications", err);
+      } finally {
+          setLoadingNotifications(false);
       }
   };
 
@@ -67,6 +79,9 @@ const MainLayout = ({ children }: MainLayoutProps) => {
       if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
         setShowNotifications(false);
       }
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setShowSearchResults(false);
+      }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
@@ -74,6 +89,24 @@ const MainLayout = ({ children }: MainLayoutProps) => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  // Global search with debounce
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      if (searchQuery.length >= 2) {
+        setSearching(true);
+        const results = await searchGlobal(searchQuery);
+        setSearchResults(results);
+        setShowSearchResults(true);
+        setSearching(false);
+      } else {
+        setSearchResults([]);
+        setShowSearchResults(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   const handleMarkAsRead = async (id: string, e: React.MouseEvent) => {
       e.stopPropagation();
@@ -122,15 +155,63 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                 >
                     <Menu className="w-6 h-6" />
                 </button>
-            <div className="relative w-full max-w-sm hidden sm:block">
+            <div className="relative w-full max-w-sm hidden sm:block" ref={searchRef}>
               <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
                 <Search className="w-5 h-5" />
               </span>
-              <input 
-                type="text" 
-                className="w-full py-2 pl-10 pr-4 text-sm text-gray-700 bg-gray-100 border-none rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-400"
-                placeholder="Search patients, doctors, records..." 
+              <input
+                type="text"
+                className="w-full py-2 pl-10 pr-4 text-sm text-gray-700 bg-gray-100 border-none rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white transition-all"
+                placeholder="Search patients, doctors, records..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => searchQuery.length >= 2 && setShowSearchResults(true)}
               />
+              {searchQuery && (
+                <button
+                  onClick={() => { setSearchQuery(''); setSearchResults([]); }}
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+
+              {/* Search Results Dropdown */}
+              {showSearchResults && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 z-50 max-h-80 overflow-y-auto">
+                  {searching ? (
+                    <div className="p-4 text-center text-gray-400 text-sm">Searching...</div>
+                  ) : searchResults.length === 0 ? (
+                    <div className="p-4 text-center text-gray-400 text-sm">No results found</div>
+                  ) : (
+                    <div className="py-1">
+                      {searchResults.map((result) => (
+                        <button
+                          key={`${result.type}-${result.id}`}
+                          onClick={() => {
+                            navigate(result.path);
+                            setSearchQuery('');
+                            setShowSearchResults(false);
+                          }}
+                          className="w-full flex items-center gap-3 px-4 py-2 text-left hover:bg-gray-50 transition-colors"
+                        >
+                          {result.type === 'patient' ? (
+                            <UserIcon className="w-4 h-4 text-sky-500" />
+                          ) : result.type === 'staff' ? (
+                            <Stethoscope className="w-4 h-4 text-green-500" />
+                          ) : (
+                            <Calendar className="w-4 h-4 text-purple-500" />
+                          )}
+                          <div>
+                            <p className="text-sm font-medium text-gray-800">{result.name}</p>
+                            <p className="text-xs text-gray-500">{result.subtitle}</p>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
           
@@ -161,7 +242,19 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                             )}
                         </div>
                         <div className="max-h-96 overflow-y-auto">
-                            {notifications.length === 0 ? (
+                            {loadingNotifications ? (
+                                <div className="p-4 space-y-4">
+                                    {[1, 2, 3].map(i => (
+                                        <div key={i} className="flex gap-3 animate-pulse">
+                                            <div className="w-2 h-2 mt-2 rounded-full bg-gray-200 shrink-0" />
+                                            <div className="flex-1 space-y-2">
+                                                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                                                <div className="h-3 bg-gray-200 rounded w-1/4"></div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : notifications.length === 0 ? (
                                 <div className="p-8 text-center text-gray-400 text-sm">No notifications</div>
                             ) : (
                                 notifications.map(notification => (
@@ -205,17 +298,17 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                 )}
             </div>
             
-            <div className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors">
+            <button className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500">
               <div className="w-8 h-8 bg-sky-100 rounded-full flex items-center justify-center text-sky-500">
                 <User className="w-5 h-5" />
               </div>
               <div className="hidden md:block text-left">
                 <p className="text-sm font-medium text-gray-700">
-                    {user?.role === 'DOCTOR' ? 'Dr. ' : ''}{user?.firstName} {user?.lastName}
+                    {user?.role === Role.DOCTOR ? 'Dr. ' : ''}{user?.firstName} {user?.lastName}
                 </p>
                 <p className="text-xs text-gray-500 capitalize">{user?.role ? user.role.toLowerCase() : 'User'}</p>
               </div>
-            </div>
+            </button>
           </div>
         </header>
         

@@ -8,6 +8,7 @@ import { useAuth } from '../../context/AuthContext';
 import { format, addMinutes, getDay } from 'date-fns';
 import { SettingsService } from '../../services/settings.service';
 import type { HospitalSettings } from '../../services/settings.service';
+import { Role } from '../../constants/roles';
 
 // TypeScript interfaces for type safety
 interface Patient {
@@ -38,8 +39,8 @@ const NewAppointment = () => {
     
     // If patient, start at step 1 (Doctor Selection)
     // If patient, start at step 1 (Doctor Selection)
-    const isPatient = user?.role === 'PATIENT';
-    const isDoctor = user?.role === 'DOCTOR';
+    const isPatient = user?.role === Role.PATIENT;
+    const isDoctor = user?.role === Role.DOCTOR;
     const [currentStep, setCurrentStep] = useState(isPatient ? 1 : 0);
 
     

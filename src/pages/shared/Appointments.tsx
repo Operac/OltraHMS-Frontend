@@ -2,19 +2,23 @@ import { useState, useEffect, Fragment } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
-import { Plus, ChevronLeft, ChevronRight, Filter } from 'lucide-react';
+import { Plus, ChevronLeft, ChevronRight, Filter, Clock, Video, CalendarX } from 'lucide-react';
+import { Role } from '../../constants/roles';
 import { format, startOfWeek, endOfWeek, eachDayOfInterval, isSameDay, addWeeks, subWeeks, addDays, subDays, addMonths, subMonths, startOfMonth, endOfMonth, isSameMonth } from 'date-fns';
+import toast from 'react-hot-toast';
+import ConfirmModal from '../../components/ui/ConfirmModal';
 
 const Appointments = () => {
     const navigate = useNavigate();
     const { token, user } = useAuth();
     
-    // View state: 'day' | 'week' | 'month'
-    const [view, setView] = useState<'day' | 'week' | 'month'>('week');
+    // View state: 'day' | 'week' | 'month' | 'list'
+    const [view, setView] = useState<'day' | 'week' | 'month' | 'list'>('week');
     
     const [currentDate, setCurrentDate] = useState(new Date());
     const [appointments, setAppointments] = useState<any[]>([]); 
     const [loading, setLoading] = useState(true);
+    const [cancelConfirm, setCancelConfirm] = useState<{isOpen: boolean, appointmentId: string | null}>({isOpen: false, appointmentId: null});
 
     // Week View Logic
     // Date Logic based on View
@@ -44,7 +48,7 @@ const Appointments = () => {
                 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
                 let query = `${API_URL}/appointments?startDate=${days[0].toISOString()}&endDate=${days[days.length - 1].toISOString()}`;
                 
-                if (user?.role === 'DOCTOR' && user.staffId) {
+                if (user?.role === Role.DOCTOR && user.staffId) {
                     query += `&doctorId=${user.staffId}`;
                 }
 
@@ -68,8 +72,15 @@ const Appointments = () => {
         });
     };
 
-    const handleCancelAppointment = async (id: string) => {
-        if (!confirm('Are you sure you want to cancel this appointment?')) return;
+    const confirmCancel = (id: string, e?: React.MouseEvent) => {
+        if (e) e.stopPropagation();
+        setCancelConfirm({ isOpen: true, appointmentId: id });
+    };
+
+    const handleCancelAppointment = async () => {
+        const id = cancelConfirm.appointmentId;
+        if (!id) return;
+        setCancelConfirm({ isOpen: false, appointmentId: null });
         try {
             const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
             await axios.patch(`${API_URL}/appointments/${id}/status`, 
@@ -78,21 +89,38 @@ const Appointments = () => {
             );
             // Refresh
             let query = `${API_URL}/appointments?startDate=${days[0].toISOString()}&endDate=${days[days.length - 1].toISOString()}`;
-            if (user?.role === 'DOCTOR' && user.staffId) {
+            if (user?.role === Role.DOCTOR && user.staffId) {
                 query += `&doctorId=${user.staffId}`;
             }
             const res = await axios.get(query, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setAppointments(res.data);
-            alert('Appointment cancelled.');
+            toast.success('Appointment cancelled.');
         } catch (error) {
             console.error('Failed to cancel', error);
-            alert('Failed to cancel appointment.');
+            toast.error('Failed to cancel appointment.');
         }
     };
 
-    if (loading) return <div className="p-6 text-center">Loading schedule...</div>;
+    if (loading) {
+        return (
+            <div className="h-[calc(100vh-100px)] flex flex-col p-6 animate-pulse">
+                <div className="flex justify-between mb-6">
+                    <div>
+                        <div className="h-8 bg-gray-200 rounded w-48 mb-2"></div>
+                        <div className="h-4 bg-gray-200 rounded w-64"></div>
+                    </div>
+                    <div className="flex gap-3">
+                        <div className="w-10 h-10 bg-gray-200 rounded-lg"></div>
+                        <div className="w-40 h-10 bg-gray-200 rounded-lg"></div>
+                    </div>
+                </div>
+                <div className="h-16 bg-gray-200 rounded-t-xl mb-1"></div>
+                <div className="flex-1 bg-gray-100 rounded-b-xl"></div>
+            </div>
+        );
+    }
 
     return (
         <div className="h-[calc(100vh-100px)] flex flex-col">
@@ -140,17 +168,80 @@ const Appointments = () => {
                      </button>
                 </div>
                 <div className="flex bg-gray-100 p-1 rounded-lg text-sm">
+                    <button onClick={() => setView('list')} className={`px-3 py-1 rounded transition-colors ${view === 'list' ? 'bg-white shadow text-gray-900 font-medium' : 'text-gray-500 hover:text-gray-900'}`}>List</button>
                     <button onClick={() => setView('week')} className={`px-3 py-1 rounded transition-colors ${view === 'week' ? 'bg-white shadow text-gray-900 font-medium' : 'text-gray-500 hover:text-gray-900'}`}>Week</button>
                     <button onClick={() => setView('day')} className={`px-3 py-1 rounded transition-colors ${view === 'day' ? 'bg-white shadow text-gray-900 font-medium' : 'text-gray-500 hover:text-gray-900'}`}>Day</button>
-                    <button onClick={() => setView('month')} className={`px-3 py-1 rounded transition-colors ${view === 'month' ? 'bg-white shadow text-gray-900 font-medium' : 'text-gray-500 hover:text-gray-900'}`}>Month</button>
                 </div>
             </div>
 
-            {/* Calendar Grid */}
-            <div className={`bg-white border-x border-b border-gray-200 rounded-b-xl flex-1 overflow-auto ${view === 'month' ? '' : ''}`}>
+            {/* Calendar Grid / List View */}
+            <div className="bg-white border-x border-b border-gray-200 rounded-b-xl flex-1 overflow-auto">
                 
-                {/* Month View Implementation */}
-                {view === 'month' ? (
+                {/* List View - Mobile Friendly */}
+                {view === 'list' ? (
+                    <div className="p-4 space-y-3">
+                        {appointments.length === 0 ? (
+                            <div className="flex flex-col items-center justify-center py-16 text-gray-500 bg-gray-50 rounded-lg border border-dashed border-gray-200">
+                                <CalendarX className="w-12 h-12 text-gray-300 mb-4" />
+                                <h3 className="text-lg font-medium text-gray-900 mb-1">No appointments found</h3>
+                                <p className="text-sm">There are no scheduled appointments for this period.</p>
+                            </div>
+                        ) : (
+                            appointments
+                                .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime())
+                                .map(apt => (
+                                    <div 
+                                        key={apt.id}
+                                        className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+                                        onClick={() => {
+                                            if (user?.role === Role.DOCTOR) navigate(`/consultation/${apt.id}`);
+                                            else if (apt.type === 'TELEMEDICINE' || apt.type === 'TELEHEALTH') navigate(`/consultation/video/${apt.id}`);
+                                        }}
+                                    >
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-12 h-12 bg-sky-100 rounded-lg flex flex-col items-center justify-center text-sky-600">
+                                                <span className="text-xs font-bold">{format(new Date(apt.startTime), 'dd')}</span>
+                                                <span className="text-[10px] uppercase">{format(new Date(apt.startTime), 'MMM')}</span>
+                                            </div>
+                                            <div>
+                                                <div className="font-medium text-gray-900">
+                                                    {user?.role === Role.PATIENT 
+                                                        ? `Dr. ${apt.doctor?.user?.firstName || ''} ${apt.doctor?.user?.lastName || ''}`
+                                                        : `${apt.patient?.firstName || ''} ${apt.patient?.lastName || ''}`
+                                                    }
+                                                </div>
+                                                <div className="text-sm text-gray-500 flex items-center gap-2">
+                                                    <Clock className="w-3 h-3" />
+                                                    {format(new Date(apt.startTime), 'h:mm a')} - {format(new Date(apt.endTime), 'h:mm a')}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                                                apt.status === 'CONFIRMED' ? 'bg-green-100 text-green-700' :
+                                                apt.status === 'COMPLETED' ? 'bg-gray-100 text-gray-600' :
+                                                apt.status === 'CANCELLED' ? 'bg-red-100 text-red-700' :
+                                                'bg-yellow-100 text-yellow-700'
+                                            }`}>
+                                                {apt.status}
+                                            </span>
+                                            {(apt.type === 'TELEMEDICINE' || apt.type === 'TELEHEALTH') && (
+                                                <Video className="w-4 h-4 text-teal-500" />
+                                            )}
+                                            {user?.role === Role.PATIENT && apt.status !== 'CANCELLED' && new Date(apt.startTime) > new Date() && (
+                                                <button 
+                                                    onClick={(e) => { e.stopPropagation(); confirmCancel(apt.id, e); }}
+                                                    className="ml-2 px-3 py-1 bg-red-100 text-red-600 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors"
+                                                >
+                                                    Cancel
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))
+                        )}
+                    </div>
+                ) : view === 'month' ? (
                      <div className="grid grid-cols-7 h-full">
                          {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
                              <div key={day} className="p-2 border-b border-r text-center font-medium bg-gray-50 text-gray-500 text-sm">
@@ -171,14 +262,27 @@ const Appointments = () => {
                                         .map(apt => (
                                             <div 
                                                 key={apt.id}
-                                                onClick={() => {
-                                                     if (user?.role === 'DOCTOR') navigate(`/consultation/${apt.id}`);
+                                                onClick={(e) => {
+                                                     e.stopPropagation();
+                                                     if (user?.role === Role.DOCTOR) navigate(`/consultation/${apt.id}`);
+                                                     else if (apt.type === 'TELEMEDICINE' || apt.type === 'TELEHEALTH') navigate(`/consultation/video/${apt.id}`);
                                                 }}
-                                                className={`text-[10px] p-1 rounded truncate cursor-pointer ${
-                                                    apt.type === 'TELEHEALTH' ? 'bg-teal-100 text-teal-700' : 'bg-sky-100 text-sky-600'
+                                                className={`text-[10px] p-1 rounded truncate cursor-pointer flex justify-between items-center ${
+                                                    (apt.type === 'TELEHEALTH' || apt.type === 'TELEMEDICINE') ? 'bg-teal-100 text-teal-700' : 'bg-sky-100 text-sky-600'
                                                 }`}
                                             >
-                                                {format(new Date(apt.startTime), 'HH:mm')} {user?.role === 'PATIENT' ? apt.doctor?.user?.lastName : apt.patient.lastName}
+                                                <span className="truncate">
+                                                    {format(new Date(apt.startTime), 'HH:mm')} {user?.role === Role.PATIENT ? apt.doctor?.user?.lastName : apt.patient.lastName}
+                                                </span>
+                                                {user?.role === Role.PATIENT && apt.status !== 'CANCELLED' && new Date(apt.startTime) > new Date() && (
+                                                    <button 
+                                                        onClick={(e) => { e.stopPropagation(); confirmCancel(apt.id, e); }}
+                                                        className="ml-1 text-red-500 hover:text-red-700 font-bold"
+                                                        title="Cancel"
+                                                    >
+                                                        ×
+                                                    </button>
+                                                )}
                                             </div>
                                         ))
                                     }
@@ -188,7 +292,8 @@ const Appointments = () => {
                      </div>
                 ) : (
                     // Day & Week View Implementation
-                    <div className={`grid ${view === 'day' ? 'grid-cols-1' : 'grid-cols-8'} min-w-[${view === 'day' ? '100%' : '800px'}]`}>
+                    <div className="overflow-x-auto w-full">
+                        <div className={`grid ${view === 'day' ? 'grid-cols-[80px_minmax(300px,1fr)]' : 'grid-cols-[80px_repeat(7,minmax(150px,1fr))]'} min-w-max w-full`}>
                         {/* Time Column Header */}
                         <div className="p-4 border-b border-r bg-gray-50 font-medium text-gray-500 text-sm">Time</div>
                         {/* Day Headers */}
@@ -218,27 +323,27 @@ const Appointments = () => {
                                                     key={apt.id}
                                                     // If doctor, go to details. If patient, alert or go to video if active.
                                                     onClick={() => {
-                                                        if (user?.role === 'DOCTOR') navigate(`/consultation/${apt.id}`);
+                                                        if (user?.role === Role.DOCTOR) navigate(`/consultation/${apt.id}`);
                                                     }}
                                                     className={`p-2 rounded text-xs mb-1 cursor-pointer transition-colors border-l-4 ${
-                                                        apt.type === 'TELEHEALTH' ? 'bg-teal-100 border-teal-500 hover:bg-teal-200' : 'bg-sky-100 border-sky-400 hover:bg-sky-200'
+                                                        (apt.type === 'TELEHEALTH' || apt.type === 'TELEMEDICINE') ? 'bg-teal-100 border-teal-500 hover:bg-teal-200' : 'bg-sky-100 border-sky-400 hover:bg-sky-200'
                                                     }`}
                                                 >
-                                                    <div className={`font-bold truncate ${apt.type === 'TELEHEALTH' ? 'text-teal-900' : 'text-sky-900'}`}>
-                                                        {user?.role === 'PATIENT' 
+                                                    <div className={`font-bold truncate ${(apt.type === 'TELEHEALTH' || apt.type === 'TELEMEDICINE') ? 'text-teal-900' : 'text-sky-900'}`}>
+                                                        {user?.role === Role.PATIENT 
                                                             ? `Dr. ${apt.doctor?.user?.lastName}`
                                                             : `${apt.patient.firstName} ${apt.patient.lastName}`
                                                         }
                                                     </div>
-                                                    <div className={`${apt.type === 'TELEHEALTH' ? 'text-teal-700' : 'text-sky-600'} flex items-center gap-1`}>
+                                                    <div className={`${(apt.type === 'TELEHEALTH' || apt.type === 'TELEMEDICINE') ? 'text-teal-700' : 'text-sky-600'} flex items-center gap-1`}>
                                                         {format(new Date(apt.startTime), 'h:mm')}
-                                                        {apt.type === 'TELEHEALTH' && <span className="ml-1 text-[10px] bg-teal-200 px-1 rounded">V</span>}
+                                                        {(apt.type === 'TELEHEALTH' || apt.type === 'TELEMEDICINE') && <span className="ml-1 text-[10px] bg-teal-200 px-1 rounded">V</span>}
                                                     </div>
                                                     
                                                     {/* Patient Actions */}
-                                                    {user?.role === 'PATIENT' && (
+                                                    {user?.role === Role.PATIENT && (
                                                         <div className="mt-1 space-y-1">
-                                                            {apt.type === 'TELEHEALTH' && apt.status !== 'CANCELLED' && (
+                                                            {(apt.type === 'TELEHEALTH' || apt.type === 'TELEMEDICINE') && apt.status !== 'CANCELLED' && (
                                                                 <button
                                                                     onClick={(e) => {
                                                                         e.stopPropagation();
@@ -249,13 +354,10 @@ const Appointments = () => {
                                                                     Video
                                                                 </button>
                                                             )}
-                                                            {apt.status !== 'CANCELLED' && (
+                                                            {apt.status !== 'CANCELLED' && new Date(apt.startTime) > new Date() && (
                                                                 <button 
-                                                                    onClick={(e) => {
-                                                                        e.stopPropagation();
-                                                                        handleCancelAppointment(apt.id);
-                                                                    }}
-                                                                    className="w-full text-center bg-red-100 text-red-600 py-1 rounded hover:bg-red-200"
+                                                                    onClick={(e) => confirmCancel(apt.id, e)}
+                                                                    className="w-full text-center bg-red-100 text-red-600 py-1.5 rounded hover:bg-red-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 font-medium transition-colors cursor-pointer"
                                                                 >
                                                                     Cancel
                                                                 </button>
@@ -269,9 +371,19 @@ const Appointments = () => {
                                 })}
                             </Fragment>
                         ))}
+                        </div>
                     </div>
                 )}
             </div>
+            
+            <ConfirmModal
+                isOpen={cancelConfirm.isOpen}
+                title="Cancel Appointment"
+                message="Are you sure you want to cancel this appointment?"
+                confirmText="Cancel Appointment"
+                onConfirm={handleCancelAppointment}
+                onCancel={() => setCancelConfirm({ isOpen: false, appointmentId: null })}
+            />
         </div>
     );
 };

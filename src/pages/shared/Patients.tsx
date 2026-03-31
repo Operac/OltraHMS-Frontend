@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { format } from 'date-fns';
 import { useAuth } from '../../context/AuthContext';
+import { Role } from '../../constants/roles';
 
 interface Patient {
   id: string;
@@ -40,7 +41,7 @@ const Patients = () => {
             const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
             let query = `${API_URL}/patients?page=${page}&limit=10&search=${search}`;
             
-            if (user?.role === 'DOCTOR' && user.staffId) {
+            if (user?.role === Role.DOCTOR && user.staffId) {
                 query += `&doctorId=${user.staffId}`;
             }
 
@@ -171,7 +172,7 @@ const Patients = () => {
                                             <div className="flex flex-col space-y-1">
                                                 <div className="flex items-center text-sm text-gray-500">
                                                     <Phone className="w-3 h-3 mr-2" />
-                                                    {patient.phone}
+                                                    {patient.phone || 'No phone provided'}
                                                 </div>
                                             </div>
                                         </td>

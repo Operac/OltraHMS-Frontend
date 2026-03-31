@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { Role } from '../constants/roles';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { User, Mail, Save, AlertCircle, CheckCircle, Calendar, DollarSign, Lock, Eye, EyeOff } from 'lucide-react';
@@ -9,7 +9,7 @@ import MyPayslips from '../components/MyPayslips';
 const Settings = () => {
     const { user, token, login } = useAuth();
     
-    if (user?.role === 'PATIENT') {
+    if (user?.role === Role.PATIENT) {
         return <PatientSettings />;
     }
 
@@ -143,7 +143,7 @@ const Settings = () => {
                     >
                         <Lock className="w-4 h-4" /> Security
                     </button>
-                    {(user?.role !== 'PATIENT' && user?.role !== 'ADMIN') && (
+                    {(user?.role !== Role.PATIENT && user?.role !== Role.ADMIN) && (
                         <>
                             <button 
                                 onClick={() => setActiveTab('LEAVES')}

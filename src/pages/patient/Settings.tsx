@@ -367,12 +367,55 @@ export default PatientSettings;
 
 // Insurance Tab Component
 const InsuranceTab = ({ insurances, showAddInsurance, setShowAddInsurance, newInsurance, setNewInsurance, handleAddInsurance }: any) => {
+    const [editId, setEditId] = useState<string | null>(null);
+    const [editData, setEditData] = useState<any>({});
+    const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+
     const statusColors: any = {
         PENDING: 'bg-yellow-100 text-yellow-800',
         ACTIVE: 'bg-green-100 text-green-800',
         VERIFIED: 'bg-blue-100 text-blue-800',
         REJECTED: 'bg-red-100 text-red-800',
         EXPIRED: 'bg-gray-100 text-gray-800',
+    };
+
+    const canEdit = (status: string) => status === 'PENDING' || status === 'REJECTED';
+    const canDelete = (status: string) => status !== 'ACTIVE' || true; // allow delete, backend checks for active claims
+
+    const handleStartEdit = (ins: any) => {
+        setEditId(ins.id);
+        setEditData({
+            provider: ins.provider,
+            planName: ins.planName || '',
+            policyNumber: ins.policyNumber,
+            groupNumber: ins.groupNumber || '',
+            coveragePercentage: ins.coveragePercentage || 100,
+            validFrom: ins.validFrom ? new Date(ins.validFrom).toISOString().split('T')[0] : '',
+            validUntil: ins.validUntil ? new Date(ins.validUntil).toISOString().split('T')[0] : ''
+        });
+    };
+
+    const handleSaveEdit = async (id: string) => {
+        try {
+            await PatientService.updateInsurancePolicy(id, editData);
+            setEditId(null);
+            setMessage({ type: 'success', text: 'Insurance policy updated! If it was rejected, it has been resubmitted for verification.' });
+            // Refresh parent data
+            window.location.reload();
+        } catch (error: any) {
+            setMessage({ type: 'error', text: error.response?.data?.message || 'Failed to update policy' });
+        }
+    };
+
+    const handleDelete = async (id: string, provider: string) => {
+        if (!confirm(`Delete ${provider} policy? This cannot be undone.`)) return;
+        try {
+            await PatientService.deleteInsurancePolicy(id);
+            setMessage({ type: 'success', text: 'Insurance policy deleted.' });
+            window.location.reload();
+        } catch (error: any) {
+            setMessage({ type: 'error', text: error.response?.data?.message || 'Failed to delete policy' });
+        }
     };
 
     return (
@@ -386,6 +429,13 @@ const InsuranceTab = ({ insurances, showAddInsurance, setShowAddInsurance, newIn
                     <Plus className="w-4 h-4" /> Add Insurance
                 </button>
             </div>
+
+            {message && (
+                <div className={`p-4 rounded-lg flex items-center gap-2 ${message.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                    {message.type === 'success' ? <CheckCircle className="w-5 h-5"/> : <AlertCircle className="w-5 h-5"/>}
+                    {message.text}
+                </div>
+            )}
 
             {showAddInsurance && (
                 <div className="bg-indigo-50 p-6 rounded-xl border border-indigo-100 animate-slideDown">
@@ -411,40 +461,83 @@ const InsuranceTab = ({ insurances, showAddInsurance, setShowAddInsurance, newIn
                 {insurances.length > 0 ? (
                     insurances.map((ins: any) => (
                         <div key={ins.id} className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                            <div className="flex justify-between items-start mb-3">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-                                        <Shield className="w-5 h-5 text-indigo-600" />
+                            {editId === ins.id ? (
+                                /* Edit Mode */
+                                <div className="space-y-3">
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <input type="text" value={editData.provider} onChange={e => setEditData({...editData, provider: e.target.value})} className="px-3 py-2 rounded border text-sm" placeholder="Provider" />
+                                        <input type="text" value={editData.planName} onChange={e => setEditData({...editData, planName: e.target.value})} className="px-3 py-2 rounded border text-sm" placeholder="Plan Name" />
+                                        <input type="text" value={editData.policyNumber} onChange={e => setEditData({...editData, policyNumber: e.target.value})} className="px-3 py-2 rounded border text-sm" placeholder="Policy Number" />
+                                        <input type="text" value={editData.groupNumber} onChange={e => setEditData({...editData, groupNumber: e.target.value})} className="px-3 py-2 rounded border text-sm" placeholder="Group Number" />
+                                        <input type="number" value={editData.coveragePercentage} onChange={e => setEditData({...editData, coveragePercentage: parseInt(e.target.value)})} className="px-3 py-2 rounded border text-sm" placeholder="Coverage %" min="0" max="100" />
+                                        <input type="date" value={editData.validUntil} onChange={e => setEditData({...editData, validUntil: e.target.value})} className="px-3 py-2 rounded border text-sm" />
                                     </div>
-                                    <div>
-                                        <h4 className="font-bold text-gray-900">{ins.provider}</h4>
-                                        <p className="text-sm text-gray-500">{ins.planName || 'Standard Plan'}</p>
+                                    <div className="flex justify-end gap-2 pt-2">
+                                        <button onClick={() => setEditId(null)} className="text-gray-600 px-3 py-1.5 rounded hover:bg-gray-100 text-sm font-medium">Cancel</button>
+                                        <button onClick={() => handleSaveEdit(ins.id)} className="bg-indigo-600 text-white px-4 py-1.5 rounded hover:bg-indigo-700 text-sm font-medium">Save</button>
                                     </div>
                                 </div>
-                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[ins.status] || 'bg-gray-100 text-gray-800'}`}>
-                                    {ins.status}
-                                </span>
-                            </div>
-                            <div className="space-y-2 text-sm">
-                                <div className="flex justify-between">
-                                    <span className="text-gray-500">Policy Number</span>
-                                    <span className="font-medium text-gray-900">{ins.policyNumber}</span>
-                                </div>
-                                {ins.groupNumber && (
-                                    <div className="flex justify-between">
-                                        <span className="text-gray-500">Group Number</span>
-                                        <span className="font-medium text-gray-900">{ins.groupNumber}</span>
+                            ) : (
+                                /* View Mode */
+                                <>
+                                    <div className="flex justify-between items-start mb-3">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                                                <Shield className="w-5 h-5 text-indigo-600" />
+                                            </div>
+                                            <div>
+                                                <h4 className="font-bold text-gray-900">{ins.provider}</h4>
+                                                <p className="text-sm text-gray-500">{ins.planName || 'Standard Plan'}</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[ins.status] || 'bg-gray-100 text-gray-800'}`}>
+                                                {ins.status}
+                                            </span>
+                                            {ins.verificationNote && ins.status === 'REJECTED' && (
+                                                <span className="text-xs text-red-500" title={ins.verificationNote}>⚠</span>
+                                            )}
+                                        </div>
                                     </div>
-                                )}
-                                <div className="flex justify-between">
-                                    <span className="text-gray-500">Coverage</span>
-                                    <span className="font-medium text-gray-900">{ins.coveragePercentage || 100}%</span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span className="text-gray-500">Valid Until</span>
-                                    <span className="font-medium text-gray-900">{ins.validUntil ? new Date(ins.validUntil).toLocaleDateString() : 'N/A'}</span>
-                                </div>
-                            </div>
+                                    <div className="space-y-2 text-sm">
+                                        <div className="flex justify-between">
+                                            <span className="text-gray-500">Policy Number</span>
+                                            <span className="font-medium text-gray-900">{ins.policyNumber}</span>
+                                        </div>
+                                        {ins.groupNumber && (
+                                            <div className="flex justify-between">
+                                                <span className="text-gray-500">Group Number</span>
+                                                <span className="font-medium text-gray-900">{ins.groupNumber}</span>
+                                            </div>
+                                        )}
+                                        <div className="flex justify-between">
+                                            <span className="text-gray-500">Coverage</span>
+                                            <span className="font-medium text-gray-900">{ins.coveragePercentage || 100}%</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className="text-gray-500">Valid Until</span>
+                                            <span className="font-medium text-gray-900">{ins.validUntil ? new Date(ins.validUntil).toLocaleDateString() : 'N/A'}</span>
+                                        </div>
+                                    </div>
+                                    {canEdit(ins.status) && (
+                                        <div className="flex gap-2 mt-4 pt-3 border-t border-gray-100">
+                                            <button onClick={() => handleStartEdit(ins)} className="flex-1 text-indigo-600 hover:text-indigo-700 text-sm font-medium py-1.5 rounded hover:bg-indigo-50 transition-colors">
+                                                Edit
+                                            </button>
+                                            <button onClick={() => handleDelete(ins.id, ins.provider)} className="flex-1 text-red-500 hover:text-red-600 text-sm font-medium py-1.5 rounded hover:bg-red-50 transition-colors">
+                                                Delete
+                                            </button>
+                                        </div>
+                                    )}
+                                    {ins.status === 'ACTIVE' && (
+                                        <div className="flex gap-2 mt-4 pt-3 border-t border-gray-100">
+                                            <button onClick={() => handleDelete(ins.id, ins.provider)} className="flex-1 text-red-500 hover:text-red-600 text-sm font-medium py-1.5 rounded hover:bg-red-50 transition-colors">
+                                                Delete
+                                            </button>
+                                        </div>
+                                    )}
+                                </>
+                            )}
                         </div>
                     ))
                 ) : (

@@ -63,7 +63,8 @@ import ResetPassword from './pages/ResetPassword';
 import PatientOnboarding from './pages/patient/PatientOnboarding'; // New Import
 import LandingPage from './pages/LandingPage';
 import Theaters from './pages/admin/Theaters';
-import { AuthProvider } from './context/AuthContext';
+import InsuranceVerification from './pages/admin/InsuranceVerification';
+import { Role } from './constants/roles';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Toaster } from 'react-hot-toast';
 
@@ -89,7 +90,7 @@ function App() {
           } />
           
           <Route path="/patients" element={
-            <ProtectedRoute allowedRoles={['ADMIN', 'DOCTOR', 'NURSE', 'RECEPTIONIST']}>
+            <ProtectedRoute allowedRoles={[Role.ADMIN, Role.DOCTOR, Role.NURSE, Role.RECEPTIONIST]}>
               <MainLayout>
                 <Patients />
               </MainLayout>
@@ -97,7 +98,7 @@ function App() {
           } />
 
           <Route path="/patients/new" element={
-            <ProtectedRoute allowedRoles={['ADMIN', 'DOCTOR', 'NURSE', 'RECEPTIONIST']}>
+            <ProtectedRoute allowedRoles={[Role.ADMIN, Role.DOCTOR, Role.NURSE, Role.RECEPTIONIST]}>
               <MainLayout>
                 <RegisterPatient />
               </MainLayout>
@@ -105,7 +106,7 @@ function App() {
           } />
 
           <Route path="/patients/:id" element={
-            <ProtectedRoute allowedRoles={['ADMIN', 'DOCTOR', 'NURSE', 'RECEPTIONIST']}>
+            <ProtectedRoute allowedRoles={[Role.ADMIN, Role.DOCTOR, Role.NURSE, Role.RECEPTIONIST]}>
               <MainLayout>
                 <PatientDetails />
               </MainLayout>
@@ -113,7 +114,7 @@ function App() {
           } />
 
           <Route path="/consultation/:appointmentId" element={
-            <ProtectedRoute allowedRoles={['DOCTOR']}>
+            <ProtectedRoute allowedRoles={[Role.DOCTOR]}>
               <MainLayout>
                 <Consultation />
               </MainLayout>
@@ -122,7 +123,7 @@ function App() {
 
           { /* Role Based Dashboards */ }
           <Route path="/admin" element={
-            <ProtectedRoute allowedRoles={['ADMIN']}>
+            <ProtectedRoute allowedRoles={[Role.ADMIN]}>
               <MainLayout>
                 <AdminDashboard />
               </MainLayout>
@@ -130,7 +131,7 @@ function App() {
           } />
 
           <Route path="/admin/facility" element={
-            <ProtectedRoute allowedRoles={['ADMIN']}>
+            <ProtectedRoute allowedRoles={[Role.ADMIN]}>
               <MainLayout>
                 <FacilityManagement />
               </MainLayout>
@@ -138,15 +139,23 @@ function App() {
           } />
 
           <Route path="/admin/theaters" element={
-            <ProtectedRoute allowedRoles={['ADMIN']}>
+            <ProtectedRoute allowedRoles={[Role.ADMIN]}>
               <MainLayout>
                 <Theaters />
               </MainLayout>
             </ProtectedRoute>
           } />
+
+          <Route path="/admin/insurance-verification" element={
+            <ProtectedRoute allowedRoles={[Role.ADMIN, Role.ACCOUNTANT]}>
+              <MainLayout>
+                <InsuranceVerification />
+              </MainLayout>
+            </ProtectedRoute>
+          } />
           
           <Route path="/admin/audit-logs" element={
-            <ProtectedRoute allowedRoles={['ADMIN']}>
+            <ProtectedRoute allowedRoles={[Role.ADMIN]}>
               <MainLayout>
                 <AuditLogs />
               </MainLayout>
@@ -154,7 +163,7 @@ function App() {
           } />
 
           <Route path="/admin/payroll" element={
-            <ProtectedRoute allowedRoles={['ADMIN', 'ACCOUNTANT']}>
+            <ProtectedRoute allowedRoles={[Role.ADMIN, Role.ACCOUNTANT]}>
               <MainLayout>
                 <PayrollManagement />
               </MainLayout>
@@ -162,55 +171,72 @@ function App() {
           } />
 
           <Route path="/admin/leaves" element={
-            <ProtectedRoute allowedRoles={['ADMIN']}>
+            <ProtectedRoute allowedRoles={[Role.ADMIN]}>
               <MainLayout>
                 <LeaveManagement />
               </MainLayout>
             </ProtectedRoute>
           } />
 
-          <Route path="/admin/leaves/settings" element={
-            <ProtectedRoute allowedRoles={['ADMIN']}>
-              <MainLayout>
-                <LeaveSettings />
-              </MainLayout>
-            </ProtectedRoute>
-          } />
+           <Route path="/admin/leaves/settings" element={
+             <ProtectedRoute allowedRoles={[Role.ADMIN]}>
+               <MainLayout>
+                 <LeaveSettings />
+               </MainLayout>
+             </ProtectedRoute>
+           } />
 
-          <Route path="/admin/settings" element={
-            <ProtectedRoute allowedRoles={['ADMIN']}>
-              <MainLayout>
-                <HospitalSettingsPage />
-              </MainLayout>
-            </ProtectedRoute>
-          } />
+           <Route path="/nurse/triage" element={
+             <ProtectedRoute allowedRoles={[Role.NURSE]}>
+               <MainLayout>
+                 <TriageDashboard />
+               </MainLayout>
+             </ProtectedRoute>
+           } />
+
+           <Route path="/admin/settings" element={
+             <ProtectedRoute allowedRoles={[Role.ADMIN]}>
+               <MainLayout>
+                 <HospitalSettingsPage />
+               </MainLayout>
+             </ProtectedRoute>
+           } />
 
           <Route path="/departments" element={
-            <ProtectedRoute allowedRoles={['ADMIN']}>
+            <ProtectedRoute allowedRoles={[Role.ADMIN]}>
               <MainLayout>
                 <DepartmentList />
               </MainLayout>
             </ProtectedRoute>
           } />
 
-          <Route path="/reports" element={
-            <ProtectedRoute allowedRoles={['ADMIN']}>
-              <MainLayout>
-                <ReportsDashboard />
-              </MainLayout>
-            </ProtectedRoute>
-          } />
+           <Route path="/reports" element={
+             <ProtectedRoute allowedRoles={[Role.ADMIN]}>
+               <MainLayout>
+                 <ReportsDashboard />
+               </MainLayout>
+             </ProtectedRoute>
+           } />
+           
+           {/* Insurance Claims Route */}
+           <Route path="/finance/insurance-claims" element={
+             <ProtectedRoute allowedRoles={[Role.ACCOUNTANT, Role.ADMIN]}>
+               <MainLayout>
+                 <InsuranceClaims />
+               </MainLayout>
+             </ProtectedRoute>
+           } />
 
           {/* Inpatient Routes */}
           <Route path="/inpatient" element={
-            <ProtectedRoute allowedRoles={['DOCTOR', 'NURSE', 'ADMIN']}>
+            <ProtectedRoute allowedRoles={[Role.DOCTOR, Role.NURSE, Role.ADMIN]}>
               <MainLayout>
                 <InpatientDashboard />
               </MainLayout>
             </ProtectedRoute>
           } />
           <Route path="/inpatient/ward/:id" element={
-            <ProtectedRoute allowedRoles={['DOCTOR', 'NURSE', 'ADMIN']}>
+            <ProtectedRoute allowedRoles={[Role.DOCTOR, Role.NURSE, Role.ADMIN]}>
               <MainLayout>
                 <WardDetails />
               </MainLayout>
@@ -218,7 +244,7 @@ function App() {
           } />
 
           <Route path="/treatments" element={
-            <ProtectedRoute allowedRoles={['NURSE', 'ADMIN']}>
+            <ProtectedRoute allowedRoles={[Role.NURSE, Role.ADMIN]}>
               <MainLayout>
                 <TreatmentDashboard />
               </MainLayout>
@@ -227,12 +253,12 @@ function App() {
 
           {/* Telemedicine Routes */}
           <Route path="/consultation/video/:appointmentId" element={
-            <ProtectedRoute allowedRoles={['DOCTOR', 'PATIENT']}>
+            <ProtectedRoute allowedRoles={[Role.DOCTOR, Role.PATIENT]}>
                <VideoCallPage />
             </ProtectedRoute>
           } />
           <Route path="/patient/book" element={
-            <ProtectedRoute allowedRoles={['PATIENT']}>
+            <ProtectedRoute allowedRoles={[Role.PATIENT]}>
               <MainLayout>
                 <PatientBooking />
               </MainLayout>
@@ -240,7 +266,7 @@ function App() {
           } />
           
           <Route path="/patient/doctors" element={
-            <ProtectedRoute allowedRoles={['PATIENT']}>
+            <ProtectedRoute allowedRoles={[Role.PATIENT]}>
               <MainLayout>
                 <Doctors />
               </MainLayout>
@@ -249,49 +275,49 @@ function App() {
 
 
           <Route path="/doctor" element={
-            <ProtectedRoute allowedRoles={['DOCTOR']}>
+            <ProtectedRoute allowedRoles={[Role.DOCTOR]}>
               <MainLayout>
                 <DoctorDashboard />
               </MainLayout>
             </ProtectedRoute>
           } />
           <Route path="/doctor/telemedicine" element={
-            <ProtectedRoute allowedRoles={['DOCTOR']}>
+            <ProtectedRoute allowedRoles={[Role.DOCTOR]}>
               <MainLayout>
                 <TelemedicineDashboard />
               </MainLayout>
             </ProtectedRoute>
           } />
           <Route path="/lab-tech" element={
-            <ProtectedRoute allowedRoles={['LAB_TECH', 'ADMIN']}>
+            <ProtectedRoute allowedRoles={[Role.LAB_TECH, Role.ADMIN]}>
               <MainLayout>
                 <LabDashboard />
               </MainLayout>
             </ProtectedRoute>
           } />
           <Route path="/receptionist" element={
-            <ProtectedRoute allowedRoles={['RECEPTIONIST', 'ADMIN']}>
+            <ProtectedRoute allowedRoles={[Role.RECEPTIONIST, Role.ADMIN]}>
               <MainLayout>
                 <ReceptionistDashboard />
               </MainLayout>
             </ProtectedRoute>
           } />
           <Route path="/receptionist/register" element={
-            <ProtectedRoute allowedRoles={['RECEPTIONIST', 'ADMIN']}>
+            <ProtectedRoute allowedRoles={[Role.RECEPTIONIST, Role.ADMIN]}>
               <MainLayout>
                 <ReceptionistRegistration />
               </MainLayout>
             </ProtectedRoute>
           } />
           <Route path="/receptionist/booking" element={
-            <ProtectedRoute allowedRoles={['RECEPTIONIST', 'ADMIN']}>
+            <ProtectedRoute allowedRoles={[Role.RECEPTIONIST, Role.ADMIN]}>
               <MainLayout>
                 <ReceptionistBooking />
               </MainLayout>
             </ProtectedRoute>
           } />
           <Route path="/receptionist/queue" element={
-            <ProtectedRoute allowedRoles={['RECEPTIONIST', 'ADMIN']}>
+            <ProtectedRoute allowedRoles={[Role.RECEPTIONIST, Role.ADMIN]}>
               <MainLayout>
                 <QueueDashboard />
               </MainLayout>
@@ -299,21 +325,21 @@ function App() {
           } />
 
           <Route path="/pharmacy" element={
-            <ProtectedRoute allowedRoles={['PHARMACIST', 'ADMIN']}>
+            <ProtectedRoute allowedRoles={[Role.PHARMACIST, Role.ADMIN]}>
               <MainLayout>
                 <PharmacyDashboard />
               </MainLayout>
             </ProtectedRoute>
           } />
           <Route path="/finance" element={
-            <ProtectedRoute allowedRoles={['ACCOUNTANT', 'ADMIN']}>
+            <ProtectedRoute allowedRoles={[Role.ACCOUNTANT, Role.ADMIN]}>
               <MainLayout>
                 <FinanceDashboard />
               </MainLayout>
             </ProtectedRoute>
           } />
           <Route path="/admissions" element={
-            <ProtectedRoute allowedRoles={['NURSE', 'ADMIN', 'DOCTOR']}>
+            <ProtectedRoute allowedRoles={[Role.NURSE, Role.ADMIN, Role.DOCTOR]}>
               <MainLayout>
                 <AdmissionDashboard />
               </MainLayout>
@@ -322,14 +348,14 @@ function App() {
 
           {/* Radiology Routes */}
           <Route path="/radiology" element={
-            <ProtectedRoute allowedRoles={['DOCTOR', 'ADMIN', 'LAB_TECH', 'RADIOLOGIST']}>
+            <ProtectedRoute allowedRoles={[Role.DOCTOR, Role.ADMIN, Role.LAB_TECH, Role.RADIOLOGIST]}>
               <MainLayout>
                 <RadiologyDashboard />
               </MainLayout>
             </ProtectedRoute>
           } />
           <Route path="/radiology/request" element={
-            <ProtectedRoute allowedRoles={['DOCTOR', 'ADMIN']}>
+            <ProtectedRoute allowedRoles={[Role.DOCTOR, Role.ADMIN]}>
               <MainLayout>
                 <RequestImaging />
               </MainLayout>
@@ -338,14 +364,14 @@ function App() {
 
           {/* Surgery Routes */}
           <Route path="/surgery" element={
-            <ProtectedRoute allowedRoles={['DOCTOR', 'ADMIN', 'NURSE']}>
+            <ProtectedRoute allowedRoles={[Role.DOCTOR, Role.ADMIN, Role.NURSE]}>
               <MainLayout>
                 <SurgeryDashboard />
               </MainLayout>
             </ProtectedRoute>
           } />
           <Route path="/surgery/book" element={
-            <ProtectedRoute allowedRoles={['DOCTOR', 'ADMIN', 'NURSE']}>
+            <ProtectedRoute allowedRoles={[Role.DOCTOR, Role.ADMIN, Role.NURSE]}>
               <MainLayout>
                 <BookSurgery />
               </MainLayout>
@@ -353,7 +379,7 @@ function App() {
           } />
 
           <Route path="/wellness" element={
-            <ProtectedRoute allowedRoles={['PATIENT']}>
+            <ProtectedRoute allowedRoles={[Role.PATIENT]}>
               <MainLayout>
                 <WellnessDashboard />
               </MainLayout>
@@ -362,7 +388,7 @@ function App() {
 
           {/* Provider: View Patient Wellness */}
           <Route path="/wellness/patient/:patientId" element={
-            <ProtectedRoute allowedRoles={['DOCTOR', 'NURSE', 'ADMIN']}>
+            <ProtectedRoute allowedRoles={[Role.DOCTOR, Role.NURSE, Role.ADMIN]}>
               <MainLayout>
                 <PatientWellnessView />
               </MainLayout>
@@ -370,7 +396,7 @@ function App() {
           } />
 
           <Route path="/staff" element={
-            <ProtectedRoute allowedRoles={['ADMIN', 'DOCTOR', 'NURSE', 'RECEPTIONIST']}>
+            <ProtectedRoute allowedRoles={[Role.ADMIN, Role.DOCTOR, Role.NURSE, Role.RECEPTIONIST]}>
               <MainLayout>
                 <Staff />
               </MainLayout>
@@ -379,7 +405,7 @@ function App() {
 
 
           <Route path="/appointments" element={
-            <ProtectedRoute allowedRoles={['ADMIN', 'DOCTOR', 'NURSE', 'RECEPTIONIST', 'PATIENT']}>
+            <ProtectedRoute allowedRoles={[Role.ADMIN, Role.DOCTOR, Role.NURSE, Role.RECEPTIONIST, Role.PATIENT]}>
               <MainLayout>
                 <Appointments />
               </MainLayout>
@@ -387,7 +413,7 @@ function App() {
           } />
 
           <Route path="/appointments/new" element={
-            <ProtectedRoute allowedRoles={['ADMIN', 'DOCTOR', 'NURSE', 'RECEPTIONIST', 'PATIENT']}>
+            <ProtectedRoute allowedRoles={[Role.ADMIN, Role.DOCTOR, Role.NURSE, Role.RECEPTIONIST, Role.PATIENT]}>
               <MainLayout>
                 <NewAppointment />
               </MainLayout>
@@ -395,7 +421,7 @@ function App() {
           } />
           
           <Route path="/records" element={
-            <ProtectedRoute allowedRoles={['ADMIN', 'DOCTOR', 'NURSE', 'PATIENT']}>
+            <ProtectedRoute allowedRoles={[Role.ADMIN, Role.DOCTOR, Role.NURSE, Role.PATIENT]}>
               <MainLayout>
                 <Records />
               </MainLayout>
@@ -403,7 +429,7 @@ function App() {
            } />
 
           <Route path="/medications" element={
-            <ProtectedRoute allowedRoles={['PATIENT']}>
+            <ProtectedRoute allowedRoles={[Role.PATIENT]}>
               <MainLayout>
                 <Medications />
               </MainLayout>
@@ -411,7 +437,7 @@ function App() {
           } />
 
            <Route path="/billing" element={
-            <ProtectedRoute allowedRoles={['PATIENT']}>
+            <ProtectedRoute allowedRoles={[Role.PATIENT]}>
               <MainLayout>
                 <Billing />
               </MainLayout>

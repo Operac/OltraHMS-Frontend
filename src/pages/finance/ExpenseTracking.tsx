@@ -1,8 +1,17 @@
 import { useState, useEffect } from 'react';
 import { FinanceService } from '../../services/finance.service';
 import toast from 'react-hot-toast';
-import { Plus, DollarSign } from 'lucide-react';
+import { Plus, DollarSign, Download, FileDown } from 'lucide-react';
 import { format } from 'date-fns';
+import { exportToCSV, exportToPDF } from '../../utils/export';
+
+const expenseColumns = [
+    { header: 'Date', dataKey: (row: any) => row.incurredAt ? format(new Date(row.incurredAt), 'MMM dd, yyyy') : '' },
+    { header: 'Description', dataKey: 'description' },
+    { header: 'Category', dataKey: 'category' },
+    { header: 'Recorded By', dataKey: (row: any) => row.recordedBy?.name || 'Unknown' },
+    { header: 'Amount', dataKey: 'amount' }
+];
 
 const ExpenseTracking = () => {
     const [expenses, setExpenses] = useState<any[]>([]);
@@ -51,14 +60,22 @@ const ExpenseTracking = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center flex-wrap gap-4">
                 <h1 className="text-2xl font-bold text-gray-800">Expense Tracking</h1>
-                <button 
-                    onClick={() => setIsModalOpen(true)}
-                    className="bg-red-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-red-700"
-                >
-                    <Plus size={20} /> Record Expense
-                </button>
+                <div className="flex items-center gap-3">
+                    <button onClick={() => exportToCSV(expenses, 'expenses', expenseColumns)} className="flex items-center gap-1 text-sm bg-white border border-gray-200 text-gray-600 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+                        <Download className="w-4 h-4" /> CSV
+                    </button>
+                    <button onClick={() => exportToPDF(expenses, 'expenses', 'Expense Tracking', expenseColumns)} className="flex items-center gap-1 text-sm bg-white border border-gray-200 text-gray-600 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+                        <FileDown className="w-4 h-4" /> PDF
+                    </button>
+                    <button 
+                        onClick={() => setIsModalOpen(true)}
+                        className="bg-red-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-red-700 ml-2"
+                    >
+                        <Plus size={20} /> Record Expense
+                    </button>
+                </div>
             </div>
 
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">

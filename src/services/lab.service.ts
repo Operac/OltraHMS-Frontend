@@ -7,6 +7,9 @@ export interface LabOrder {
     status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED';
     orderedAt: string;
     clinicalIndication?: string;
+    paymentStatus?: 'AWAITING_PAYMENT' | 'PAYMENT_SUBMITTED' | 'CLEARED' | 'WAIVED';
+    clearedAt?: string;
+    waiverReason?: string;
     patient: {
         firstName: string;
         lastName: string;
@@ -46,6 +49,22 @@ export const labService = {
 
     createInvoice: async (id: string, amount: number) => {
         const response = await api.post(`/labs/orders/${id}/invoice`, { amount });
+        return response.data;
+    },
+
+    // Payment gate methods
+    submitPayment: async (id: string) => {
+        const response = await api.post(`/labs/orders/${id}/submit-payment`);
+        return response.data;
+    },
+
+    clearPayment: async (id: string) => {
+        const response = await api.post(`/labs/orders/${id}/clear-payment`);
+        return response.data;
+    },
+
+    waivePayment: async (id: string, waiverReason?: string) => {
+        const response = await api.post(`/labs/orders/${id}/waive-payment`, { waiverReason });
         return response.data;
     }
 };

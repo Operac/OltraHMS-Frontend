@@ -43,6 +43,11 @@ export const PharmacyService = {
         return response.data;
     },
 
+    getRefillRequests: async () => {
+        const response = await api.get('/pharmacy/refill-requests');
+        return response.data;
+    },
+
     dispense: async (prescriptionId: string, items: DispenseItem[]) => {
         const response = await api.post(`/pharmacy/dispense/${prescriptionId}`, { items });
         return response.data;
@@ -55,6 +60,22 @@ export const PharmacyService = {
 
     getReport: async () => {
         const response = await api.get('/pharmacy/report');
+        return response.data;
+    },
+
+    // Payment gate methods
+    submitPayment: async (prescriptionId: string) => {
+        const response = await api.post('/pharmacy/submit-payment', { prescriptionId });
+        return response.data;
+    },
+
+    clearPayment: async (prescriptionId: string) => {
+        const response = await api.post('/pharmacy/clear-payment', { prescriptionId });
+        return response.data;
+    },
+
+    waivePayment: async (prescriptionId: string, waiverReason?: string) => {
+        const response = await api.post('/pharmacy/waive-payment', { prescriptionId, waiverReason });
         return response.data;
     }
 };

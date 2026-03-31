@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { CreditCard, Clock, CheckCircle, AlertCircle, RefreshCw } from 'lucide-react';
+import { CreditCard, Clock, CheckCircle, AlertCircle, RefreshCw, Send } from 'lucide-react';
 import { PatientService } from '../../services/patient.service';
 import type { Invoice } from '../../services/patient.service';
+import toast from 'react-hot-toast';
 
 const Billing = () => {
     const { token } = useAuth();
@@ -37,10 +38,24 @@ const Billing = () => {
             
             // Refetch invoices to update status
             await fetchInvoices();
-            alert('Payment Successful!');
+            toast.success('Payment Successful!');
         } catch (error: any) {
             console.error('Payment Error', error);
-            alert('Payment Failed: ' + (error.response?.data?.message || 'Unknown error'));
+            toast.error('Payment Failed: ' + (error.response?.data?.message || 'Unknown error'));
+        } finally {
+            setPaymentProcessing(null);
+        }
+    };
+
+    const handleSubmitPayment = async (invoiceId: string) => {
+        setPaymentProcessing(invoiceId);
+        try {
+            await PatientService.submitPayment({ invoiceId, method: 'BANK_TRANSFER', reference: `PAY-${Date.now()}` });
+            await fetchInvoices();
+            toast.success('Payment submitted! Awaiting staff confirmation.');
+        } catch (error: any) {
+            console.error('Submit Payment Error', error);
+            toast.error('Failed to submit payment: ' + (error.response?.data?.message || 'Unknown error'));
         } finally {
             setPaymentProcessing(null);
         }
@@ -136,18 +151,49 @@ const Billing = () => {
                                         </td>
                                         <td className="py-4 px-6 text-right space-x-2">
                                             {invoice.status !== 'PAID' && invoice.status !== 'VOID' && invoice.status !== 'REFUNDED' && (
-                                                <button
-                                                    onClick={() => handlePay(invoice.id, invoice.balance ?? invoice.total)}
-                                                    disabled={paymentProcessing === invoice.id}
-                                                    className="inline-flex items-center px-3 py-1.5 bg-teal-600 text-white text-xs font-bold rounded-lg hover:bg-teal-700 disabled:opacity-50 transition-all shadow-sm active:scale-95"
-                                                >
-                                                    {paymentProcessing === invoice.id ? (
-                                                        <Clock className="w-3 h-3 mr-1.5 animate-spin" />
+                                                <div className="flex flex-col gap-1 items-end">
+                                                    {(invoice as any).paymentConfirmationStatus === 'AWAITING_CONFIRMATION' ? (
+                                                        <span className="inline-flex items-center px-3 py-1.5 bg-blue-50 text-blue-700 text-xs font-bold rounded-lg border border-blue-200">
+                                                            <Clock className="w-3 h-3 mr-1.5" /> Awaiting Confirmation
+                                                        </span>
+                                                    ) : (invoice as any).paymentConfirmationStatus === 'REJECTED' ? (
+                                                        <div className="flex flex-col items-end gap-1">
+                                                            <span className="inline-flex items-center px-3 py-1.5 bg-red-50 text-red-700 text-xs font-bold rounded-lg border border-red-200">
+                                                                Payment Rejected
+                                                            </span>
+                                                            <button
+                                                                onClick={() => handlePay(invoice.id, invoice.balance ?? invoice.total)}
+                                                                disabled={paymentProcessing === invoice.id}
+                                                                className="inline-flex items-center px-3 py-1.5 bg-teal-600 text-white text-xs font-bold rounded-lg hover:bg-teal-700 disabled:opacity-50 transition-all shadow-sm active:scale-95"
+                                                            >
+                                                                <CreditCard className="w-3 h-3 mr-1.5" /> Try Again
+                                                            </button>
+                                                        </div>
                                                     ) : (
-                                                        <CreditCard className="w-3 h-3 mr-1.5" />
+                                                        <div className="flex gap-1">
+                                                            <button
+                                                                onClick={() => handlePay(invoice.id, invoice.balance ?? invoice.total)}
+                                                                disabled={paymentProcessing === invoice.id}
+                                                                className="inline-flex items-center px-3 py-1.5 bg-teal-600 text-white text-xs font-bold rounded-lg hover:bg-teal-700 disabled:opacity-50 transition-all shadow-sm active:scale-95"
+                                                            >
+                                                                {paymentProcessing === invoice.id ? (
+                                                                    <Clock className="w-3 h-3 mr-1.5 animate-spin" />
+                                                                ) : (
+                                                                    <CreditCard className="w-3 h-3 mr-1.5" />
+                                                                )}
+                                                                Pay
+                                                            </button>
+                                                            <button
+                                                                onClick={() => handleSubmitPayment(invoice.id)}
+                                                                disabled={paymentProcessing === invoice.id}
+                                                                className="inline-flex items-center px-3 py-1.5 bg-blue-600 text-white text-xs font-bold rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-all shadow-sm active:scale-95"
+                                                            >
+                                                                <Send className="w-3 h-3 mr-1.5" />
+                                                                Submit
+                                                            </button>
+                                                        </div>
                                                     )}
-                                                    Pay
-                                                </button>
+                                                </div>
                                             )}
                                             {invoice.status === 'PAID' && (
                                                 <span className="inline-flex items-center text-green-600 text-xs font-medium px-3 py-1.5">

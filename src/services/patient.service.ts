@@ -107,6 +107,11 @@ export const PatientService = {
     return response.data;
   },
 
+  submitPayment: async (data: { invoiceId: string; method: string; reference?: string }) => {
+    const response = await api.post('/patient/payments/submit', data);
+    return response.data;
+  },
+
   // --- Telemedicine ---
   getQueueStatus: async () => {
     const response = await api.get('/patient/queue-status');
@@ -178,6 +183,11 @@ export const PatientService = {
 
   updateInsurancePolicy: async (id: string, data: any) => {
     const response = await api.patch(`/patient-experience/insurance/${id}`, data);
+    return response.data;
+  },
+
+  deleteInsurancePolicy: async (id: string) => {
+    const response = await api.delete(`/patient-experience/insurance/${id}`);
     return response.data;
   }
 };

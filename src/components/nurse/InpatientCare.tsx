@@ -5,6 +5,7 @@ import { inpatientService as InpatientService } from '../../services/inpatient.s
 import type { InpatientData } from '../../types/inpatient';
 import toast from 'react-hot-toast';
 import { Pill, Droplets, CheckCircle, XCircle, Stethoscope } from 'lucide-react';
+import { Role } from '../../constants/roles';
 
 interface FluidBalance {
     id: string;
@@ -352,7 +353,7 @@ export const InpatientCare = ({ patientId, admissionId }: InpatientCareProps) =>
                         </div>
 
                         {/* Add Round Form */}
-                        {user?.role === 'DOCTOR' && (
+                        {user?.role === Role.DOCTOR && (
                             <form 
                                 onSubmit={async (e) => {
                                     e.preventDefault();

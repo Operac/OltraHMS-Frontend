@@ -7,6 +7,7 @@ import type { Department } from '../../services/department.service';
 
 interface StaffMember {
     id: string;
+    staffId: string;
     user: {
         firstName: string;
         lastName: string;
@@ -32,9 +33,20 @@ const DepartmentList = () => {
         try {
             const data = await AdminService.getAllStaff();
             // Filter to only include potential heads (doctors, nurses, etc.)
-            const potentialHeads = data.filter((s: StaffMember) => 
-                ['DOCTOR', 'NURSE', 'PHARMACIST', 'LAB_TECH', 'RADIOLOGIST', 'RECEPTIONIST'].includes(s.role)
-            );
+            // and map to get staff.id for head of department
+            const potentialHeads = data
+                .filter((s: any) => 
+                    ['DOCTOR', 'NURSE', 'PHARMACIST', 'LAB_TECH', 'RADIOLOGIST', 'RECEPTIONIST'].includes(s.role)
+                )
+                .map((s: any) => ({
+                    id: s.id,
+                    staffId: s.staff?.id || s.id,
+                    user: {
+                        firstName: s.firstName,
+                        lastName: s.lastName
+                    },
+                    role: s.role
+                }));
             setStaff(potentialHeads);
         } catch (error) {
             console.error("Failed to load staff");
@@ -79,6 +91,7 @@ const DepartmentList = () => {
 
     const handleEdit = (dept: Department) => {
         try {
+            // For editing, we need to get the staff.id, not user.id
             setFormData({ 
                 name: dept.name || '', 
                 description: dept.description || '',
@@ -200,7 +213,7 @@ const DepartmentList = () => {
                                 >
                                     <option value="">-- Select Department Head --</option>
                                     {staff.map(s => (
-                                        <option key={s.id} value={s.id}>
+                                        <option key={s.staffId} value={s.staffId}>
                                             {s.user.firstName} {s.user.lastName} ({s.role})
                                         </option>
                                     ))}

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../lib/api';
+import { useAuth } from '../../context/AuthContext';
 
 interface OnboardingData {
   // Step 1: Personal Information
@@ -55,6 +56,7 @@ const initialData: OnboardingData = {
 
 export default function PatientOnboarding() {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [data, setData] = useState<OnboardingData>(initialData);
   const [loading, setLoading] = useState(false);
@@ -118,8 +120,17 @@ export default function PatientOnboarding() {
         insuranceExpiry: data.insuranceExpiry ? new Date(data.insuranceExpiry) : undefined,
       });
 
-      // Navigate to login or dashboard
-      navigate('/login', { state: { message: 'Registration successful! Please login.' } });
+      // Auto-login after successful registration
+      const loginResponse = await api.post('/auth/login', {
+        email: data.email,
+        password: 'Welcome@123',
+      });
+      
+      const { token, user } = loginResponse.data;
+      login(token, user);
+      
+      // Redirect to patient dashboard
+      navigate('/patient/dashboard');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Registration failed. Please try again.');
     } finally {
