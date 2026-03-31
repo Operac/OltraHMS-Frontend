@@ -3,9 +3,11 @@ import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { User, Mail, Lock, ArrowRight, Activity, AlertCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useAuth } from '../../context/AuthContext';
 
 const Register = () => {
     const navigate = useNavigate();
+    const { login } = useAuth();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     
@@ -21,35 +23,78 @@ const Register = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setError('');
+     const handleSubmit = async (e: React.FormEvent) => {
+         e.preventDefault();
+         setError('');
 
-        if (formData.password !== formData.confirmPassword) {
-            setError("Passwords do not match");
-            return;
-        }
+         if (formData.password !== formData.confirmPassword) {
+             setError("Passwords do not match");
+             return;
+         }
 
-        setLoading(true);
+         setLoading(true);
 
-        try {
-            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
-            await axios.post(`${API_URL}/auth/register`, {
-                firstName: formData.firstName,
-                lastName: formData.lastName,
-                email: formData.email,
-                password: formData.password,
-                role: 'PATIENT' // Default role
-            });
+         try {
+             const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+             const response = await axios.post(`${API_URL}/auth/register`, {
+                 firstName: formData.firstName,
+                 lastName: formData.lastName,
+                 email: formData.email,
+                 password: formData.password,
+                 role: 'PATIENT' // Default role
+             });
 
-            toast.success("Account created successfully! Please login.");
-            navigate('/login');
-        } catch (err: any) {
-            setError(err.response?.data?.message || 'Registration failed.');
-        } finally {
-            setLoading(false);
-        }
-    };
+             const { token, user, refreshToken } = response.data;
+
+             // Store refresh token if present
+             if (refreshToken) {
+                 localStorage.setItem('refreshToken', refreshToken);
+             }
+
+             // Login via AuthContext
+             login(token, user);
+
+             toast.success("Account created successfully! Redirecting...");
+
+             // Role-based redirect (with a small delay to allow context update)
+             setTimeout(() => {
+                 switch(user.role) {
+                     case 'ADMIN':
+                         window.location.href = '/admin';
+                         break;
+                     case 'DOCTOR':
+                         window.location.href = '/doctor';
+                         break;
+                     case 'PATIENT':
+                         navigate('/app'); 
+                         break;
+                     case 'RECEPTIONIST':
+                         window.location.href = '/receptionist';
+                         break;
+                     case 'PHARMACIST':
+                         window.location.href = '/pharmacy';
+                         break;
+                     case 'LAB_TECH':
+                         window.location.href = '/lab-tech';
+                         break;
+                     case 'NURSE':
+                         window.location.href = '/inpatient';
+                         break;
+                     case 'RADIOLOGIST':
+                         window.location.href = '/radiology';
+                         break;
+                     default:
+                         navigate('/app');
+                 }
+             }, 100);
+          } catch (err: unknown) {
+              if (axios.isAxiosError(err)) {
+                  setError(err.response?.data?.message || 'Registration failed.');
+              } else {
+                  setError('Registration failed.');
+              }
+          }
+     };
 
     return (
         <div className="min-h-screen w-full flex bg-[#F8FAFC]">
