@@ -64,8 +64,11 @@ import PatientOnboarding from './pages/patient/PatientOnboarding'; // New Import
 import LandingPage from './pages/LandingPage';
 import Theaters from './pages/admin/Theaters';
 import InsuranceVerification from './pages/admin/InsuranceVerification';
+import TriageDashboard from './pages/nurse/TriageDashboard';
+import InsuranceClaims from './pages/finance/InsuranceClaims';
 import { Role } from './constants/roles';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { AuthProvider } from './context/AuthContext';
 import { Toaster } from 'react-hot-toast';
 
 function App() {
