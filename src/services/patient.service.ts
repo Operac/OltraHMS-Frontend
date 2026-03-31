@@ -71,99 +71,99 @@ export const PatientService = {
   },
 
   // --- Medical Records ---
-  getMedicalRecords: async () => {
-    const response = await api.get('/patient/medical-records');
-    return response.data.history || response.data;
-  },
-  
-  getLabResults: async () => {
-    const response = await api.get('/patient/lab-results');
-    return response.data;
-  },
-
-  getPrescriptions: async () => {
-    const response = await api.get('/patient/prescriptions');
-    return response.data;
-  },
-
-  getMedicationSchedule: async () => {
-    const response = await api.get('/patient/medications/adherence');
-    return response.data;
-  },
-
-  requestRefill: async (prescriptionId: string) => {
-    const response = await api.post(`/patient/prescriptions/${prescriptionId}/refill`);
-    return response.data;
-  },
-
-  // --- Billing ---
-  getInvoices: async () => {
-    const response = await api.get('/patient/invoices');
-    return response.data;
-  },
-
-  processPayment: async (data: { invoiceId: string; amount: number; method: string; reference?: string }) => {
-    const response = await api.post('/patient/payments/process', data);
-    return response.data;
-  },
-
-  submitPayment: async (data: { invoiceId: string; method: string; reference?: string }) => {
-    const response = await api.post('/patient/payments/submit', data);
-    return response.data;
-  },
-
-  // --- Telemedicine ---
-  getQueueStatus: async () => {
-    const response = await api.get('/patient/queue-status');
-    return response.data;
-  },
-
-  initializeVideoSession: async (appointmentId: string) => {
-    const response = await api.post('/patient/telemedicine/session', { appointmentId });
-    return response.data;
-  },
-
-  // --- Family & Settings ---
-  getDependents: async () => {
-    const response = await api.get('/patient/dependents');
-    return response.data;
-  },
-
-  addDependent: async (data: any) => {
-    const response = await api.post('/patient/dependents', data);
-    return response.data;
-  },
-
-  removeDependent: async (id: string) => {
-    const response = await api.delete(`/patient/dependents/${id}`);
-    return response.data;
-  },
-
-  getEmergencyProfile: async () => {
-    const response = await api.get('/patient/emergency-profile');
-    return response.data;
-  },
-
-  updateEmergencyProfile: async (data: any) => {
-    const response = await api.put('/patient/emergency-profile', data);
-    return response.data;
-  },
-
-  // --- Wellness & Misc ---
-  getWellnessGoals: async () => {
-    const response = await api.get('/patient/wellness/goals');
-    return response.data;
-  },
-
-  updateWellnessGoal: async (id: string, data: any) => {
-    const response = await api.post(`/patient/wellness/goals`, { id, ...data });
-    return response.data;
-  },
-  
-  submitFeedback: async (data: any) => {
-    const response = await api.post('/patient/feedback', data);
-    return response.data;
-  },
+   getMedicalRecords: async () => {
+     const response = await api.get('/patient-experience/medical-records');
+     return response.data.history || response.data;
+   },
+   
+   getLabResults: async () => {
+     const response = await api.get('/patient-experience/lab-results');
+     return response.data;
+   },
+ 
+   getPrescriptions: async () => {
+     const response = await api.get('/patient-experience/prescriptions');
+     return response.data;
+   },
+ 
+   getMedicationSchedule: async () => {
+     const response = await api.get('/patient-experience/medications/adherence');
+     return response.data;
+   },
+ 
+   requestRefill: async (prescriptionId: string) => {
+     const response = await api.post(`/patient-experience/prescriptions/${prescriptionId}/refill`);
+     return response.data;
+   },
+ 
+   // --- Billing ---
+   getInvoices: async () => {
+     const response = await api.get('/patient-experience/invoices');
+     return response.data;
+   },
+ 
+   processPayment: async (data: { invoiceId: string; amount: number; method: string; reference?: string }) => {
+     const response = await api.post('/patient-experience/payments/process', data);
+     return response.data;
+   },
+ 
+   submitPayment: async (data: { invoiceId: string; method: string; reference?: string }) => {
+     const response = await api.post('/patient-experience/payments/submit', data);
+     return response.data;
+   },
+ 
+   // --- Telemedicine ---
+   getQueueStatus: async () => {
+     const response = await api.get('/patient-experience/queue-status');
+     return response.data;
+   },
+ 
+   initializeVideoSession: async (appointmentId: string) => {
+     const response = await api.post('/patient-experience/telemedicine/session', { appointmentId });
+     return response.data;
+   },
+ 
+   // --- Family & Settings ---
+   getDependents: async () => {
+     const response = await api.get('/patient-experience/dependents');
+     return response.data;
+   },
+ 
+   addDependent: async (data: any) => {
+     const response = await api.post('/patient-experience/dependents', data);
+     return response.data;
+   },
+ 
+   removeDependent: async (id: string) => {
+     const response = await api.delete(`/patient-experience/dependents/${id}`);
+     return response.data;
+   },
+ 
+   getEmergencyProfile: async () => {
+     const response = await api.get('/patient-experience/emergency-profile');
+     return response.data;
+   },
+ 
+   updateEmergencyProfile: async (data: any) => {
+     const response = await api.put('/patient-experience/emergency-profile', data);
+     return response.data;
+   },
+ 
+   // --- Wellness & Misc ---
+   getWellnessGoals: async () => {
+     const response = await api.get('/patient-experience/wellness/goals');
+     return response.data;
+   },
+ 
+   updateWellnessGoal: async (id: string, data: any) => {
+     const response = await api.post(`/patient-experience/wellness/goals`, { id, ...data });
+     return response.data;
+   },
+   
+   submitFeedback: async (data: any) => {
+     const response = await api.post('/patient-experience/feedback', data);
+     return response.data;
+   },
 
   getAppointment: async (id: string) => {
       const response = await api.get(`/appointments/${id}`);
