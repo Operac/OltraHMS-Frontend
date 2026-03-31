@@ -572,6 +572,7 @@ const InsuranceClaims = () => {
             </>
           ) : (
             /* Claim Detail View */
+            <>
             <div className="bg-white rounded-xl shadow-sm border border-gray-200">
               <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
                 <div className="flex items-center gap-2">
