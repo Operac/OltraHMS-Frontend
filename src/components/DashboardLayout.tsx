@@ -61,6 +61,8 @@ const DashboardLayout = ({ children, role, title }: DashboardLayoutProps) => {
                             <button 
                                 onClick={() => setSidebarOpen(true)}
                                 className="text-gray-500 focus:outline-none lg:hidden"
+                                title="Open sidebar menu"
+                                aria-label="Open sidebar menu"
                             >
                                 <Menu className="w-6 h-6" />
                             </button>

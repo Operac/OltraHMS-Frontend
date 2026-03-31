@@ -200,23 +200,23 @@ const PatientSettings = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-gray-700">First Name</label>
-                                <input type="text" value={profile.firstName} onChange={e => setProfile({...profile, firstName: e.target.value})} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400 outline-none" />
+                                <input type="text" value={profile.firstName} onChange={e => setProfile({...profile, firstName: e.target.value})} placeholder="First name" title="First Name" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400 outline-none" />
                             </div>
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-gray-700">Last Name</label>
-                                <input type="text" value={profile.lastName} onChange={e => setProfile({...profile, lastName: e.target.value})} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400 outline-none" />
+                                <input type="text" value={profile.lastName} onChange={e => setProfile({...profile, lastName: e.target.value})} placeholder="Last name" title="Last Name" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400 outline-none" />
                             </div>
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-gray-700">Email</label>
-                                <input type="email" value={profile.email} disabled className="w-full px-4 py-2 border rounded-lg bg-gray-50 text-gray-500 cursor-not-allowed" />
+                                <input type="email" value={profile.email} disabled title="Email" placeholder="Email address" className="w-full px-4 py-2 border rounded-lg bg-gray-50 text-gray-500 cursor-not-allowed" />
                             </div>
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-gray-700">Phone</label>
-                                <input type="tel" value={profile.phone} onChange={e => setProfile({...profile, phone: e.target.value})} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400 outline-none" />
+                                <input type="tel" value={profile.phone} onChange={e => setProfile({...profile, phone: e.target.value})} placeholder="Phone number" title="Phone" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400 outline-none" />
                             </div>
                              <div className="span-full md:col-span-2 space-y-2">
                                 <label className="text-sm font-medium text-gray-700">Address</label>
-                                <input type="text" value={profile.address} onChange={e => setProfile({...profile, address: e.target.value})} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400 outline-none" />
+                                <input type="text" value={profile.address} onChange={e => setProfile({...profile, address: e.target.value})} placeholder="Address" title="Address" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400 outline-none" />
                             </div>
                         </div>
                         <div className="pt-4">
@@ -235,14 +235,14 @@ const PatientSettings = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                              <div className="space-y-2">
                                 <label className="text-sm font-medium text-gray-700">Blood Group</label>
-                                <select value={profile.bloodGroup} onChange={e => setProfile({...profile, bloodGroup: e.target.value})} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 outline-none bg-white">
+                                <select value={profile.bloodGroup} onChange={e => setProfile({...profile, bloodGroup: e.target.value})} title="Blood Group" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 outline-none bg-white">
                                     <option value="">Select Group</option>
                                     {['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'].map(g => <option key={g} value={g}>{g}</option>)}
                                 </select>
                             </div>
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-gray-700">Genotype</label>
-                                <select value={profile.genotype} onChange={e => setProfile({...profile, genotype: e.target.value})} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 outline-none bg-white">
+                                <select value={profile.genotype} onChange={e => setProfile({...profile, genotype: e.target.value})} title="Genotype" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 outline-none bg-white">
                                     <option value="">Select Genotype</option>
                                     {['AA', 'AS', 'SS', 'AC', 'SC'].map(g => <option key={g} value={g}>{g}</option>)}
                                 </select>
@@ -261,11 +261,11 @@ const PatientSettings = () => {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
                                         <label className="text-sm font-medium text-gray-700">Contact Name</label>
-                                        <input type="text" value={emergency.emergencyContactName} onChange={e => setEmergency({...emergency, emergencyContactName: e.target.value})} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 outline-none" />
+                                        <input type="text" value={emergency.emergencyContactName} onChange={e => setEmergency({...emergency, emergencyContactName: e.target.value})} placeholder="Enter emergency contact name" title="Contact Name" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 outline-none" />
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-sm font-medium text-gray-700">Contact Phone</label>
-                                        <input type="tel" value={emergency.emergencyContactPhone} onChange={e => setEmergency({...emergency, emergencyContactPhone: e.target.value})} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 outline-none" />
+                                        <input type="tel" value={emergency.emergencyContactPhone} onChange={e => setEmergency({...emergency, emergencyContactPhone: e.target.value})} placeholder="Enter emergency contact phone number" title="Contact Phone" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 outline-none" />
                                     </div>
                                 </div>
                             </div>
@@ -298,7 +298,7 @@ const PatientSettings = () => {
                             <form onSubmit={handleAddDependent} className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <input required type="text" placeholder="First Name" value={newDependent.firstName} onChange={e => setNewDependent({...newDependent, firstName: e.target.value})} className="px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-teal-500" />
                                 <input required type="text" placeholder="Last Name" value={newDependent.lastName} onChange={e => setNewDependent({...newDependent, lastName: e.target.value})} className="px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-teal-500" />
-                                <select required value={newDependent.relationship} onChange={e => setNewDependent({...newDependent, relationship: e.target.value})} className="px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white">
+                                <select required title="Relationship" value={newDependent.relationship} onChange={e => setNewDependent({...newDependent, relationship: e.target.value})} className="px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white">
                                     <option value="">Relationship</option>
                                     <option value="SPOUSE">Spouse</option>
                                     <option value="CHILD">Child</option>
@@ -306,11 +306,11 @@ const PatientSettings = () => {
                                     <option value="SIBLING">Sibling</option>
                                     <option value="OTHER">Other</option>
                                 </select>
-                                <select value={newDependent.gender} onChange={e => setNewDependent({...newDependent, gender: e.target.value})} className="px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white">
+                                <select title="Gender" value={newDependent.gender} onChange={e => setNewDependent({...newDependent, gender: e.target.value})} className="px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white">
                                     <option value="MALE">Male</option>
                                     <option value="FEMALE">Female</option>
                                 </select>
-                                <input required type="date" value={newDependent.dob} onChange={e => setNewDependent({...newDependent, dob: e.target.value})} className="px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-teal-500" />
+                                <input required type="date" title="Date of Birth" placeholder="Date of Birth" value={newDependent.dob} onChange={e => setNewDependent({...newDependent, dob: e.target.value})} className="px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-teal-500" />
                                 
                                 <div className="md:col-span-3 flex justify-end gap-2 pt-2">
                                     <button type="button" onClick={() => setShowAddDependent(false)} className="text-gray-600 px-4 py-2 rounded-lg hover:bg-gray-100 text-sm font-medium">Cancel</button>
@@ -333,7 +333,7 @@ const PatientSettings = () => {
                                             <p className="text-sm text-gray-500 capitalize">{dep.relationship?.toLowerCase()} • {dep.gender === 'MALE' ? 'Male' : 'Female'}</p>
                                         </div>
                                     </div>
-                                    <button onClick={() => handleRemoveDependent(dep.id)} className="text-gray-400 hover:text-red-500 p-2 rounded-full hover:bg-red-50 transition-colors">
+                                    <button onClick={() => handleRemoveDependent(dep.id)} title="Remove dependent" className="text-gray-400 hover:text-red-500 p-2 rounded-full hover:bg-red-50 transition-colors">
                                         <Trash2 className="w-4 h-4" />
                                     </button>
                                 </div>
@@ -469,7 +469,7 @@ const InsuranceTab = ({ insurances, showAddInsurance, setShowAddInsurance, newIn
                                         <input type="text" value={editData.policyNumber} onChange={e => setEditData({...editData, policyNumber: e.target.value})} className="px-3 py-2 rounded border text-sm" placeholder="Policy Number" />
                                         <input type="text" value={editData.groupNumber} onChange={e => setEditData({...editData, groupNumber: e.target.value})} className="px-3 py-2 rounded border text-sm" placeholder="Group Number" />
                                         <input type="number" value={editData.coveragePercentage} onChange={e => setEditData({...editData, coveragePercentage: parseInt(e.target.value)})} className="px-3 py-2 rounded border text-sm" placeholder="Coverage %" min="0" max="100" />
-                                        <input type="date" value={editData.validUntil} onChange={e => setEditData({...editData, validUntil: e.target.value})} className="px-3 py-2 rounded border text-sm" />
+                                        <input type="date" value={editData.validUntil} onChange={e => setEditData({...editData, validUntil: e.target.value})} className="px-3 py-2 rounded border text-sm" placeholder="Valid Until" />
                                     </div>
                                     <div className="flex justify-end gap-2 pt-2">
                                         <button onClick={() => setEditId(null)} className="text-gray-600 px-3 py-1.5 rounded hover:bg-gray-100 text-sm font-medium">Cancel</button>

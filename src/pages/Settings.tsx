@@ -186,6 +186,8 @@ const Settings = () => {
                                 value={passwordData.currentPassword}
                                 onChange={(e) => setPasswordData({...passwordData, currentPassword: e.target.value})}
                                 className="w-full pl-10 pr-12 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400 outline-none"
+                                placeholder="Enter your current password"
+                                title="Current Password"
                                 required
                             />
                             <button
@@ -207,6 +209,8 @@ const Settings = () => {
                                 value={passwordData.newPassword}
                                 onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
                                 className="w-full pl-10 pr-12 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400 outline-none"
+                                placeholder="Enter your new password"
+                                title="New Password"
                                 required
                             />
                             <button
@@ -229,6 +233,8 @@ const Settings = () => {
                                 value={passwordData.confirmPassword}
                                 onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})}
                                 className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400 outline-none"
+                                placeholder="Confirm your new password"
+                                title="Confirm New Password"
                                 required
                             />
                         </div>
@@ -268,8 +274,10 @@ const Settings = () => {
                                 <input
                                     type="text"
                                     name="firstName"
+                                    placeholder="Enter your first name"
                                     value={formData.firstName}
                                     onChange={handleChange}
+                                    title="First Name"
                                     className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400 outline-none"
                                 />
                             </div>
@@ -281,8 +289,10 @@ const Settings = () => {
                                 <input
                                     type="text"
                                     name="lastName"
+                                    placeholder="Enter your last name"
                                     value={formData.lastName}
                                     onChange={handleChange}
+                                    title="Last Name"
                                     className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400 outline-none"
                                 />
                             </div>
@@ -298,6 +308,8 @@ const Settings = () => {
                                 name="email"
                                 value={formData.email}
                                 onChange={handleChange}
+                                placeholder="Enter your email address"
+                                title="Email Address"
                                 className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400 outline-none"
                             />
                         </div>

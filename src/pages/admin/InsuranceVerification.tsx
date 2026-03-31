@@ -173,20 +173,20 @@ const InsuranceVerification = () => {
                       <h4 className="font-medium text-gray-900 mb-3">Verification Decision</h4>
                       <div className="grid grid-cols-2 gap-3 mb-3">
                         <div>
-                          <label className="text-xs text-gray-500 font-bold uppercase">Coverage %</label>
-                          <input type="number" min="0" max="100" className="w-full p-2 border rounded text-sm" value={approveForm.coveragePercentage} onChange={e => setApproveForm({...approveForm, coveragePercentage: e.target.value})} />
+                          <label htmlFor="coverage" className="text-xs text-gray-500 font-bold uppercase">Coverage %</label>
+                          <input id="coverage" type="number" min="0" max="100" placeholder="Coverage percentage" className="w-full p-2 border rounded text-sm" value={approveForm.coveragePercentage} onChange={e => setApproveForm({...approveForm, coveragePercentage: e.target.value})} title="Coverage percentage" />
                         </div>
                         <div>
-                          <label className="text-xs text-gray-500 font-bold uppercase">Annual Limit (₦)</label>
-                          <input type="number" className="w-full p-2 border rounded text-sm" placeholder="Optional" value={approveForm.annualLimit} onChange={e => setApproveForm({...approveForm, annualLimit: e.target.value})} />
+                          <label htmlFor="annualLimit" className="text-xs text-gray-500 font-bold uppercase">Annual Limit (₦)</label>
+                          <input id="annualLimit" type="number" className="w-full p-2 border rounded text-sm" placeholder="Annual limit in Naira" value={approveForm.annualLimit} onChange={e => setApproveForm({...approveForm, annualLimit: e.target.value})} title="Annual limit" />
                         </div>
                         <div>
-                          <label className="text-xs text-gray-500 font-bold uppercase">Valid Until</label>
-                          <input type="date" className="w-full p-2 border rounded text-sm" value={approveForm.validUntil} onChange={e => setApproveForm({...approveForm, validUntil: e.target.value})} />
+                          <label htmlFor="validUntil" className="text-xs text-gray-500 font-bold uppercase">Valid Until</label>
+                          <input id="validUntil" type="date" className="w-full p-2 border rounded text-sm" placeholder="Valid until date" value={approveForm.validUntil} onChange={e => setApproveForm({...approveForm, validUntil: e.target.value})} title="Validity date" />
                         </div>
                         <div>
-                          <label className="text-xs text-gray-500 font-bold uppercase">Note</label>
-                          <input type="text" className="w-full p-2 border rounded text-sm" placeholder="Optional note" value={approveForm.verificationNote} onChange={e => setApproveForm({...approveForm, verificationNote: e.target.value})} />
+                          <label htmlFor="note" className="text-xs text-gray-500 font-bold uppercase">Note</label>
+                          <input id="note" type="text" className="w-full p-2 border rounded text-sm" placeholder="Verification note" value={approveForm.verificationNote} onChange={e => setApproveForm({...approveForm, verificationNote: e.target.value})} title="Verification note" />
                         </div>
                       </div>
                       <div className="flex gap-2">

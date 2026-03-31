@@ -417,7 +417,7 @@ const TriageDashboard = () => {
                           setTriageForm(prev => ({...prev, chiefComplaint: e.target.value}))
                         }
                         placeholder="Describe the patient's main symptoms or reason for visit..."
-                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-sky-400 focus:ring-sky-400 py-2 px-3 border min-h-[80px]"
+                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-sky-400 focus:ring-sky-400 py-2 px-3 border min-h-20"
                         required
                       />
                     </div>
@@ -429,6 +429,7 @@ const TriageDashboard = () => {
                           setTriageForm(prev => ({...prev, triageLevel: e.target.value as TriageLevel}))
                         }
                         className="w-full rounded-md border-gray-300 shadow-sm focus:border-sky-400 focus:ring-sky-400 py-2 px-3 border"
+                        title="Triage Level"
                         required
                       >
                         <option value="">Select triage level</option>
