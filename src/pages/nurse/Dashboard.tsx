@@ -93,7 +93,7 @@ const NurseDashboard = () => {
                         Refresh
                     </button>
                     <button 
-                        onClick={() => navigate('/nurse/treatment')}
+                        onClick={() => navigate('/treatments')}
                         className="flex items-center gap-2 bg-sky-500 text-white px-4 py-2 rounded-lg hover:bg-sky-600"
                     >
                         <Syringe className="w-4 h-4" />
@@ -146,7 +146,7 @@ const NurseDashboard = () => {
                             <div className="text-gray-500 text-sm">Treatment Room</div>
                             <div className="text-2xl font-bold text-gray-800">
                                 <button 
-                                    onClick={() => navigate('/nurse/treatment')}
+onClick={() => navigate('/treatments')}
                                     className="text-sky-600 hover:text-sky-800 text-sm underline"
                                 >
                                     Open

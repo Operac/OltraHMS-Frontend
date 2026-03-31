@@ -66,78 +66,78 @@ const InsuranceClaims = () => {
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
   const authHeader = () => ({ Authorization: `Bearer ${localStorage.getItem('token')}` });
 
-  const fetchClaimStats = async () => {
-    try {
-      const res = await axios.get(`${API_URL}/insurance-claims/stats/summary`, { headers: authHeader() });
-      setStats(res.data);
-    } catch (err) { console.error(err); }
-  };
+   const fetchClaimStats = async () => {
+     try {
+       const res = await axios.get(`${API_URL}/insurance-claim/stats/summary`, { headers: authHeader() });
+       setStats(res.data);
+     } catch (err) { console.error(err); }
+   };
 
-  const fetchClaims = async () => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams();
-      if (filters.status)    params.append('status',    filters.status);
-      if (filters.provider)  params.append('provider',  filters.provider);
-      if (filters.startDate) params.append('startDate', filters.startDate);
-      if (filters.endDate)   params.append('endDate',   filters.endDate);
-      const res = await axios.get(`${API_URL}/insurance-claims?${params}`, { headers: authHeader() });
-      setClaims(res.data);
-      setFilteredClaims(res.data);
-    } catch (err) {
-      console.error(err);
-      toast.error('Failed to fetch insurance claims');
-    } finally { setLoading(false); }
-  };
+   const fetchClaims = async () => {
+     setLoading(true);
+     try {
+       const params = new URLSearchParams();
+       if (filters.status)    params.append('status',    filters.status);
+       if (filters.provider)  params.append('provider',  filters.provider);
+       if (filters.startDate) params.append('startDate', filters.startDate);
+       if (filters.endDate)   params.append('endDate',   filters.endDate);
+       const res = await axios.get(`${API_URL}/insurance-claim?${params}`, { headers: authHeader() });
+       setClaims(res.data);
+       setFilteredClaims(res.data);
+     } catch (err) {
+       console.error(err);
+       toast.error('Failed to fetch insurance claims');
+     } finally { setLoading(false); }
+   };
 
-  const createClaim = async () => {
-    if (!claimForm.invoiceId) { toast.error('Invoice ID is required'); return; }
-    setSubmitting(true);
-    try {
-      await axios.post(`${API_URL}/insurance-claims`, {
-        invoiceId: claimForm.invoiceId,
-        insuranceProvider: claimForm.insuranceProvider || undefined,
-        notes: claimForm.notes
-      }, { headers: authHeader() });
-      toast.success('Insurance claim created successfully');
-      setClaimForm({ invoiceId: '', insuranceProvider: '', notes: '' });
-      await fetchClaims(); await fetchClaimStats();
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Failed to create insurance claim');
-    } finally { setSubmitting(false); }
-  };
+   const createClaim = async () => {
+     if (!claimForm.invoiceId) { toast.error('Invoice ID is required'); return; }
+     setSubmitting(true);
+     try {
+       await axios.post(`${API_URL}/insurance-claim`, {
+         invoiceId: claimForm.invoiceId,
+         insuranceProvider: claimForm.insuranceProvider || undefined,
+         notes: claimForm.notes
+       }, { headers: authHeader() });
+       toast.success('Insurance claim created successfully');
+       setClaimForm({ invoiceId: '', insuranceProvider: '', notes: '' });
+       await fetchClaims(); await fetchClaimStats();
+     } catch (err: any) {
+       toast.error(err.response?.data?.message || 'Failed to create insurance claim');
+     } finally { setSubmitting(false); }
+   };
 
-  const updateClaim = async () => {
-    if (!selectedClaim || !updateForm.status) { toast.error('Status is required'); return; }
-    setSubmitting(true);
-    try {
-      const body: any = { status: updateForm.status };
-      if (updateForm.approvedAmount !== '') body.approvedAmount = parseFloat(updateForm.approvedAmount);
-      if (updateForm.denialReason   !== '') body.denialReason   = updateForm.denialReason;
-      if (updateForm.trackingNumber !== '') body.trackingNumber = updateForm.trackingNumber;
-      await axios.patch(`${API_URL}/insurance-claims/${selectedClaim.id}`, body, { headers: authHeader() });
-      toast.success('Insurance claim updated successfully');
-      handleClearSelection();
-      await fetchClaims(); await fetchClaimStats();
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Failed to update claim');
-    } finally { setSubmitting(false); }
-  };
+   const updateClaim = async () => {
+     if (!selectedClaim || !updateForm.status) { toast.error('Status is required'); return; }
+     setSubmitting(true);
+     try {
+       const body: any = { status: updateForm.status };
+       if (updateForm.approvedAmount !== '') body.approvedAmount = parseFloat(updateForm.approvedAmount);
+       if (updateForm.denialReason   !== '') body.denialReason   = updateForm.denialReason;
+       if (updateForm.trackingNumber !== '') body.trackingNumber = updateForm.trackingNumber;
+       await axios.patch(`${API_URL}/insurance-claim/${selectedClaim.id}`, body, { headers: authHeader() });
+       toast.success('Insurance claim updated successfully');
+       handleClearSelection();
+       await fetchClaims(); await fetchClaimStats();
+     } catch (err: any) {
+       toast.error(err.response?.data?.message || 'Failed to update claim');
+     } finally { setSubmitting(false); }
+   };
 
-  const submitClaim = async () => {
-    if (!selectedClaim || selectedClaim.status !== 'DRAFT') {
-      toast.error('Only draft claims can be submitted'); return;
-    }
-    setSubmitting(true);
-    try {
-      await axios.post(`${API_URL}/insurance-claims/${selectedClaim.id}/submit`, {}, { headers: authHeader() });
-      toast.success('Claim submitted successfully');
-      handleClearSelection();
-      await fetchClaims(); await fetchClaimStats();
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Failed to submit claim');
-    } finally { setSubmitting(false); }
-  };
+   const submitClaim = async () => {
+     if (!selectedClaim || selectedClaim.status !== 'DRAFT') {
+       toast.error('Only draft claims can be submitted'); return;
+     }
+     setSubmitting(true);
+     try {
+       await axios.post(`${API_URL}/insurance-claim/${selectedClaim.id}/submit`, {}, { headers: authHeader() });
+       toast.success('Claim submitted successfully');
+       handleClearSelection();
+       await fetchClaims(); await fetchClaimStats();
+     } catch (err: any) {
+       toast.error(err.response?.data?.message || 'Failed to submit claim');
+     } finally { setSubmitting(false); }
+   };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const q = e.target.value.toLowerCase();

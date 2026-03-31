@@ -99,4 +99,4 @@ sw.addEventListener('activate', (event) => {
   );
 });
 
-export {};
+
