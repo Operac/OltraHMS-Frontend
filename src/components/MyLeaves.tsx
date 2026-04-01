@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Calendar, Plus } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { HRService } from '../services/hr.service';
+import { Loading } from './ui/Loading';
 import { format } from 'date-fns';
 
 const MyLeaves = () => {
@@ -95,7 +96,7 @@ const MyLeaves = () => {
                     </thead>
                     <tbody className="divide-y divide-gray-100">
                         {loading ? (
-                             <tr><td colSpan={5} className="p-6 text-center">Loading...</td></tr>
+                             <tr><td colSpan={5} className="p-6 text-center"><Loading text="Loading leaves..." /></td></tr>
                         ) : leaves.length === 0 ? (
                             <tr><td colSpan={5} className="p-6 text-center text-gray-500">No leave requests found</td></tr>
                         ) : leaves.map((leave) => (

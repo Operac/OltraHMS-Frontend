@@ -1,5 +1,4 @@
-
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { 
     WellnessGoal, 
     WellnessVitals, 
@@ -17,6 +16,8 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { WellnessSummaryCharts } from '../../components/WellnessCharts';
+import { Loading } from '../../components/ui/Loading';
+import './WellnessDashboard.css';
 
 // Tab types
 type TabType = 'overview' | 'habits' | 'vitals' | 'medications' | 'mood' | 'sleep' | 'symptoms';
@@ -103,11 +104,7 @@ const WellnessDashboard = () => {
         }
     };
 
-    if (loading) return (
-        <div className="flex items-center justify-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500"></div>
-        </div>
-    );
+    if (loading) return <Loading />;
 
     const tabs = [
         { id: 'overview', label: 'Overview', icon: TrendingUp },
@@ -229,7 +226,7 @@ const WellnessDashboard = () => {
 // OVERVIEW TAB
 // =============================================================================
 function OverviewTab({ summary, vitals, moods, sleep, onNavigate }: any) {
-    if (!summary) return <div>Loading...</div>;
+    if (!summary) return <Loading text="Loading summary..." />;
 
     const getVitalDisplay = (type: string) => {
         const v = vitals.find((v: any) => v.type === type);
@@ -364,6 +361,7 @@ function HabitsTab({ goals, onCheckIn, setShowModal, onRefresh }: any) {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {goals.map((goal: WellnessGoal) => {
                     const progress = Math.min((goal.currentValue / goal.targetValue) * 100, 100);
+                    const progressClass = `progress-${Math.round(progress / 5) * 5}`;
                     const isCompleted = goal.currentValue >= goal.targetValue;
 
                     return (
@@ -393,10 +391,9 @@ function HabitsTab({ goals, onCheckIn, setShowModal, onRefresh }: any) {
                                     <span className="text-gray-500">Progress</span>
                                     <span className="font-medium">{goal.currentValue}/{goal.targetValue} {goal.unit}</span>
                                 </div>
-                                <div className="h-2 bg-gray-100 rounded-full">
-                                    <div 
-                                        className={`h-full rounded-full ${isCompleted ? 'bg-green-500' : 'bg-sky-400'}`}
-                                        style={{ width: `${progress}%` }}
+                                <div className="habit-progress-track h-2 bg-gray-100 rounded-full">
+                                    <div
+                                        className={`progress-bar ${progressClass} h-full rounded-full transition-all duration-300 ${isCompleted ? 'bg-green-500' : 'bg-sky-400'}`}
                                     />
                                 </div>
                             </div>
@@ -890,12 +887,12 @@ function GoalModal({ onClose, onSave }: { onClose: () => void, onSave: () => voi
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
                         <label className="block text-sm font-medium mb-1">Description</label>
-                        <input name="description" required className="w-full border rounded-lg p-2" placeholder="e.g. Drink water" />
+                        <input name="description" required className="w-full border rounded-lg p-2" placeholder="e.g. Drink water" title="Habit description" />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <label className="block text-sm font-medium mb-1">Category</label>
-                            <select name="category" className="w-full border rounded-lg p-2">
+                            <select name="category" className="w-full border rounded-lg p-2" title="Habit category">
                                 <option>General</option>
                                 <option>Nutrition</option>
                                 <option>Fitness</option>
@@ -904,7 +901,7 @@ function GoalModal({ onClose, onSave }: { onClose: () => void, onSave: () => voi
                         </div>
                         <div>
                             <label className="block text-sm font-medium mb-1">Frequency</label>
-                            <select name="frequency" className="w-full border rounded-lg p-2">
+                            <select name="frequency" className="w-full border rounded-lg p-2" title="Habit frequency">
                                 <option value="DAILY">Daily</option>
                                 <option value="WEEKLY">Weekly</option>
                             </select>
@@ -913,11 +910,11 @@ function GoalModal({ onClose, onSave }: { onClose: () => void, onSave: () => voi
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <label className="block text-sm font-medium mb-1">Target</label>
-                            <input name="targetValue" type="number" min="1" defaultValue="1" className="w-full border rounded-lg p-2" />
+                            <input name="targetValue" type="number" min="1" defaultValue="1" className="w-full border rounded-lg p-2" placeholder="Enter target value" title="Target value for habit" />
                         </div>
                         <div>
                             <label className="block text-sm font-medium mb-1">Unit</label>
-                            <input name="unit" defaultValue="times" className="w-full border rounded-lg p-2" />
+                            <input name="unit" defaultValue="times" className="w-full border rounded-lg p-2" placeholder="e.g. times" title="Unit of measurement" />
                         </div>
                     </div>
                     <div className="flex gap-2 pt-2">
@@ -962,7 +959,7 @@ function VitalsModal({ onClose, onSave }: { onClose: () => void, onSave: () => v
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
                         <label className="block text-sm font-medium mb-1">Type</label>
-                        <select name="type" className="w-full border rounded-lg p-2">
+                        <select name="type" title="Vital type" className="w-full border rounded-lg p-2">
                             <option value="BLOOD_PRESSURE">Blood Pressure</option>
                             <option value="HEART_RATE">Heart Rate</option>
                             <option value="WEIGHT">Weight</option>
@@ -973,16 +970,16 @@ function VitalsModal({ onClose, onSave }: { onClose: () => void, onSave: () => v
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <label className="block text-sm font-medium mb-1">Value</label>
-                            <input name="value" type="number" step="0.1" required className="w-full border rounded-lg p-2" />
+                            <input name="value" type="number" step="0.1" required title="Vital value" className="w-full border rounded-lg p-2" />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium mb-1">Diastolic (BP)</label>
-                            <input name="value2" type="number" className="w-full border rounded-lg p-2" placeholder="Optional" />
+                            <label htmlFor="diastolic-bp" className="block text-sm font-medium mb-1">Diastolic (BP)</label>
+                            <input id="diastolic-bp" name="value2" type="number" className="w-full border rounded-lg p-2" placeholder="Optional" title="Diastolic blood pressure value (optional)" />
                         </div>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium mb-1">Unit</label>
-                        <select name="unit" className="w-full border rounded-lg p-2">
+                        <label htmlFor="vital-unit" className="block text-sm font-medium mb-1">Unit</label>
+                        <select id="vital-unit" name="unit" className="w-full border rounded-lg p-2" title="Select unit of measurement">
                             <option value="mmHg">mmHg (BP)</option>
                             <option value="bpm">bpm (HR)</option>
                             <option value="kg">kg</option>
@@ -1029,17 +1026,17 @@ function MedicationModal({ onClose, onSave }: { onClose: () => void, onSave: () 
                 <h2 className="text-xl font-bold mb-4">Add Medication</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium mb-1">Medication Name</label>
-                        <input name="name" required className="w-full border rounded-lg p-2" />
+                        <label htmlFor="medication-name" className="block text-sm font-medium mb-1">Medication Name</label>
+                        <input id="medication-name" name="name" type="text" required className="w-full border rounded-lg p-2" placeholder="e.g. Aspirin" title="Enter medication name" />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-medium mb-1">Dosage</label>
-                            <input name="dosage" required className="w-full border rounded-lg p-2" placeholder="e.g. 500mg" />
+                            <label htmlFor="medication-dosage" className="block text-sm font-medium mb-1">Dosage</label>
+                            <input id="medication-dosage" name="dosage" type="text" required className="w-full border rounded-lg p-2" placeholder="e.g. 500mg" title="Enter medication dosage" />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium mb-1">Frequency</label>
-                            <select name="frequency" className="w-full border rounded-lg p-2">
+                            <label htmlFor="medication-frequency" className="block text-sm font-medium mb-1">Frequency</label>
+                            <select id="medication-frequency" name="frequency" className="w-full border rounded-lg p-2" title="Select medication frequency">
                                 <option value="ONCE_DAILY">Once Daily</option>
                                 <option value="TWICE_DAILY">Twice Daily</option>
                                 <option value="THREE_TIMES_DAILY">3x Daily</option>
@@ -1048,12 +1045,12 @@ function MedicationModal({ onClose, onSave }: { onClose: () => void, onSave: () 
                         </div>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium mb-1">Times (comma separated)</label>
-                        <input name="times" required className="w-full border rounded-lg p-2" placeholder="08:00, 20:00" />
+                        <label htmlFor="medication-times" className="block text-sm font-medium mb-1">Times (comma separated)</label>
+                        <input id="medication-times" name="times" type="text" required className="w-full border rounded-lg p-2" placeholder="08:00, 20:00" title="Enter medication times (comma separated)" />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium mb-1">Instructions (optional)</label>
-                        <input name="instructions" className="w-full border rounded-lg p-2" placeholder="e.g. Take with food" />
+                        <label htmlFor="medication-instructions" className="block text-sm font-medium mb-1">Instructions (optional)</label>
+                        <input id="medication-instructions" name="instructions" type="text" className="w-full border rounded-lg p-2" placeholder="e.g. Take with food" title="Enter medication instructions (optional)" />
                     </div>
                     <div className="flex gap-2 pt-2">
                         <button type="button" onClick={onClose} className="flex-1 py-2 border rounded-lg">Cancel</button>
@@ -1090,8 +1087,8 @@ function MoodModal({ onClose, onSave }: { onClose: () => void, onSave: () => voi
                 <h2 className="text-xl font-bold mb-4">How are you feeling?</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium mb-2">Mood (1-10)</label>
-                        <input name="moodScore" type="range" min="1" max="10" defaultValue="5" className="w-full" />
+                        <label htmlFor="mood-score" className="block text-sm font-medium mb-2">Mood (1-10)</label>
+                        <input id="mood-score" name="moodScore" type="range" min="1" max="10" defaultValue="5" className="w-full" title="Rate your mood from 1 (sad) to 10 (happy)" />
                         <div className="flex justify-between text-xs text-gray-500">
                             <span>😢</span>
                             <span>😐</span>
@@ -1099,8 +1096,8 @@ function MoodModal({ onClose, onSave }: { onClose: () => void, onSave: () => voi
                         </div>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium mb-2">Stress Level (optional)</label>
-                        <input name="stressLevel" type="range" min="1" max="10" defaultValue="5" className="w-full" />
+                        <label htmlFor="stress-level" className="block text-sm font-medium mb-2">Stress Level (optional)</label>
+                        <input id="stress-level" name="stressLevel" type="range" min="1" max="10" defaultValue="5" className="w-full" title="Rate your stress level from 1 (low) to 10 (high)" />
                     </div>
                     <div>
                         <label className="block text-sm font-medium mb-1">Notes (optional)</label>
@@ -1142,21 +1139,21 @@ function SleepModal({ onClose, onSave }: { onClose: () => void, onSave: () => vo
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-medium mb-1">Bedtime</label>
-                            <input name="bedtime" type="datetime-local" required className="w-full border rounded-lg p-2" />
+                            <label htmlFor="sleep-bedtime" className="block text-sm font-medium mb-1">Bedtime</label>
+                            <input id="sleep-bedtime" name="bedtime" type="datetime-local" required className="w-full border rounded-lg p-2" title="Select your bedtime" />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium mb-1">Wake Time</label>
-                            <input name="wakeTime" type="datetime-local" required className="w-full border rounded-lg p-2" />
+                            <label htmlFor="sleep-waketime" className="block text-sm font-medium mb-1">Wake Time</label>
+                            <input id="sleep-waketime" name="wakeTime" type="datetime-local" required className="w-full border rounded-lg p-2" title="Select your wake time" />
                         </div>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium mb-2">Sleep Quality (1-10)</label>
-                        <input name="quality" type="range" min="1" max="10" defaultValue="7" className="w-full" />
+                        <label htmlFor="sleep-quality" className="block text-sm font-medium mb-2">Sleep Quality (1-10)</label>
+                        <input id="sleep-quality" name="quality" type="range" min="1" max="10" defaultValue="7" className="w-full" title="Rate your sleep quality from 1 (poor) to 10 (excellent)" />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium mb-1">Notes (optional)</label>
-                        <textarea name="notes" className="w-full border rounded-lg p-2" rows={2} />
+                        <label htmlFor="sleep-notes" className="block text-sm font-medium mb-1">Notes (optional)</label>
+                        <textarea id="sleep-notes" name="notes" className="w-full border rounded-lg p-2" rows={2} placeholder="Any notes about your sleep" title="Optional notes about your sleep" />
                     </div>
                     <div className="flex gap-2 pt-2">
                         <button type="button" onClick={onClose} className="flex-1 py-2 border rounded-lg">Cancel</button>
@@ -1194,17 +1191,17 @@ function SymptomModal({ onClose, onSave }: { onClose: () => void, onSave: () => 
                 <h2 className="text-xl font-bold mb-4">Log Symptom</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium mb-1">Symptom</label>
-                        <input name="symptom" required className="w-full border rounded-lg p-2" placeholder="e.g. Headache" />
+                        <label htmlFor="symptom-name" className="block text-sm font-medium mb-1">Symptom</label>
+                        <input id="symptom-name" name="symptom" type="text" required className="w-full border rounded-lg p-2" placeholder="e.g. Headache" title="Enter symptom name" />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-medium mb-2">Severity (1-10)</label>
-                            <input name="severity" type="range" min="1" max="10" defaultValue="5" className="w-full" />
+                            <label htmlFor="symptom-severity" className="block text-sm font-medium mb-2">Severity (1-10)</label>
+                            <input id="symptom-severity" name="severity" type="range" min="1" max="10" defaultValue="5" className="w-full" title="Rate symptom severity from 1 (mild) to 10 (severe)" />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium mb-1">Frequency</label>
-                            <select name="frequency" className="w-full border rounded-lg p-2">
+                            <label htmlFor="symptom-frequency" className="block text-sm font-medium mb-1">Frequency</label>
+                            <select id="symptom-frequency" name="frequency" className="w-full border rounded-lg p-2" title="Select symptom frequency">
                                 <option value="OCCASIONAL">Occasional</option>
                                 <option value="FREQUENT">Frequent</option>
                                 <option value="CONSTANT">Constant</option>
@@ -1212,12 +1209,12 @@ function SymptomModal({ onClose, onSave }: { onClose: () => void, onSave: () => 
                         </div>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium mb-1">Location (optional)</label>
-                        <input name="location" className="w-full border rounded-lg p-2" placeholder="e.g. Left side of head" />
+                        <label htmlFor="symptom-location" className="block text-sm font-medium mb-1">Location (optional)</label>
+                        <input id="symptom-location" name="location" type="text" className="w-full border rounded-lg p-2" placeholder="e.g. Left side of head" title="Enter symptom location (optional)" />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium mb-1">Notes</label>
-                        <textarea name="notes" className="w-full border rounded-lg p-2" rows={2} />
+                        <label htmlFor="symptom-notes" className="block text-sm font-medium mb-1">Notes</label>
+                        <textarea id="symptom-notes" name="notes" className="w-full border rounded-lg p-2" rows={2} placeholder="Additional notes about the symptom" title="Additional notes about the symptom" />
                     </div>
                     <div className="flex gap-2 pt-2">
                         <button type="button" onClick={onClose} className="flex-1 py-2 border rounded-lg">Cancel</button>

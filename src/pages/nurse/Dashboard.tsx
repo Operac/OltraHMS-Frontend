@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { getDailyAppointments } from '../../services/receptionist.service';
 import { inpatientService } from '../../services/inpatient.service';
 import { Heart, Thermometer, Activity, Clock, User, Stethoscope, Syringe, RotateCw, BedDouble } from 'lucide-react';
+import { Loading } from '../../components/ui/Loading';
 
 const NurseDashboard = () => {
     const navigate = useNavigate();
@@ -76,7 +77,7 @@ const NurseDashboard = () => {
         });
     };
 
-    if (loading) return <div className="p-6">Loading...</div>;
+    if (loading) return <Loading />;
 
     return (
         <div className="space-y-6">

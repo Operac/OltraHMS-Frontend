@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import { DepartmentService } from '../../services/department.service';
 import { AdminService } from '../../services/admin.service';
 import type { Department } from '../../services/department.service';
+import { Loading } from '../../components/ui/Loading';
 
 interface StaffMember {
     id: string;
@@ -137,7 +138,7 @@ const DepartmentList = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {loading ? (
-                    <p>Loading...</p>
+                    <Loading />
                 ) : departments.map((dept) => (
                     <div key={dept.id} className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition">
                         <div className="flex justify-between items-start mb-4">

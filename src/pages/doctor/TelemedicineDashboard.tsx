@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Video, Calendar, User, Clock, CheckCircle } from 'lucide-react';
 import api from '../../lib/api';
 import { format, parseISO } from 'date-fns';
+import { Loading } from '../../components/ui/Loading';
 
 interface Appointment {
     id: string;
@@ -62,7 +63,7 @@ const TelemedicineDashboard = () => {
             </div>
 
             {loading ? (
-                <div className="text-center py-12">Loading...</div>
+                <Loading text="Loading appointments..." />
             ) : appointments.length === 0 ? (
                 <div className="text-center py-12 bg-white rounded-xl border border-gray-200">
                     <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-3" />

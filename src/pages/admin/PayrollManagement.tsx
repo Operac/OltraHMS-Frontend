@@ -3,6 +3,7 @@ import { CheckCircle, Calculator, Pencil } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { AdminService } from '../../services/admin.service';
 import { SettingsService, getCurrencySymbol } from '../../services/settings.service';
+import { Loading } from '../../components/ui/Loading';
 
 const PayrollManagement = () => {
     const [payrolls, setPayrolls] = useState<any[]>([]);
@@ -150,7 +151,7 @@ const PayrollManagement = () => {
                     </thead>
                     <tbody className="divide-y divide-gray-100">
                         {loading ? (
-                             <tr><td colSpan={6} className="p-6 text-center">Loading...</td></tr>
+                             <tr><td colSpan={6} className="p-6 text-center"><Loading text="Loading payrolls..." /></td></tr>
                         ) : payrolls.length === 0 ? (
                             <tr><td colSpan={6} className="p-6 text-center text-gray-500">No payroll records for this period</td></tr>
                         ) : payrolls.map((p) => (

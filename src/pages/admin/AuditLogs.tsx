@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Search, History } from 'lucide-react';
 import { AdminService } from '../../services/admin.service';
+import { Loading } from '../../components/ui/Loading';
 
 const AuditLogs = () => {
     const [logs, setLogs] = useState<any[]>([]);
@@ -51,7 +52,7 @@ const AuditLogs = () => {
                     </thead>
                     <tbody className="divide-y divide-gray-100">
                         {loading ? (
-                             <tr><td colSpan={5} className="p-6 text-center">Loading...</td></tr>
+                             <tr><td colSpan={5} className="p-6 text-center"><Loading text="Loading logs..." /></td></tr>
                         ) : logs.length === 0 ? (
                             <tr><td colSpan={5} className="p-6 text-center text-gray-500">No logs found</td></tr>
                         ) : logs.map((log) => (

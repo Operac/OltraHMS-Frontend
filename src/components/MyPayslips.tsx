@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Download, Calendar } from 'lucide-react';
 import { HRService } from '../services/hr.service';
 import { SettingsService, getCurrencySymbol } from '../services/settings.service';
+import { Loading } from './ui/Loading';
 
 const MyPayslips = () => {
     const [payrolls, setPayrolls] = useState<any[]>([]);
@@ -50,7 +51,7 @@ const MyPayslips = () => {
                     </thead>
                     <tbody className="divide-y divide-gray-100">
                         {loading ? (
-                             <tr><td colSpan={5} className="p-6 text-center">Loading...</td></tr>
+                             <tr><td colSpan={5} className="p-6 text-center"><Loading text="Loading payslips..." /></td></tr>
                         ) : payrolls.length === 0 ? (
                             <tr><td colSpan={5} className="p-6 text-center text-gray-500">No payslips found</td></tr>
                         ) : payrolls.map((p) => (

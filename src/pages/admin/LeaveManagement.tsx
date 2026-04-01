@@ -3,6 +3,7 @@ import { Calendar, CheckCircle, XCircle, Eye, AlertTriangle } from 'lucide-react
 import toast from 'react-hot-toast';
 import { AdminService } from '../../services/admin.service';
 import { format } from 'date-fns';
+import { Loading } from '../../components/ui/Loading';
 
 const LeaveManagement = () => {
     const [leaves, setLeaves] = useState<any[]>([]);
@@ -96,7 +97,7 @@ const LeaveManagement = () => {
                     </thead>
                     <tbody className="divide-y divide-gray-100">
                         {loading ? (
-                             <tr><td colSpan={5} className="p-6 text-center">Loading...</td></tr>
+                             <tr><td colSpan={5} className="p-6 text-center"><Loading text="Loading leave requests..." /></td></tr>
                         ) : leaves.length === 0 ? (
                             <tr><td colSpan={5} className="p-6 text-center text-gray-500">No leave requests found</td></tr>
                         ) : leaves.map((leave) => (

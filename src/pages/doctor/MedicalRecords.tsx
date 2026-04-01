@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Search, FileText, Calendar, Eye, X, Printer } from 'lucide-react';
+import { Search, FileText, Calendar, Eye, X, Printer, User } from 'lucide-react';
 import { format } from 'date-fns';
 
 const MedicalRecords = () => {
@@ -172,109 +172,146 @@ const MedicalRecords = () => {
                 </div>
             )}
             {selectedRecord && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                    <div id="record-modal" className="bg-white w-full max-w-4xl max-h-[90vh] rounded-xl shadow-2xl overflow-hidden flex flex-col">
-                        <div className="p-6 border-b border-gray-200 flex justify-between items-center bg-gray-50 no-print">
-                            <div>
-                                <h2 className="text-2xl font-bold text-gray-900">Medical Record</h2>
-                                <p className="text-gray-500 text-sm">ID: {selectedRecord.id}</p>
-                            </div>
-                            <div className="flex gap-2">
-                                <button 
-                                    onClick={handlePrint}
-                                    className="p-2 text-sky-500 hover:bg-sky-100 rounded-lg flex items-center gap-2 font-medium transition-colors"
-                                >
-                                    <Printer className="w-5 h-5" />
-                                    <span>Print / Download</span>
-                                </button>
-                                <button onClick={() => setSelectedRecord(null)} className="p-2 hover:bg-gray-200 rounded-full">
-                                    <X className="w-6 h-6 text-gray-500" />
-                                </button>
+                <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                    <div id="record-modal" className="bg-white w-full max-w-4xl max-h-[90vh] rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+                        {/* Modern Header with gradient */}
+                        <div className="bg-gradient-to-r from-sky-600 to-indigo-600 p-6 text-white no-print">
+                            <div className="flex justify-between items-start">
+                                <div>
+                                    <h2 className="text-2xl font-bold">Medical Record</h2>
+                                    <p className="text-sky-100 text-sm mt-1">ID: {selectedRecord.id}</p>
+                                </div>
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={handlePrint}
+                                        className="p-2 bg-white/20 hover:bg-white/30 rounded-lg flex items-center gap-2 font-medium transition-colors"
+                                    >
+                                        <Printer className="w-5 h-5" />
+                                        <span className="hidden sm:inline">Print</span>
+                                    </button>
+                                    <button onClick={() => setSelectedRecord(null)} className="p-2 bg-white/20 hover:bg-white/30 rounded-full transition-colors">
+                                        <X className="w-6 h-6" />
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                        
-                        {/* Printable Header for print view only (usually hidden, but we show modal content) */}
-                        <div className="hidden print:block p-6 text-center border-b">
-                            <h2 className="text-3xl font-bold text-teal-900">OltraHMS Medical Report</h2>
-                            <p className="text-gray-500">Confidential Medical Record</p>
+
+                        {/* Printable Header */}
+                        <div className="hidden print:block p-6 text-center border-b bg-gradient-to-r from-sky-600 to-indigo-600 text-white">
+                            <h2 className="text-3xl font-bold">OltraHMS Medical Report</h2>
+                            <p className="text-sky-100">Confidential Medical Record</p>
                         </div>
 
                         <div className="p-6 overflow-y-auto space-y-8 print:overflow-visible">
-                            {/* ... Content ... */}
-                            {/* Header Info */}
-                            <div className="grid grid-cols-2 gap-8">
-                                <div className="bg-sky-50 p-4 rounded-lg">
-                                    <h3 className="text-xs font-bold text-sky-700 uppercase mb-2">Patient</h3>
-                                    <p className="text-lg font-bold">{selectedRecord.patient?.firstName} {selectedRecord.patient?.lastName}</p>
-                                    <p className="text-sm text-sky-600">
-                                        {selectedRecord.patient?.gender} 
+                            {/* Patient & Encounter Info Cards */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="bg-gradient-to-br from-sky-50 to-indigo-50 p-5 rounded-xl border border-sky-100">
+                                    <div className="flex items-center gap-3 mb-3">
+                                        <div className="p-2 bg-sky-500 text-white rounded-lg">
+                                            <User className="w-5 h-5" />
+                                        </div>
+                                        <h3 className="text-sm font-bold text-sky-700 uppercase">Patient</h3>
+                                    </div>
+                                    <p className="text-xl font-bold text-gray-900">{selectedRecord.patient?.firstName} {selectedRecord.patient?.lastName}</p>
+                                    <div className="flex flex-wrap gap-2 mt-2">
+                                        <span className="px-2 py-1 bg-sky-100 text-sky-700 rounded text-xs font-medium">
+                                            {selectedRecord.patient?.gender}
+                                        </span>
                                         {selectedRecord.patient?.dateOfBirth && (
-                                            <> • {format(new Date(selectedRecord.patient.dateOfBirth), 'yyyy-MM-dd')}</>
+                                            <span className="px-2 py-1 bg-indigo-100 text-indigo-700 rounded text-xs font-medium">
+                                                {format(new Date(selectedRecord.patient.dateOfBirth), 'MMM dd, yyyy')}
+                                            </span>
                                         )}
-                                    </p>
+                                    </div>
                                 </div>
-                                <div className="bg-gray-50 p-4 rounded-lg text-right">
-                                    <h3 className="text-xs font-bold text-gray-500 uppercase mb-2">Encounter Info</h3>
-                                    <p className="text-gray-900 font-medium">
-                                        Date: {selectedRecord.visitDate ? format(new Date(selectedRecord.visitDate), 'PPP') : 'N/A'}
+                                <div className="bg-gradient-to-br from-gray-50 to-slate-50 p-5 rounded-xl border border-gray-100">
+                                    <div className="flex items-center gap-3 mb-3">
+                                        <div className="p-2 bg-indigo-500 text-white rounded-lg">
+                                            <Calendar className="w-5 h-5" />
+                                        </div>
+                                        <h3 className="text-sm font-bold text-gray-500 uppercase">Encounter</h3>
+                                    </div>
+                                    <p className="text-lg font-semibold text-gray-900">
+                                        {selectedRecord.visitDate ? format(new Date(selectedRecord.visitDate), 'MMMM dd, yyyy') : 'N/A'}
                                     </p>
-                                    <p className="text-gray-600 text-sm">
+                                    <p className="text-indigo-600 font-medium mt-1">
                                         Dr. {selectedRecord.doctor?.user?.firstName} {selectedRecord.doctor?.user?.lastName}
                                     </p>
                                 </div>
                             </div>
 
-                            {/* SOAP Grid */}
-                            <div className="grid grid-cols-2 gap-6">
-                                <div className="space-y-2">
-                                    <h3 className="font-bold text-gray-700 border-b pb-1">Subjective</h3>
-                                    <p className="text-gray-600 bg-gray-50 p-3 rounded-lg min-h-[100px] whitespace-pre-wrap">
-                                        {typeof selectedRecord.subjective === 'object' ? JSON.stringify(selectedRecord.subjective, null, 2) : selectedRecord.subjective}
-                                    </p>
-                                </div>
-                                <div className="space-y-2">
-                                    <h3 className="font-bold text-gray-700 border-b pb-1">Objective</h3>
-                                    <p className="text-gray-600 bg-gray-50 p-3 rounded-lg min-h-[100px] whitespace-pre-wrap">
-                                        {typeof selectedRecord.objective === 'object' ? JSON.stringify(selectedRecord.objective, null, 2) : selectedRecord.objective}
-                                    </p>
-                                </div>
-                                <div className="space-y-2">
-                                    <h3 className="font-bold text-gray-700 border-b pb-1">Assessment</h3>
-                                    <p className="text-gray-600 bg-gray-50 p-3 rounded-lg min-h-[100px] whitespace-pre-wrap">
-                                        {typeof selectedRecord.assessment === 'object' ? JSON.stringify(selectedRecord.assessment, null, 2) : selectedRecord.assessment}
-                                    </p>
-                                </div>
-                                <div className="space-y-2">
-                                    <h3 className="font-bold text-gray-700 border-b pb-1">Plan</h3>
-                                    <p className="text-gray-600 bg-gray-50 p-3 rounded-lg min-h-[100px] whitespace-pre-wrap">
-                                        {typeof selectedRecord.plan === 'object' ? JSON.stringify(selectedRecord.plan, null, 2) : selectedRecord.plan}
-                                    </p>
+                            {/* SOAP Notes - Colorful Cards */}
+                            <div className="space-y-4">
+                                <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+                                    <FileText className="w-5 h-5 text-sky-500" /> Clinical Notes
+                                </h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="bg-white rounded-xl border-2 border-amber-100 p-4 hover:shadow-md transition">
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <span className="w-3 h-3 rounded-full bg-amber-500"></span>
+                                            <h4 className="font-bold text-amber-700">Subjective</h4>
+                                        </div>
+                                        <p className="text-gray-600 bg-amber-50 p-3 rounded-lg min-h-[80px] whitespace-pre-wrap text-sm">
+                                            {typeof selectedRecord.subjective === 'object' ? JSON.stringify(selectedRecord.subjective, null, 2) : selectedRecord.subjective || 'No data'}
+                                        </p>
+                                    </div>
+                                    <div className="bg-white rounded-xl border-2 border-blue-100 p-4 hover:shadow-md transition">
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <span className="w-3 h-3 rounded-full bg-blue-500"></span>
+                                            <h4 className="font-bold text-blue-700">Objective</h4>
+                                        </div>
+                                        <p className="text-gray-600 bg-blue-50 p-3 rounded-lg min-h-[80px] whitespace-pre-wrap text-sm">
+                                            {typeof selectedRecord.objective === 'object' ? JSON.stringify(selectedRecord.objective, null, 2) : selectedRecord.objective || 'No data'}
+                                        </p>
+                                    </div>
+                                    <div className="bg-white rounded-xl border-2 border-emerald-100 p-4 hover:shadow-md transition">
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <span className="w-3 h-3 rounded-full bg-emerald-500"></span>
+                                            <h4 className="font-bold text-emerald-700">Assessment</h4>
+                                        </div>
+                                        <p className="text-gray-600 bg-emerald-50 p-3 rounded-lg min-h-[80px] whitespace-pre-wrap text-sm">
+                                            {typeof selectedRecord.assessment === 'object' ? JSON.stringify(selectedRecord.assessment, null, 2) : selectedRecord.assessment || 'No data'}
+                                        </p>
+                                    </div>
+                                    <div className="bg-white rounded-xl border-2 border-purple-100 p-4 hover:shadow-md transition">
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <span className="w-3 h-3 rounded-full bg-purple-500"></span>
+                                            <h4 className="font-bold text-purple-700">Plan</h4>
+                                        </div>
+                                        <p className="text-gray-600 bg-purple-50 p-3 rounded-lg min-h-[80px] whitespace-pre-wrap text-sm">
+                                            {typeof selectedRecord.plan === 'object' ? JSON.stringify(selectedRecord.plan, null, 2) : selectedRecord.plan || 'No data'}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
 
-                            {/* Prescriptions */}
+                            {/* Prescriptions - Modern Card */}
                             {selectedRecord.prescriptions && selectedRecord.prescriptions.length > 0 && (
-                                <div>
-                                    <h3 className="font-bold text-gray-900 text-lg mb-3 flex items-center gap-2">
-                                        <FileText className="w-5 h-5 text-green-600" /> Prescriptions
-                                    </h3>
-                                    <div className="border rounded-lg overflow-hidden">
+                                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                                    <div className="bg-green-50 px-5 py-3 border-b border-green-100 flex items-center gap-2">
+                                        <FileText className="w-5 h-5 text-green-600" />
+                                        <h3 className="font-bold text-green-800">Prescriptions</h3>
+                                        <span className="ml-auto px-2 py-0.5 bg-green-200 text-green-800 rounded-full text-xs font-bold">
+                                            {selectedRecord.prescriptions.length}
+                                        </span>
+                                    </div>
+                                    <div className="overflow-x-auto">
                                         <table className="w-full text-sm">
                                             <thead className="bg-gray-50">
                                                 <tr>
-                                                    <th className="p-3 text-left">Medication</th>
-                                                    <th className="p-3 text-left">Dosage</th>
-                                                    <th className="p-3 text-left">Freq</th>
-                                                    <th className="p-3 text-left">Duration</th>
+                                                    <th className="p-3 text-left font-semibold text-gray-600">Medication</th>
+                                                    <th className="p-3 text-left font-semibold text-gray-600">Dosage</th>
+                                                    <th className="p-3 text-left font-semibold text-gray-600">Frequency</th>
+                                                    <th className="p-3 text-left font-semibold text-gray-600">Duration</th>
                                                 </tr>
                                             </thead>
                                             <tbody className="divide-y">
                                                 {selectedRecord.prescriptions.map((p: any) => (
-                                                    <tr key={p.id}>
-                                                        <td className="p-3 font-medium">{p.medicationName}</td>
-                                                        <td className="p-3">{p.dosage}</td>
-                                                        <td className="p-3">{p.frequency}</td>
-                                                        <td className="p-3">{p.duration} days</td>
+                                                    <tr key={p.id} className="hover:bg-green-50/50">
+                                                        <td className="p-3 font-medium text-gray-900">{p.medicationName}</td>
+                                                        <td className="p-3 text-gray-600">{p.dosage}</td>
+                                                        <td className="p-3 text-gray-600">{p.frequency}</td>
+                                                        <td className="p-3 text-gray-600">{p.duration} days</td>
                                                     </tr>
                                                 ))}
                                             </tbody>
@@ -283,50 +320,61 @@ const MedicalRecords = () => {
                                 </div>
                             )}
 
-                             {/* Lab Orders */}
+                             {/* Lab Orders - Modern Card */}
                              {selectedRecord.labOrders && selectedRecord.labOrders.length > 0 && (
-                                <div>
-                                    <h3 className="font-bold text-gray-900 text-lg mb-3 flex items-center gap-2">
-                                        <FileText className="w-5 h-5 text-teal-600" /> Lab Orders
-                                    </h3>
-                                    <div className="border rounded-lg overflow-hidden">
+                                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                                    <div className="bg-teal-50 px-5 py-3 border-b border-teal-100 flex items-center gap-2">
+                                        <FileText className="w-5 h-5 text-teal-600" />
+                                        <h3 className="font-bold text-teal-800">Lab Orders</h3>
+                                        <span className="ml-auto px-2 py-0.5 bg-teal-200 text-teal-800 rounded-full text-xs font-bold">
+                                            {selectedRecord.labOrders.length}
+                                        </span>
+                                    </div>
+                                    <div className="overflow-x-auto">
                                         <table className="w-full text-sm">
                                             <thead className="bg-gray-50">
                                                 <tr>
-                                                    <th className="p-3 text-left">Test Name</th>
-                                                    <th className="p-3 text-left">Priority</th>
-                                                    <th className="p-3 text-left">Status</th>
+                                                    <th className="p-3 text-left font-semibold text-gray-600">Test Name</th>
+                                                    <th className="p-3 text-left font-semibold text-gray-600">Priority</th>
+                                                    <th className="p-3 text-left font-semibold text-gray-600">Status</th>
+                                                    <th className="p-3 text-left font-semibold text-gray-600">Result</th>
                                                 </tr>
                                             </thead>
                                             <tbody className="divide-y">
                                                 {selectedRecord.labOrders.map((l: any) => (
-                                                    <tr key={l.id}>
-                                                        <td className="p-3 font-medium">{l.testName}</td>
+                                                    <tr key={l.id} className="hover:bg-teal-50/50">
+                                                        <td className="p-3 font-medium text-gray-900">{l.testName}</td>
                                                         <td className="p-3">
-                                                            <span className={`px-2 py-1 rounded text-xs font-bold ${
-                                                                l.priority === 'STAT' ? 'bg-red-100 text-red-800' : 
-                                                                l.priority === 'URGENT' ? 'bg-orange-100 text-orange-800' : 
+                                                            <span className={`px-2 py-1 rounded-full text-xs font-bold ${
+                                                                l.priority === 'STAT' ? 'bg-red-100 text-red-800' :
+                                                                l.priority === 'URGENT' ? 'bg-orange-100 text-orange-800' :
                                                                 'bg-sky-100 text-sky-700'
                                                             }`}>{l.priority}</span>
                                                         </td>
                                                         <td className="p-3">
-                                                            <span className={`px-2 py-1 rounded text-xs ${
-                                                                l.status === 'COMPLETED' ? 'bg-green-100 text-green-800' : 'text-gray-500'
+                                                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                                                l.status === 'COMPLETED' ? 'bg-green-100 text-green-800' :
+                                                                l.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
+                                                                'bg-gray-100 text-gray-600'
                                                             }`}>{l.status}</span>
                                                         </td>
-                                                        {l.result && (
-                                                            <td className="p-3 text-sm bg-gray-50">
-                                                                <div className="font-semibold text-gray-700">Result:</div>
-                                                                <pre className="whitespace-pre-wrap text-xs text-gray-600">
-                                                                    {JSON.stringify(l.result.resultData, null, 2)}
-                                                                </pre>
-                                                                {l.result.aiInterpretation && (
-                                                                    <div className="mt-1 text-xs text-teal-700">
-                                                                        <strong>AI Note:</strong> {l.result.aiInterpretation}
-                                                                    </div>
-                                                                )}
-                                                            </td>
-                                                        )}
+                                                        <td className="p-3">
+                                                            {l.result ? (
+                                                                <div className="text-xs">
+                                                                    <div className="font-semibold text-gray-700">Result:</div>
+                                                                    <pre className="whitespace-pre-wrap text-xs text-gray-600 mt-1 bg-gray-50 p-2 rounded">
+                                                                        {JSON.stringify(l.result.resultData, null, 2)}
+                                                                    </pre>
+                                                                    {l.result.aiInterpretation && (
+                                                                        <div className="mt-2 text-teal-700 bg-teal-50 p-2 rounded">
+                                                                            <strong>AI Note:</strong> {l.result.aiInterpretation}
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            ) : (
+                                                                <span className="text-gray-400 text-xs">Pending</span>
+                                                            )}
+                                                        </td>
                                                     </tr>
                                                 ))}
                                             </tbody>

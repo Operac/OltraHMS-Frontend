@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AdminService } from '../../services/admin.service';
+import { Loading } from '../../components/ui/Loading';
 const Card = ({ children }: { children: React.ReactNode }) => (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100">{children}</div>
 );
@@ -97,7 +98,7 @@ const LeaveSettings = () => {
         }
     };
 
-    if (loading) return <div className="p-6">Loading...</div>;
+    if (loading) return <Loading />;
 
     return (
         <div className="p-6 space-y-6">

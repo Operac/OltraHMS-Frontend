@@ -7,6 +7,7 @@ import { format } from 'date-fns';
 import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
 import { Role } from '../../constants/roles';
+import { Loading } from '../../components/ui/Loading';
 
 const ReceptionistDashboard = () => {
     const navigate = useNavigate();
@@ -76,7 +77,7 @@ const ReceptionistDashboard = () => {
         }
     };
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <Loading />;
 
     const waitingList = appointments.filter(a => a.status === 'CHECKED_IN');
     const upcomingList = appointments.filter(a => a.status === 'CONFIRMED');

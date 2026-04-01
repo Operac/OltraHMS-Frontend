@@ -54,7 +54,10 @@ const Register = () => {
              // Login via AuthContext
              login(token, user);
 
-             toast.success("Account created successfully! Redirecting...");
+             toast.success("Account created successfully! Please check your email to verify your account.");
+
+             // Stop loading and redirect
+             setLoading(false);
 
              // Role-based redirect (with a small delay to allow context update)
              setTimeout(() => {
@@ -66,7 +69,7 @@ const Register = () => {
                          window.location.href = '/doctor';
                          break;
                      case 'PATIENT':
-                         navigate('/app'); 
+                         navigate('/app');
                          break;
                      case 'RECEPTIONIST':
                          window.location.href = '/receptionist';
@@ -86,8 +89,9 @@ const Register = () => {
                      default:
                          navigate('/app');
                  }
-             }, 100);
+             }, 1500);
           } catch (err: unknown) {
+              setLoading(false);
               if (axios.isAxiosError(err)) {
                   setError(err.response?.data?.message || 'Registration failed.');
               } else {
@@ -206,12 +210,17 @@ const Register = () => {
                             </div>
                         </div>
 
-                        <button 
+                        <button
                             type="submit"
                             disabled={loading}
                             className="w-full py-4 bg-sky-500 hover:bg-sky-600 text-white rounded-xl font-bold shadow-lg shadow-sky-500/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-70"
                         >
-                            {loading ? 'Creating Account...' : (
+                            {loading ? (
+                                <span className="flex items-center gap-2">
+                                    <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                                    Creating Account...
+                                </span>
+                            ) : (
                                 <>
                                     Create Account <ArrowRight className="w-5 h-5" />
                                 </>

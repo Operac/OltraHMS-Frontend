@@ -3,6 +3,7 @@ import { Plus, Edit2, Activity } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { surgeryService } from '../../services/surgery.service';
 import type { OperatingTheater } from '../../services/surgery.service';
+import { Loading } from '../../components/ui/Loading';
 
 const Theaters = () => {
     const [theaters, setTheaters] = useState<OperatingTheater[]>([]);
@@ -101,7 +102,7 @@ const Theaters = () => {
                     </thead>
                     <tbody className="divide-y divide-gray-100">
                         {loading ? (
-                             <tr><td colSpan={4} className="p-6 text-center text-gray-500">Loading...</td></tr>
+                             <tr><td colSpan={4} className="p-6 text-center"><Loading /></td></tr>
                         ) : theaters.length === 0 ? (
                              <tr><td colSpan={4} className="p-6 text-center text-gray-500">No Operating Theaters found</td></tr>
                         ) : theaters.map((t) => (

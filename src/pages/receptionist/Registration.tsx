@@ -28,19 +28,19 @@ const Registration = () => {
         setLoading(true);
         try {
             const response = await registerPatient(formData);
-            
+
             // Store credentials for display
             if (response.credentials) {
                 setCredentials(response.credentials);
                 setShowCredentials(true);
             }
-            
+
             if (confirm('Patient registered successfully! \nDo you want to book an appointment now?')) {
                 // Ensure backend returns the full patient object in response.patient
-                navigate('/receptionist/booking', { 
-                    state: { 
-                        patient: response.patient 
-                    } 
+                navigate('/receptionist/booking', {
+                    state: {
+                        patient: response.patient
+                    }
                 });
             } else {
                 navigate('/receptionist');
@@ -56,7 +56,7 @@ const Registration = () => {
     return (
         <div className="max-w-2xl mx-auto">
             <div className="mb-6 flex items-center gap-2">
-                <button 
+                <button
                     onClick={() => navigate('/receptionist')}
                     className="p-2 hover:bg-gray-100 rounded-full"
                 >

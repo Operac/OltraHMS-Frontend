@@ -11,12 +11,28 @@ import ConfirmModal from '../../components/ui/ConfirmModal';
 const Appointments = () => {
     const navigate = useNavigate();
     const { token, user } = useAuth();
-    
-    // View state: 'day' | 'week' | 'month' | 'list'
-    const [view, setView] = useState<'day' | 'week' | 'month' | 'list'>('week');
-    
+
+    // Check if mobile screen
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+    // View state: 'day' | 'week' | 'month' | 'list' - default to 'list' on mobile
+    const [view, setView] = useState<'day' | 'week' | 'month' | 'list'>(isMobile ? 'list' : 'week');
+
+    // Update view when screen size changes
+    useEffect(() => {
+        const handleResize = () => {
+            const mobile = window.innerWidth < 768;
+            setIsMobile(mobile);
+            if (mobile && (view === 'week' || view === 'day' || view === 'month')) {
+                setView('list');
+            }
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, [view]);
+
     const [currentDate, setCurrentDate] = useState(new Date());
-    const [appointments, setAppointments] = useState<any[]>([]); 
+    const [appointments, setAppointments] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [cancelConfirm, setCancelConfirm] = useState<{isOpen: boolean, appointmentId: string | null}>({isOpen: false, appointmentId: null});
 
@@ -125,7 +141,7 @@ const Appointments = () => {
     return (
         <div className="h-[calc(100vh-100px)] flex flex-col">
             {/* Header */}
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <div>
                      <h1 className="text-2xl font-bold text-gray-900">Appointments</h1>
                      <p className="text-gray-500">Manage schedule and bookings</p>
@@ -134,18 +150,18 @@ const Appointments = () => {
                     <button className="p-2 border rounded-lg hover:bg-gray-50 text-gray-600">
                         <Filter className="w-5 h-5" />
                     </button>
-                    <button 
+                    <button
                         onClick={() => navigate('/appointments/new')}
                         className="bg-sky-500 text-white px-4 py-2 rounded-lg hover:bg-sky-600 flex items-center gap-2 font-medium"
                     >
-                        <Plus className="w-4 h-4" /> New Appointment
+                        <Plus className="w-4 h-4" /> <span className="hidden sm:inline">New Appointment</span>
                     </button>
                 </div>
             </div>
 
             {/* Calendar Controls */}
-            <div className="bg-white border text-center p-4 rounded-t-xl border-gray-200 flex items-center justify-between">
-                <div className="flex items-center gap-4">
+            <div className="bg-white border text-center p-3 sm:p-4 rounded-t-xl border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div className="flex items-center gap-2 sm:gap-4">
                      <button onClick={() => {
                          if (view === 'day') setCurrentDate(subDays(currentDate, 1));
                          else if (view === 'week') setCurrentDate(subWeeks(currentDate, 1));
@@ -153,11 +169,13 @@ const Appointments = () => {
                      }} className="p-1 hover:bg-gray-100 rounded">
                          <ChevronLeft className="w-5 h-5" />
                      </button>
-                     <h2 className="text-lg font-bold w-48 text-center">
-                         {view === 'month' 
-                             ? format(currentDate, 'MMMM yyyy') 
-                             : `${format(days[0], 'MMM d')} - ${format(days[days.length - 1], 'MMM d, yyyy')}`
-                         }
+                     <h2 className="text-lg font-bold min-w-[140px] sm:w-48 text-center">
+                         {view === 'month'
+                             ? format(currentDate, 'MMMM yyyy')
+                             : view === 'list'
+                                ? format(currentDate, 'MMMM yyyy')
+                                : `${format(days[0], 'MMM d')} - ${format(days[days.length - 1], 'MMM d, yyyy')}`
+                     }
                      </h2>
                      <button onClick={() => {
                          if (view === 'day') setCurrentDate(addDays(currentDate, 1));
@@ -167,10 +185,10 @@ const Appointments = () => {
                          <ChevronRight className="w-5 h-5" />
                      </button>
                 </div>
-                <div className="flex bg-gray-100 p-1 rounded-lg text-sm">
-                    <button onClick={() => setView('list')} className={`px-3 py-1 rounded transition-colors ${view === 'list' ? 'bg-white shadow text-gray-900 font-medium' : 'text-gray-500 hover:text-gray-900'}`}>List</button>
-                    <button onClick={() => setView('week')} className={`px-3 py-1 rounded transition-colors ${view === 'week' ? 'bg-white shadow text-gray-900 font-medium' : 'text-gray-500 hover:text-gray-900'}`}>Week</button>
-                    <button onClick={() => setView('day')} className={`px-3 py-1 rounded transition-colors ${view === 'day' ? 'bg-white shadow text-gray-900 font-medium' : 'text-gray-500 hover:text-gray-900'}`}>Day</button>
+                <div className="flex bg-gray-100 p-1 rounded-lg text-sm w-full sm:w-auto justify-center">
+                    <button onClick={() => setView('list')} className={`px-3 py-1 rounded transition-colors flex-1 sm:flex-none ${view === 'list' ? 'bg-white shadow text-gray-900 font-medium' : 'text-gray-500 hover:text-gray-900'}`}>List</button>
+                    <button onClick={() => setView('week')} className={`px-3 py-1 rounded transition-colors hidden sm:block ${view === 'week' ? 'bg-white shadow text-gray-900 font-medium' : 'text-gray-500 hover:text-gray-900'}`}>Week</button>
+                    <button onClick={() => setView('day')} className={`px-3 py-1 rounded transition-colors hidden sm:block ${view === 'day' ? 'bg-white shadow text-gray-900 font-medium' : 'text-gray-500 hover:text-gray-900'}`}>Day</button>
                 </div>
             </div>
 
@@ -179,7 +197,7 @@ const Appointments = () => {
                 
                 {/* List View - Mobile Friendly */}
                 {view === 'list' ? (
-                    <div className="p-4 space-y-3">
+                    <div className="p-2 sm:p-4 space-y-2 sm:space-y-3">
                         {appointments.length === 0 ? (
                             <div className="flex flex-col items-center justify-center py-16 text-gray-500 bg-gray-50 rounded-lg border border-dashed border-gray-200">
                                 <CalendarX className="w-12 h-12 text-gray-300 mb-4" />
@@ -190,33 +208,33 @@ const Appointments = () => {
                             appointments
                                 .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime())
                                 .map(apt => (
-                                    <div 
+                                    <div
                                         key={apt.id}
-                                        className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+                                        className="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer gap-3"
                                         onClick={() => {
                                             if (user?.role === Role.DOCTOR) navigate(`/consultation/${apt.id}`);
                                             else if (apt.type === 'TELEMEDICINE' || apt.type === 'TELEHEALTH') navigate(`/consultation/video/${apt.id}`);
                                         }}
                                     >
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-12 h-12 bg-sky-100 rounded-lg flex flex-col items-center justify-center text-sky-600">
+                                        <div className="flex items-center gap-3 sm:gap-4">
+                                            <div className="w-10 sm:w-12 h-10 sm:h-12 bg-sky-100 rounded-lg flex flex-col items-center justify-center text-sky-600 flex-shrink-0">
                                                 <span className="text-xs font-bold">{format(new Date(apt.startTime), 'dd')}</span>
-                                                <span className="text-[10px] uppercase">{format(new Date(apt.startTime), 'MMM')}</span>
+                                                <span className="text-[9px] sm:text-[10px] uppercase">{format(new Date(apt.startTime), 'MMM')}</span>
                                             </div>
-                                            <div>
-                                                <div className="font-medium text-gray-900">
-                                                    {user?.role === Role.PATIENT 
+                                            <div className="min-w-0">
+                                                <div className="font-medium text-gray-900 truncate">
+                                                    {user?.role === Role.PATIENT
                                                         ? `Dr. ${apt.doctor?.user?.firstName || ''} ${apt.doctor?.user?.lastName || ''}`
                                                         : `${apt.patient?.firstName || ''} ${apt.patient?.lastName || ''}`
                                                     }
                                                 </div>
-                                                <div className="text-sm text-gray-500 flex items-center gap-2">
-                                                    <Clock className="w-3 h-3" />
-                                                    {format(new Date(apt.startTime), 'h:mm a')} - {format(new Date(apt.endTime), 'h:mm a')}
+                                                <div className="text-xs sm:text-sm text-gray-500 flex items-center gap-1 sm:gap-2">
+                                                    <Clock className="w-3 h-3 flex-shrink-0" />
+                                                    <span className="whitespace-nowrap">{format(new Date(apt.startTime), 'h:mm a')} - {format(new Date(apt.endTime), 'h:mm a')}</span>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="flex items-center gap-2">
+                                        <div className="flex items-center gap-2 ml-14 sm:ml-0">
                                             <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                                                 apt.status === 'CONFIRMED' ? 'bg-green-100 text-green-700' :
                                                 apt.status === 'COMPLETED' ? 'bg-gray-100 text-gray-600' :
@@ -226,12 +244,12 @@ const Appointments = () => {
                                                 {apt.status}
                                             </span>
                                             {(apt.type === 'TELEMEDICINE' || apt.type === 'TELEHEALTH') && (
-                                                <Video className="w-4 h-4 text-teal-500" />
+                                                <Video className="w-4 h-4 text-teal-500 flex-shrink-0" />
                                             )}
                                             {user?.role === Role.PATIENT && apt.status !== 'CANCELLED' && new Date(apt.startTime) > new Date() && (
-                                                <button 
+                                                <button
                                                     onClick={(e) => { e.stopPropagation(); confirmCancel(apt.id, e); }}
-                                                    className="ml-2 px-3 py-1 bg-red-100 text-red-600 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors"
+                                                    className="px-2 sm:px-3 py-1 bg-red-100 text-red-600 rounded-lg text-xs sm:text-sm font-medium hover:bg-red-200 transition-colors"
                                                 >
                                                     Cancel
                                                 </button>

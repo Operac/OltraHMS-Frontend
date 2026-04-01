@@ -12,7 +12,6 @@ html {
 
 body {
   overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
 }
 
 /* Fix for flex containers causing overflow */
@@ -55,6 +54,7 @@ button,
 nav,
 header {
   -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
   user-select: none;
 }
 
@@ -82,4 +82,9 @@ textarea {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #a1a1a1;
+}
+
+/* Progress bar utility class */
+.progress-bar {
+  width: var(--progress-width, 0%);
 }

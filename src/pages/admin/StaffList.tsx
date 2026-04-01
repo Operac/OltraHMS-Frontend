@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Plus, UserX, UserCheck, Shield, Banknote, Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { AdminService } from '../../services/admin.service';
+import { Loading } from '../../components/ui/Loading';
 
 const StaffList = () => {
     const [staff, setStaff] = useState<any[]>([]);
@@ -143,7 +144,7 @@ const StaffList = () => {
                     </thead>
                     <tbody className="divide-y divide-gray-100">
                         {loading ? (
-                             <tr><td colSpan={5} className="p-6 text-center">Loading...</td></tr>
+                             <tr><td colSpan={5} className="p-6 text-center"><Loading text="Loading staff..." /></td></tr>
                         ) : staff.map((s) => (
                             <tr key={s.id} className="hover:bg-gray-50">
                                 <td className="px-6 py-4">

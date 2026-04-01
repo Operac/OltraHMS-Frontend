@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { BedDouble, Activity } from 'lucide-react';
 import { inpatientService as InpatientService } from '../../services/inpatient.service';
 import { useNavigate } from 'react-router-dom';
+import { Loading } from '../../components/ui/Loading';
 
 const InpatientDashboard = () => {
     const [wards, setWards] = useState<any[]>([]);
@@ -31,7 +32,7 @@ const InpatientDashboard = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {loading ? (
-                    <div>Loading...</div>
+                    <Loading text="Loading wards..." />
                 ) : wards.length === 0 ? (
                     <div className="text-gray-500">No wards found. Seed database first!</div>
                 ) : wards.map((ward) => (
