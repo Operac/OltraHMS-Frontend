@@ -57,14 +57,15 @@ const MedicalRecords = () => {
     };
 
     const filteredRecords = records.filter(r => {
-        const term = searchTerm.toLowerCase();
-        const pName = (r.patient?.firstName || '') + ' ' + (r.patient?.lastName || '');
-        const subj = typeof r.subjective === 'object' && r.subjective !== null 
+        // Convert to string and then to lowercase to avoid errors
+        const term = String(searchTerm).toLowerCase();
+        const pName = String((r.patient?.firstName || '') + ' ' + (r.patient?.lastName || '')).toLowerCase();
+        const subj = String(typeof r.subjective === 'object' && r.subjective !== null 
             ? JSON.stringify(r.subjective) 
-            : (r.subjective || '');
+            : (r.subjective || '')).toLowerCase();
         
-        return pName.toLowerCase().includes(term) ||
-               subj.toLowerCase().includes(term);
+        return pName.includes(term) ||
+               subj.includes(term);
     });
 
     const handlePrint = () => {

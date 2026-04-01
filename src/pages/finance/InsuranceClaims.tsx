@@ -142,16 +142,16 @@ const InsuranceClaims = () => {
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const q = e.target.value.toLowerCase();
     setSearchQuery(q);
-    setFilteredClaims(
-      q.trim() === ''
-        ? claims
-        : claims.filter(c =>
-            c.claimNumber.toLowerCase().includes(q) ||
-            c.invoice.invoiceNumber.toLowerCase().includes(q) ||
-            c.invoice.patient.firstName.toLowerCase().includes(q) ||
-            c.invoice.patient.lastName.toLowerCase().includes(q) ||
-            c.invoice.patient.patientNumber.toLowerCase().includes(q) ||
-            c.insuranceProvider.toLowerCase().includes(q)
+     setFilteredClaims(
+       q.trim() === ''
+         ? claims
+         : claims.filter(c =>
+             String(c.claimNumber).toLowerCase().includes(String(q).toLowerCase()) ||
+             String(c.invoice?.invoiceNumber).toLowerCase().includes(String(q).toLowerCase()) ||
+             String(c.invoice?.patient?.firstName).toLowerCase().includes(String(q).toLowerCase()) ||
+             String(c.invoice?.patient?.lastName).toLowerCase().includes(String(q).toLowerCase()) ||
+             String(c.invoice?.patient?.patientNumber).toLowerCase().includes(String(q).toLowerCase()) ||
+             String(c.insuranceProvider).toLowerCase().includes(String(q).toLowerCase())
           )
     );
   };

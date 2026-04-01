@@ -57,24 +57,24 @@ const Records = () => {
     };
 
     // Filtering Logic
-    const getFilteredContent = () => {
-        const searchlower = searchTerm.toLowerCase();
-        
-        switch (activeTab) {
-            case 'history':
-                return records.filter(r => 
-                    r.doctor?.lastName?.toLowerCase().includes(searchlower) ||
-                    r.diagnosis?.toLowerCase().includes(searchlower)
-                );
-            case 'labs':
-                return getAllLabs().filter(l => 
-                    l.testType?.toLowerCase().includes(searchlower) ||
-                    l.result?.toLowerCase().includes(searchlower)
-                );
-            case 'prescriptions':
-                return getAllPrescriptions().filter(p => 
-                    p.medication?.name?.toLowerCase().includes(searchlower)
-                );
+     const getFilteredContent = () => {
+         const searchlower = String(searchTerm).toLowerCase();
+         
+         switch (activeTab) {
+             case 'history':
+                 return records.filter(r => 
+                     String(r.doctor?.lastName || '').toLowerCase().includes(searchlower) ||
+                     String(r.diagnosis || '').toLowerCase().includes(searchlower)
+                 );
+             case 'labs':
+                 return getAllLabs().filter(l => 
+                     String(l.testType || '').toLowerCase().includes(searchlower) ||
+                     String(l.result || '').toLowerCase().includes(searchlower)
+                 );
+             case 'prescriptions':
+                 return getAllPrescriptions().filter(p => 
+                     String(p.medication?.name || '').toLowerCase().includes(searchlower)
+                 );
             default:
                 return [];
         }

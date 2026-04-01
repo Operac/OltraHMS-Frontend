@@ -85,7 +85,7 @@ const ServiceManagement = () => {
     };
 
     const filteredServices = services.filter(s => {
-        const matchesSearch = s.name.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesSearch = String(s.name).toLowerCase().includes(String(searchTerm).toLowerCase());
         const matchesType = filter === 'ALL' || s.type === filter;
         return matchesSearch && matchesType;
     });
