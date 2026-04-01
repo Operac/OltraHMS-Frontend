@@ -23,82 +23,87 @@ const Register = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-     const handleSubmit = async (e: React.FormEvent) => {
-         e.preventDefault();
-         setError('');
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError('');
 
-         if (formData.password !== formData.confirmPassword) {
-             setError("Passwords do not match");
-             return;
-         }
+        if (formData.password !== formData.confirmPassword) {
+            setError("Passwords do not match");
+            return;
+        }
 
-         setLoading(true);
+        setLoading(true);
 
-         try {
-             const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
-             const response = await axios.post(`${API_URL}/auth/register`, {
-                 firstName: formData.firstName,
-                 lastName: formData.lastName,
-                 email: formData.email,
-                 password: formData.password,
-                 role: 'PATIENT' // Default role
-             });
+        try {
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+            const response = await axios.post(`${API_URL}/auth/register`, {
+                firstName: formData.firstName,
+                lastName: formData.lastName,
+                email: formData.email,
+                password: formData.password,
+                role: 'PATIENT'
+            });
 
-             const { token, user, refreshToken } = response.data;
+            // FIX 1: backend may return accessToken or token — handle both
+            const { token, accessToken, user, refreshToken } = response.data;
+            const authToken = token || accessToken;
 
-             // Store refresh token if present
-             if (refreshToken) {
-                 localStorage.setItem('refreshToken', refreshToken);
-             }
+            if (!authToken || !user) {
+                throw new Error('Invalid response from server. Please try logging in.');
+            }
 
-             // Login via AuthContext
-             login(token, user);
+            if (refreshToken) {
+                localStorage.setItem('refreshToken', refreshToken);
+            }
 
-             toast.success("Account created successfully! Please check your email to verify your account.");
+            // Login via AuthContext
+            login(authToken, user);
 
-             // Stop loading and redirect
-             setLoading(false);
+            toast.success("Account created successfully! Welcome to OltraHMS.");
 
-             // Role-based redirect (with a small delay to allow context update)
-             setTimeout(() => {
-                 switch(user.role) {
-                     case 'ADMIN':
-                         window.location.href = '/admin';
-                         break;
-                     case 'DOCTOR':
-                         window.location.href = '/doctor';
-                         break;
-                     case 'PATIENT':
-                         navigate('/app');
-                         break;
-                     case 'RECEPTIONIST':
-                         window.location.href = '/receptionist';
-                         break;
-                     case 'PHARMACIST':
-                         window.location.href = '/pharmacy';
-                         break;
-                     case 'LAB_TECH':
-                         window.location.href = '/lab-tech';
-                         break;
-                     case 'NURSE':
-                         window.location.href = '/inpatient';
-                         break;
-                     case 'RADIOLOGIST':
-                         window.location.href = '/radiology';
-                         break;
-                     default:
-                         navigate('/app');
-                 }
-             }, 1500);
-          } catch (err: unknown) {
-              setLoading(false);
-              if (axios.isAxiosError(err)) {
-                  setError(err.response?.data?.message || 'Registration failed.');
-              } else {
-                  setError('Registration failed.');
-              }
-          }
-     };
+            setLoading(false);
+
+            // FIX 2: navigate immediately, no setTimeout delay causing "stuck" perception
+            switch (user.role) {
+                case 'ADMIN':
+                    navigate('/admin');
+                    break;
+                case 'DOCTOR':
+                    navigate('/doctor');
+                    break;
+                case 'PATIENT':
+                    navigate('/app');
+                    break;
+                case 'RECEPTIONIST':
+                    navigate('/receptionist');
+                    break;
+                case 'PHARMACIST':
+                    navigate('/pharmacy');
+                    break;
+                case 'LAB_TECH':
+                    navigate('/lab-tech');
+                    break;
+                case 'NURSE':
+                    navigate('/inpatient');
+                    break;
+                case 'RADIOLOGIST':
+                    navigate('/radiology');
+                    break;
+                default:
+                    navigate('/app');
+            }
+
+        } catch (err: unknown) {
+            setLoading(false);
+            if (axios.isAxiosError(err)) {
+                setError(err.response?.data?.message || 'Registration failed.');
+            } else if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError('Registration failed.');
+            }
+        }
+    };
 
     return (
         <div className="min-h-screen w-full flex bg-[#F8FAFC]">
@@ -124,7 +129,7 @@ const Register = () => {
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-5">
-                         {error && (
+                        {error && (
                             <div className="bg-red-50 text-red-600 p-4 rounded-xl flex items-center gap-3 text-sm border border-red-100">
                                 <AlertCircle className="w-5 h-5 flex-shrink-0" />
                                 {error}
@@ -194,7 +199,7 @@ const Register = () => {
                             </div>
                         </div>
 
-                         <div>
+                        <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
                             <div className="relative">
                                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -228,7 +233,7 @@ const Register = () => {
                         </button>
 
                         <div className="text-center text-sm text-gray-500">
-                            Already have an account? {' '}
+                            Already have an account?{' '}
                             <Link to="/login" className="font-semibold text-sky-500 hover:text-sky-600">
                                 Sign in
                             </Link>
