@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import { AdminService } from '../../services/admin.service';
 import { SettingsService, getCurrencySymbol } from '../../services/settings.service';
 import { Loading } from '../../components/ui/Loading';
+import { useEscapeKey } from '../../hooks/useEscapeKey';
 
 const PayrollManagement = () => {
     const [payrolls, setPayrolls] = useState<any[]>([]);
@@ -81,6 +82,8 @@ const PayrollManagement = () => {
         }
     };
 
+    useEscapeKey(() => setShowEditModal(false));
+
     const openEditModal = (p: any) => {
         setSelectedPayroll(p);
         setEditForm({
@@ -111,24 +114,24 @@ const PayrollManagement = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
                 <h1 className="text-2xl font-bold text-gray-900">Payroll Management</h1>
-                <div className="flex gap-4">
-                    <select 
+                <div className="flex flex-wrap gap-3">
+                    <select
                         className="p-2 border rounded-lg bg-white shadow-sm"
                         value={selectedMonth}
                         onChange={(e) => setSelectedMonth(e.target.value)}
                     >
                         {months.map(m => <option key={m} value={m}>{m}</option>)}
                     </select>
-                    <select 
+                    <select
                         className="p-2 border rounded-lg bg-white shadow-sm"
                         value={selectedYear}
                         onChange={(e) => setSelectedYear(e.target.value)}
                     >
                         {years.map(y => <option key={y} value={y}>{y}</option>)}
                     </select>
-                    <button 
+                    <button
                         onClick={handleGenerate}
                         className="bg-sky-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-sky-600"
                     >
@@ -138,7 +141,7 @@ const PayrollManagement = () => {
             </div>
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <table className="w-full">
+                <div className="overflow-x-auto"><table className="w-full min-w-[600px]">
                     <thead className="bg-gray-50 text-gray-500 text-xs uppercase font-medium">
                         <tr>
                             <th className="px-6 py-3 text-left">Staff</th>
@@ -204,19 +207,20 @@ const PayrollManagement = () => {
                         ))}
                     </tbody>
                 </table>
+                </div>
             </div>
 
             {/* Edit Payroll Modal */}
             {showEditModal && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-                    <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" onClick={(e) => { if (e.target === e.currentTarget) setShowEditModal(false); }}>
+                    <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6" onClick={(e) => e.stopPropagation()}>
                         <h2 className="text-lg font-bold mb-4">Edit Payroll - {selectedPayroll?.staff?.user?.firstName} {selectedPayroll?.staff?.user?.lastName}</h2>
                         <form onSubmit={handleUpdatePayroll} className="space-y-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Base Salary</label>
                                 <input type="text" disabled className="w-full p-2 border rounded bg-gray-100" value={`${currencySymbol}${selectedPayroll?.baseSalary?.toLocaleString()}`} />
                             </div>
-                            <div className="grid grid-cols-3 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Bonuses</label>
                                     <input type="number" className="w-full p-2 border rounded" value={editForm.bonuses} onChange={e => setEditForm({...editForm, bonuses: e.target.value})} />

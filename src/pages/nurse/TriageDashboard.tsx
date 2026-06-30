@@ -4,6 +4,7 @@ import {
 } from 'lucide-react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { submitWithOfflineFallback } from '../../services/offlineStorage';
 
 type TriageLevel = 'RESUSCITATION' | 'EMERGENT' | 'URGENT' | 'LESS_URGENT' | 'NON_URGENT';
 
@@ -152,7 +153,6 @@ const TriageDashboard = () => {
 
     setSubmitting(true);
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
       const vitalSignsData = {
         bpSystolic: triageForm.bpSystolic ? parseInt(triageForm.bpSystolic) : null,
         bpDiastolic: triageForm.bpDiastolic ? parseInt(triageForm.bpDiastolic) : null,
@@ -165,16 +165,22 @@ const TriageDashboard = () => {
         height: triageForm.height ? parseFloat(triageForm.height) : null
       };
 
-      await axios.post(`${API_URL}/triage`, {
-        patientId: selectedPatient.patient.id,
-        chiefComplaint: triageForm.chiefComplaint,
-        triageLevel: triageForm.triageLevel,
-        vitalSigns: vitalSignsData
-      }, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      // Offline-resilient: if the network is down (NEPA outage / poor signal) the
+      // triage + vitals are saved locally and replayed automatically on reconnect.
+      const result = await submitWithOfflineFallback({
+        method: 'POST',
+        url: '/api/triage',
+        body: {
+          patientId: selectedPatient.patient.id,
+          chiefComplaint: triageForm.chiefComplaint,
+          triageLevel: triageForm.triageLevel,
+          vitalSigns: vitalSignsData
+        }
       });
 
-      toast.success('Triage assessment submitted successfully');
+      toast.success(result.queued
+        ? 'Offline — triage saved and will sync when connection returns'
+        : 'Triage assessment submitted successfully');
       setSelectedPatient(null);
       setTriageForm({
         chiefComplaint: '',
@@ -195,7 +201,7 @@ const TriageDashboard = () => {
       await fetchPendingPatients();
     } catch (error: any) {
       console.error('Error submitting triage:', error);
-      toast.error(error.response?.data?.message || 'Failed to submit triage assessment');
+      toast.error(error.response?.data?.message || error.message || 'Failed to submit triage assessment');
     } finally {
       setSubmitting(false);
     }

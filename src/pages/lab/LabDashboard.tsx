@@ -5,6 +5,7 @@ import { Activity, FileText, Upload, CheckCircle, Shield, DollarSign } from 'luc
 import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
 import { Role } from '../../constants/roles';
+import { useEscapeKey } from '../../hooks/useEscapeKey';
 
 const LabDashboard = () => {
     const { user } = useAuth();
@@ -67,20 +68,25 @@ const LabDashboard = () => {
         }
     };
 
+    useEscapeKey(() => setSelectedOrder(null), !uploading);
+
     return (
-        <div className="p-6 max-w-7xl mx-auto">
-            <header className="mb-8">
-                <h1 className="text-2xl font-bold flex items-center gap-2">
-                    <Activity className="text-sky-500" /> Lab Dashboard
-                </h1>
-                <p className="text-gray-600">Manage pending tests and upload results.</p>
+        <div className="p-4 sm:p-6 max-w-7xl mx-auto">
+            <header className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
+                <div>
+                    <h1 className="text-2xl font-bold flex items-center gap-2">
+                        <Activity className="text-sky-500" /> Lab Dashboard
+                    </h1>
+                    <p className="text-gray-600">Manage pending tests and upload results.</p>
+                </div>
             </header>
 
             {loading ? (
                 <p>Loading queue...</p>
             ) : (
                 <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                    <table className="w-full text-left">
+                    <div className="overflow-x-auto">
+                    <table className="w-full text-left min-w-[600px]">
                         <thead className="bg-gray-50 text-gray-500 font-medium text-sm uppercase">
                             <tr>
                                 <th className="p-4">Patient</th>
@@ -255,13 +261,14 @@ const LabDashboard = () => {
                             )}
                         </tbody>
                     </table>
+                    </div>
                 </div>
             )}
 
             {/* Results Upload Modal */}
             {selectedOrder && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-                    <div className="bg-white rounded-2xl w-full max-w-lg p-6 shadow-2xl animate-in fade-in zoom-in duration-200">
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm" onClick={(e) => { if (e.target === e.currentTarget && !uploading) setSelectedOrder(null); }}>
+                    <div className="bg-white rounded-2xl w-full max-w-lg p-6 shadow-2xl animate-in fade-in zoom-in duration-200" onClick={(e) => e.stopPropagation()}>
                         <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
                             <FileText className="text-sky-500" /> Upload Results
                         </h2>
@@ -319,8 +326,8 @@ const LabDashboard = () => {
 
             {/* Waiver Modal */}
             {waiveModal.open && waiveModal.orderId && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-                    <div className="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl">
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm" onClick={(e) => { if (e.target === e.currentTarget) { setWaiveModal({open: false, orderId: null}); setWaiveReason(''); } }}>
+                    <div className="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
                         <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
                             <Shield className="text-purple-500" /> Emergency Waiver
                         </h2>

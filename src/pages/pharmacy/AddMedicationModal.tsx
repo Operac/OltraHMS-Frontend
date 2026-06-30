@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { X, Save } from 'lucide-react';
 import { PharmacyService } from '../../services/pharmacy.service';
+import toast from 'react-hot-toast';
+import { useEscapeKey } from '../../hooks/useEscapeKey';
 
 interface AddMedicationModalProps {
     onClose: () => void;
@@ -8,6 +10,7 @@ interface AddMedicationModalProps {
 }
 
 const AddMedicationModal = ({ onClose, onSuccess }: AddMedicationModalProps) => {
+    useEscapeKey(onClose);
     const [formData, setFormData] = useState({
         name: '',
         genericName: '',
@@ -27,17 +30,18 @@ const AddMedicationModal = ({ onClose, onSuccess }: AddMedicationModalProps) => 
         try {
             await PharmacyService.createMedication(formData);
             onSuccess();
-        } catch (error) {
-            console.error(error);
-            alert("Failed to create medication");
+        } catch (error: any) {
+            toast.error(error?.response?.data?.message || 'Failed to create medication');
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+            onClick={onClose}>
+            <div className="bg-white rounded-xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto"
+                onClick={(e) => e.stopPropagation()}>
                 <div className="p-6 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white z-10">
                     <h2 className="text-xl font-bold text-gray-800">Add New Medication</h2>
                     <button onClick={onClose}><X className="w-6 h-6 text-gray-400 hover:text-gray-600" /></button>

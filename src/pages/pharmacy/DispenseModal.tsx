@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { X, AlertTriangle, Check, Package } from 'lucide-react';
 import { PharmacyService, type DispenseItem } from '../../services/pharmacy.service';
+import { useEscapeKey } from '../../hooks/useEscapeKey';
+import toast from 'react-hot-toast';
 
 interface DispenseModalProps {
     prescription: any;
@@ -13,6 +15,8 @@ const DispenseModal = ({ prescription, inventory, onClose, onSuccess }: Dispense
     const [selectedBatches, setSelectedBatches] = useState<DispenseItem[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [confirmPartial, setConfirmPartial] = useState(false);
+    useEscapeKey(onClose, !loading);
 
     // Find the prescribed med in inventory
     // Note: In real app, we match by specific ID. 
@@ -40,22 +44,29 @@ const DispenseModal = ({ prescription, inventory, onClose, onSuccess }: Dispense
     const isComplete = totalSelected >= required;
 
     const handleDispense = async () => {
+        if (!isComplete && !confirmPartial) {
+            setConfirmPartial(true);
+            return;
+        }
         try {
-            if (!isComplete && !confirm(`You have selected ${totalSelected} / ${required}. Dispense partially?`)) return;
-            
             setLoading(true);
+            setError('');
             await PharmacyService.dispense(prescription.id, selectedBatches);
+            toast.success('Medication dispensed successfully');
             onSuccess();
         } catch (err: any) {
             setError(err.response?.data?.message || 'Dispensing failed');
         } finally {
             setLoading(false);
+            setConfirmPartial(false);
         }
     };
 
     return (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+            onClick={loading ? undefined : onClose}>
+            <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+                onClick={(e) => e.stopPropagation()}>
                 <div className="p-6 border-b border-gray-100 flex justify-between items-center">
                     <h2 className="text-xl font-bold text-gray-800">Dispense Medication</h2>
                     <button onClick={onClose}><X className="w-6 h-6 text-gray-400 hover:text-gray-600" /></button>
@@ -116,6 +127,26 @@ const DispenseModal = ({ prescription, inventory, onClose, onSuccess }: Dispense
                         )}
                     </div>
 
+                    {/* Partial dispense confirmation */}
+                    {confirmPartial && !isComplete && (
+                        <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
+                            <p className="text-sm font-medium text-orange-800 mb-3 flex items-center gap-2">
+                                <AlertTriangle className="w-4 h-4" />
+                                You selected {totalSelected} of {required} units. Dispense partially?
+                            </p>
+                            <div className="flex gap-2">
+                                <button onClick={() => setConfirmPartial(false)}
+                                    className="flex-1 px-3 py-2 border border-gray-300 text-gray-700 rounded-lg text-sm hover:bg-gray-50">
+                                    Cancel
+                                </button>
+                                <button onClick={handleDispense} disabled={loading}
+                                    className="flex-1 px-3 py-2 bg-orange-600 text-white rounded-lg text-sm hover:bg-orange-700 disabled:opacity-50">
+                                    {loading ? 'Processing...' : 'Yes, Dispense Partially'}
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
                     {/* Summary */}
                     <div className="flex justify-between items-center pt-4 border-t border-gray-100">
                         <div className="text-sm">
@@ -123,15 +154,13 @@ const DispenseModal = ({ prescription, inventory, onClose, onSuccess }: Dispense
                                 {totalSelected}
                             </span> / {required}
                         </div>
-                        <button 
+                        <button
                             onClick={handleDispense}
                             disabled={loading || totalSelected === 0}
                             className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                         >
                             {loading ? 'Processing...' : (
-                                <>
-                                    <Check className="w-4 h-4" /> Confirm Dispense
-                                </>
+                                <><Check className="w-4 h-4" /> {isComplete ? 'Confirm Dispense' : 'Dispense'}</>
                             )}
                         </button>
                     </div>

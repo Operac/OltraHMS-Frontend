@@ -3,8 +3,11 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { surgeryService } from '../../services/surgery.service';
 import type { SurgeryCase, OperatingTheater } from '../../services/surgery.service';
-import { Activity, Calendar, Clock, MapPin, AlertTriangle } from 'lucide-react';
+import { Activity, Calendar, Clock, MapPin, AlertTriangle, FileText, X } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useEscapeKey } from '../../hooks/useEscapeKey';
+
+interface PostOpModal { surgeryId: string; currentDiagnosis?: string; currentNotes?: string; }
 
 const SurgeryDashboard = () => {
     const navigate = useNavigate();
@@ -12,6 +15,10 @@ const SurgeryDashboard = () => {
     const [surgeries, setSurgeries] = useState<SurgeryCase[]>([]);
     const [loading, setLoading] = useState(true);
     const [filterDate, setFilterDate] = useState(new Date().toISOString().split('T')[0]);
+    const [postOpModal, setPostOpModal] = useState<PostOpModal | null>(null);
+    const [postOpForm, setPostOpForm] = useState({ postOpDiagnosis: '', notes: '' });
+    const [saving, setSaving] = useState(false);
+    useEscapeKey(() => setPostOpModal(null), !saving);
 
     useEffect(() => {
         loadData();
@@ -35,13 +42,38 @@ const SurgeryDashboard = () => {
     };
 
     const handleStatusUpdate = async (id: string, newStatus: string) => {
-        if (!window.confirm(`Update status to ${newStatus}?`)) return;
+        if (newStatus === 'COMPLETED') {
+            const surgery = surgeries.find(s => s.id === id);
+            setPostOpModal({ surgeryId: id, currentDiagnosis: surgery?.postOpDiagnosis, currentNotes: surgery?.notes });
+            setPostOpForm({ postOpDiagnosis: surgery?.postOpDiagnosis || '', notes: surgery?.notes || '' });
+            return;
+        }
         try {
             await surgeryService.updateStatus(id, { status: newStatus });
             toast.success('Status updated');
             loadData();
         } catch (error) {
             toast.error('Failed to update status');
+        }
+    };
+
+    const handlePostOpSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!postOpModal) return;
+        setSaving(true);
+        try {
+            await surgeryService.updateStatus(postOpModal.surgeryId, {
+                status: 'COMPLETED',
+                postOpDiagnosis: postOpForm.postOpDiagnosis,
+                notes: postOpForm.notes,
+            });
+            toast.success('Surgery completed and post-op notes saved');
+            setPostOpModal(null);
+            loadData();
+        } catch (error) {
+            toast.error('Failed to complete surgery');
+        } finally {
+            setSaving(false);
         }
     };
 
@@ -207,6 +239,55 @@ const SurgeryDashboard = () => {
 
                 </div>
             )}
+
+            {/* Post-Op Notes Modal */}
+        {postOpModal && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+                onClick={(e) => { if (e.target === e.currentTarget && !saving) setPostOpModal(null); }}>
+                <div className="bg-white rounded-xl shadow-xl max-w-lg w-full p-6" onClick={(e) => e.stopPropagation()}>
+                    <div className="flex items-center justify-between mb-5">
+                        <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                            <FileText className="w-5 h-5 text-rose-600" /> Complete Surgery — Post-Op Notes
+                        </h2>
+                        <button onClick={() => setPostOpModal(null)} disabled={saving} className="text-gray-400 hover:text-gray-600 disabled:opacity-40">
+                            <X className="w-5 h-5" />
+                        </button>
+                    </div>
+                    <form onSubmit={handlePostOpSubmit} className="space-y-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Post-Op Diagnosis</label>
+                            <input
+                                type="text"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-400 outline-none text-sm"
+                                placeholder="Final diagnosis after surgery..."
+                                value={postOpForm.postOpDiagnosis}
+                                onChange={(e) => setPostOpForm(f => ({ ...f, postOpDiagnosis: e.target.value }))}
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Operative Notes</label>
+                            <textarea
+                                rows={4}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-400 outline-none text-sm resize-none"
+                                placeholder="Procedure performed, findings, complications..."
+                                value={postOpForm.notes}
+                                onChange={(e) => setPostOpForm(f => ({ ...f, notes: e.target.value }))}
+                            />
+                        </div>
+                        <div className="flex gap-3 pt-2">
+                            <button type="button" onClick={() => setPostOpModal(null)} disabled={saving}
+                                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 disabled:opacity-50">
+                                Cancel
+                            </button>
+                            <button type="submit" disabled={saving}
+                                className="flex-1 px-4 py-2 bg-rose-600 text-white rounded-lg hover:bg-rose-700 font-medium disabled:opacity-50">
+                                {saving ? 'Saving...' : 'Complete & Save'}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        )}
         </div>
     );
 };

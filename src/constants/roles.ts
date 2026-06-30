@@ -8,6 +8,7 @@ export const Role = {
   LAB_TECH: 'LAB_TECH',
   RADIOLOGIST: 'RADIOLOGIST',
   ACCOUNTANT: 'ACCOUNTANT',
+  INSURANCE_OFFICER: 'INSURANCE_OFFICER',
 } as const;
 
 export type RoleType = (typeof Role)[keyof typeof Role];

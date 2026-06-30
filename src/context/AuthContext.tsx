@@ -1,5 +1,4 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
 import type { ReactNode } from 'react';
 import type { RoleType } from '../constants/roles';
 
@@ -15,7 +14,7 @@ interface User {
   interface AuthContextType {
   user: User | null;
   token: string | null;
-  login: (token: string, user: User) => void;
+  login: (token: string, user: User, refreshToken?: string) => void;
   logout: () => void;
   isAuthenticated: boolean;
   loading: boolean;
@@ -30,39 +29,46 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (token) {
-        // Here you would typically validate the token with the backend
-        // For MVP, we'll just parse it or trust it if we have user data in localstorage too
-        const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
+        // Decode JWT payload and check expiry without a library
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            const isExpired = payload.exp && payload.exp * 1000 < Date.now();
+            const hasRefreshToken = !!localStorage.getItem('refreshToken');
+
+            if (isExpired && !hasRefreshToken) {
+                // Access token expired and no refresh token to recover — clear session
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                setToken(null);
+            } else {
+                // Either still valid, or expired but recoverable via refresh token.
+                // The api interceptor will silently refresh on the next request.
+                const storedUser = localStorage.getItem('user');
+                if (storedUser) {
+                    setUser(JSON.parse(storedUser));
+                }
+            }
+        } catch {
+            // Malformed token — clear it
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            localStorage.removeItem('refreshToken');
+            setToken(null);
         }
     }
     setLoading(false);
-    
-    // Global Axios Interceptor for 401
-    // (Importing axios here might create a circular dependency if axios instace is separate,
-    // but for default axios it works)
-    const interceptor = axios.interceptors.response.use(
-      (response) => response,
-      (error) => {
-        const isLoginRequest = error.config?.url?.includes('/api/auth/login');
-        if (error.response && error.response.status === 401 && !isLoginRequest) {
-          logout();
-        }
-        return Promise.reject(error);
-      }
-    );
-    
-    return () => {
-      axios.interceptors.response.eject(interceptor);
-    };
+    // Note: the 401 handling + silent token refresh interceptor is installed
+    // once on the default axios instance in main.tsx (installAuthInterceptors).
   }, [token]);
 
-  const login = (newToken: string, newUser: User) => {
+  const login = (newToken: string, newUser: User, refreshToken?: string) => {
     setToken(newToken);
     setUser(newUser);
     localStorage.setItem('token', newToken);
     localStorage.setItem('user', JSON.stringify(newUser));
+    if (refreshToken) {
+      localStorage.setItem('refreshToken', refreshToken);
+    }
   };
 
   const logout = () => {
@@ -70,6 +76,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(null);
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    localStorage.removeItem('refreshToken');
     window.location.href = '/login';
   };
 

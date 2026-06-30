@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import { surgeryService } from '../../services/surgery.service';
 import type { OperatingTheater } from '../../services/surgery.service';
 import { Loading } from '../../components/ui/Loading';
+import { useEscapeKey } from '../../hooks/useEscapeKey';
 
 const Theaters = () => {
     const [theaters, setTheaters] = useState<OperatingTheater[]>([]);
@@ -49,6 +50,8 @@ const Theaters = () => {
         setShowModal(true);
     };
 
+    useEscapeKey(() => setShowModal(false));
+
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
@@ -91,7 +94,7 @@ const Theaters = () => {
             </div>
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <table className="w-full">
+                <div className="overflow-x-auto"><table className="w-full min-w-[600px]">
                     <thead className="bg-gray-50 text-gray-500 text-xs uppercase font-medium">
                         <tr>
                             <th className="px-6 py-3 text-left">Name</th>
@@ -140,12 +143,13 @@ const Theaters = () => {
                         ))}
                     </tbody>
                 </table>
+                </div>
             </div>
 
             {/* Create/Edit Modal */}
             {showModal && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-                    <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" onClick={(e) => { if (e.target === e.currentTarget) setShowModal(false); }}>
+                    <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6" onClick={(e) => e.stopPropagation()}>
                         <div className="flex justify-between items-center mb-6">
                             <h2 className="text-xl font-bold text-gray-900">
                                 {editingTheater ? 'Edit Theater' : 'Add New Theater'}

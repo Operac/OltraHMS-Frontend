@@ -3,6 +3,7 @@ import { Plus, UserX, UserCheck, Shield, Banknote, Eye, EyeOff } from 'lucide-re
 import toast from 'react-hot-toast';
 import { AdminService } from '../../services/admin.service';
 import { Loading } from '../../components/ui/Loading';
+import Modal from '../../components/ui/Modal';
 
 const StaffList = () => {
     const [staff, setStaff] = useState<any[]>([]);
@@ -121,18 +122,19 @@ const StaffList = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
                 <h1 className="text-2xl font-bold text-gray-900">Staff Management</h1>
-                <button 
+                <button
                     onClick={() => setShowModal(true)}
-                    className="bg-sky-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-sky-600"
+                    className="bg-sky-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-sky-600 self-start sm:self-auto"
                 >
                     <Plus className="w-5 h-5" /> Add Staff
                 </button>
             </div>
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <table className="w-full">
+                <div className="overflow-x-auto">
+                <table className="w-full min-w-[700px]">
                     <thead className="bg-gray-50 text-gray-500 text-xs uppercase font-medium">
                         <tr>
                             <th className="px-6 py-3 text-left">Name</th>
@@ -185,15 +187,14 @@ const StaffList = () => {
                         ))}
                     </tbody>
                 </table>
+                </div>
             </div>
 
             {/* Create Modal */}
-            {showModal && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-                    <div className="bg-white rounded-xl shadow-xl max-w-lg w-full p-6">
-                        <h2 className="text-lg font-bold mb-4">Add New Staff Member</h2>
+            <Modal open={showModal} onClose={() => setShowModal(false)} title="Add New Staff Member">
+                    <div className="p-6">
                         <form onSubmit={handleCreate} className="space-y-4">
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <input placeholder="First Name" required className="p-2 border rounded" value={formData.firstName} onChange={e => setFormData({...formData, firstName: e.target.value})} />
                                 <input placeholder="Last Name" required className="p-2 border rounded" value={formData.lastName} onChange={e => setFormData({...formData, lastName: e.target.value})} />
                             </div>
@@ -204,8 +205,8 @@ const StaffList = () => {
                                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                 </button>
                             </div>
-                            
-                            <div className="grid grid-cols-2 gap-4">
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <select className="p-2 border rounded" value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})}>
                                     <option value="DOCTOR">Doctor</option>
                                     <option value="NURSE">Nurse</option>
@@ -229,16 +230,13 @@ const StaffList = () => {
                             </div>
                         </form>
                     </div>
-                </div>
-            )}
+            </Modal>
 
             {/* HR Modal */}
-            {showHRModal && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-                    <div className="bg-white rounded-xl shadow-xl max-w-lg w-full p-6">
-                        <h2 className="text-lg font-bold mb-4">Edit HR Details - {selectedStaff?.firstName} {selectedStaff?.lastName}</h2>
+            <Modal open={showHRModal} onClose={() => setShowHRModal(false)} title={`HR Details — ${selectedStaff?.firstName} ${selectedStaff?.lastName}`}>
+                    <div className="p-6">
                         <form onSubmit={handleSaveHR} className="space-y-4">
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">Base Salary</label>
                                     <input type="number" className="w-full p-2 border rounded" value={hrFormData.baseSalary} onChange={e => setHrFormData({...hrFormData, baseSalary: e.target.value})} />
@@ -264,8 +262,7 @@ const StaffList = () => {
                             </div>
                         </form>
                     </div>
-                </div>
-            )}
+            </Modal>
         </div>
     );
 };

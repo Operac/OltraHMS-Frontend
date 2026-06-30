@@ -5,6 +5,7 @@ import { DepartmentService } from '../../services/department.service';
 import { AdminService } from '../../services/admin.service';
 import type { Department } from '../../services/department.service';
 import { Loading } from '../../components/ui/Loading';
+import { useEscapeKey } from '../../hooks/useEscapeKey';
 
 interface StaffMember {
     id: string;
@@ -122,6 +123,8 @@ const DepartmentList = () => {
         setShowModal(true);
     }
 
+    useEscapeKey(() => setShowModal(false));
+
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
@@ -178,8 +181,8 @@ const DepartmentList = () => {
             </div>
 
             {showModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-                    <div className="bg-white rounded-xl max-w-md w-full max-h-[90vh] overflow-hidden flex flex-col">
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" onClick={(e) => { if (e.target === e.currentTarget) setShowModal(false); }}>
+                    <div className="bg-white rounded-xl max-w-md w-full max-h-[90vh] overflow-hidden flex flex-col" onClick={(e) => e.stopPropagation()}>
                         <div className="p-6 border-b">
                             <h2 className="text-xl font-bold">{editingId ? 'Edit Department' : 'Add Department'}</h2>
                         </div>

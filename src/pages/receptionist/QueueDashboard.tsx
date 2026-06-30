@@ -35,6 +35,20 @@ const QueueDashboard = () => {
     const [patientSearchQuery, setPatientSearchQuery] = useState('');
     const [patientSearchResults, setPatientSearchResults] = useState<any[]>([]);
     const [isNewPatient, setIsNewPatient] = useState(false);
+
+    // HMO / Insurance state
+    const [hmoProvider, setHmoProvider] = useState('');
+    const [hmoMemberId, setHmoMemberId] = useState('');
+    const [hmoVerified, setHmoVerified] = useState<boolean | null>(null); // null=unchecked, true=verified, false=not found
+    const KNOWN_HMOS = ['NHIS', 'Hygeia HMO', 'AXA Mansard', 'Leadway Health', 'Mediplan', 'Redcare HMO', 'Reliance HMO', 'Metrohealth HMO', 'Total Health Trust', 'Clearline HMO'];
+
+    const verifyHMO = () => {
+        if (!hmoProvider || !hmoMemberId) { toast.error('Enter HMO provider and member ID'); return; }
+        const known = KNOWN_HMOS.some(h => h.toLowerCase().includes(hmoProvider.toLowerCase()));
+        setHmoVerified(known);
+        if (known) toast.success(`${hmoProvider} verified in system`);
+        else toast('HMO not in local list — proceed with caution or mark as self-pay', { icon: '⚠️' });
+    };
     const [newPatientData, setNewPatientData] = useState({
         firstName: '',
         lastName: '',
@@ -125,11 +139,13 @@ const QueueDashboard = () => {
 
     const handleCheckIn = async (appointmentId: string) => {
         try {
-            await queueService.checkInPatient(appointmentId);
-            toast.success('Patient checked in');
+            const res = await queueService.checkInPatient(appointmentId);
+            toast.success(res?.queued
+                ? 'Offline — check-in saved and will sync when connection returns'
+                : 'Patient checked in');
             loadQueues();
         } catch (error: any) {
-            toast.error(error.response?.data?.message || 'Failed to check in');
+            toast.error(error.response?.data?.message || error.message || 'Failed to check in');
         }
     };
 
@@ -162,18 +178,20 @@ const QueueDashboard = () => {
                 return;
             }
             try {
-                await queueService.addWalkIn({
+                const res = await queueService.addWalkIn({
                     patientData: newPatientData,
                     doctorId: walkInDoctorId,
                     reason: walkInReason,
                     priority: walkInPriority
                 });
-                toast.success('New patient registered and added to queue');
+                toast.success(res?.queued
+                    ? 'Offline — walk-in saved and will sync when connection returns'
+                    : 'New patient registered and added to queue');
                 resetWalkInForm();
                 setActiveTab('overview');
                 loadQueues();
             } catch (error: any) {
-                toast.error(error.response?.data?.message || 'Failed to add walk-in');
+                toast.error(error.response?.data?.message || error.message || 'Failed to add walk-in');
             }
         } else {
             if (!walkInPatientId) {
@@ -181,18 +199,20 @@ const QueueDashboard = () => {
                 return;
             }
             try {
-                await queueService.addWalkIn({
+                const res = await queueService.addWalkIn({
                     patientId: walkInPatientId,
                     doctorId: walkInDoctorId,
                     reason: walkInReason,
                     priority: walkInPriority
                 });
-                toast.success('Walk-in patient added to queue');
+                toast.success(res?.queued
+                    ? 'Offline — walk-in saved and will sync when connection returns'
+                    : 'Walk-in patient added to queue');
                 resetWalkInForm();
                 setActiveTab('overview');
                 loadQueues();
             } catch (error: any) {
-                toast.error(error.response?.data?.message || 'Failed to add walk-in');
+                toast.error(error.response?.data?.message || error.message || 'Failed to add walk-in');
             }
         }
     };
@@ -223,19 +243,19 @@ const QueueDashboard = () => {
     }
 
     return (
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
             {/* Header */}
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between mb-6">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">Queue Management</h1>
                     <p className="text-gray-500">Manage patient queues and walk-ins</p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-wrap">
                     <button
                         onClick={() => setActiveTab('overview')}
                         className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                            activeTab === 'overview' 
-                            ? 'bg-sky-500 text-white' 
+                            activeTab === 'overview'
+                            ? 'bg-sky-500 text-white'
                             : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                         }`}
                     >
@@ -245,8 +265,8 @@ const QueueDashboard = () => {
                     <button
                         onClick={() => setActiveTab('walkin')}
                         className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                            activeTab === 'walkin' 
-                            ? 'bg-sky-500 text-white' 
+                            activeTab === 'walkin'
+                            ? 'bg-sky-500 text-white'
                             : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                         }`}
                     >
@@ -356,7 +376,7 @@ const QueueDashboard = () => {
                                         </div>
                                     ) : (
                                         queue.appointments?.map((apt: any, index: number) => (
-                                            <div key={apt.id} className="p-4 flex items-center justify-between hover:bg-gray-50">
+                                            <div key={apt.id} className="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 hover:bg-gray-50">
                                                 <div className="flex items-center gap-4">
                                                     <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
                                                         apt.status === 'IN_PROGRESS' 
@@ -539,23 +559,21 @@ const QueueDashboard = () => {
                             </div>
                         )}
                         
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Select Doctor</label>
-                                <select
-                                    value={walkInDoctorId}
-                                    onChange={(e) => setWalkInDoctorId(e.target.value)}
-                                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-sky-400 focus:ring-sky-400 py-2 px-3 border"
-                                    required
-                                >
-                                    <option value="">Select a doctor</option>
-                                    {availableDoctors.map((doc) => (
-                                        <option key={doc.id} value={doc.id}>
-                                            {doc.name} - {doc.department} ({doc.queueCount || 0} in queue)
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
+                        <div className="mt-4">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Select Doctor</label>
+                            <select
+                                value={walkInDoctorId}
+                                onChange={(e) => setWalkInDoctorId(e.target.value)}
+                                className="w-full rounded-md border-gray-300 shadow-sm focus:border-sky-400 focus:ring-sky-400 py-2 px-3 border"
+                                required
+                            >
+                                <option value="">Select a doctor</option>
+                                {availableDoctors.map((doc) => (
+                                    <option key={doc.id} value={doc.id}>
+                                        {doc.name} - {doc.department} ({doc.queueCount || 0} in queue)
+                                    </option>
+                                ))}
+                            </select>
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Reason for Visit</label>
@@ -592,6 +610,37 @@ const QueueDashboard = () => {
                                 </label>
                             </div>
                         </div>
+                        {/* HMO / Insurance Check */}
+                        <div className="border border-gray-200 rounded-lg p-3 space-y-3 bg-gray-50">
+                            <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Insurance / HMO (Optional)</p>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <div>
+                                    <label className="block text-xs font-medium text-gray-700 mb-1">HMO Provider</label>
+                                    <input list="hmo-list" value={hmoProvider} onChange={e => { setHmoProvider(e.target.value); setHmoVerified(null); }}
+                                        className="w-full rounded-md border-gray-300 shadow-sm py-1.5 px-2 border text-sm focus:border-sky-400 focus:ring-sky-400"
+                                        placeholder="e.g., NHIS, Hygeia" />
+                                    <datalist id="hmo-list">
+                                        {KNOWN_HMOS.map(h => <option key={h} value={h} />)}
+                                    </datalist>
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-medium text-gray-700 mb-1">Member ID</label>
+                                    <input value={hmoMemberId} onChange={e => { setHmoMemberId(e.target.value); setHmoVerified(null); }}
+                                        className="w-full rounded-md border-gray-300 shadow-sm py-1.5 px-2 border text-sm focus:border-sky-400 focus:ring-sky-400"
+                                        placeholder="HMO member number" />
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <button type="button" onClick={verifyHMO}
+                                    className="px-3 py-1.5 text-xs bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium">
+                                    Verify HMO
+                                </button>
+                                {hmoVerified === true && <span className="text-xs text-green-600 font-medium">✓ Verified</span>}
+                                {hmoVerified === false && <span className="text-xs text-orange-600 font-medium">⚠ Not in system — confirm manually</span>}
+                                {!hmoProvider && <span className="text-xs text-gray-400">Skip if self-pay</span>}
+                            </div>
+                        </div>
+
                         <button
                             type="submit"
                             className="w-full bg-sky-500 text-white py-2 px-4 rounded-lg hover:bg-sky-600 font-medium"

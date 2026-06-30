@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, UserPlus, Calendar, FileText, Settings, LogOut, Pill, CreditCard, Activity, Building2, BarChart, Video, DollarSign, Bed, BedDouble, Stethoscope, Heart, X, Shield } from 'lucide-react';
+import { LayoutDashboard, Users, UserPlus, Calendar, FileText, Settings, LogOut, Pill, CreditCard, Activity, Building2, BarChart, Video, DollarSign, Bed, BedDouble, Stethoscope, Heart, X, Shield, History, TrendingDown } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
 import { useAuth } from '../context/AuthContext';
@@ -40,9 +40,10 @@ const Sidebar = ({ onClose }: SidebarProps = {}) => {
         { icon: Activity, label: 'Radiology', path: '/radiology' },
         { icon: Activity, label: 'Surgery & OT', path: '/surgery' },
         { icon: Activity, label: 'Operating Theaters', path: '/admin/theaters' },
-        { icon: Settings, label: 'Settings', path: '/settings' },
         { icon: Shield, label: 'Insurance Verification', path: '/admin/insurance-verification' },
         { icon: FileText, label: 'Insurance Claims', path: '/finance/insurance-claims' },
+        { icon: History, label: 'Audit Logs', path: '/admin/audit-logs' },
+        { icon: Settings, label: 'Settings', path: '/settings' },
       ];
     }
 
@@ -69,8 +70,9 @@ const Sidebar = ({ onClose }: SidebarProps = {}) => {
           { icon: CreditCard, label: 'My Bills', path: '/billing' },
           { icon: Users, label: 'Find a Doctor', path: '/patient/doctors' },
           { icon: Heart, label: 'Health & Wellness', path: '/wellness' },
+          { icon: Calendar, label: 'Join Waitlist', path: '/patient/waitlist' },
+          { icon: LayoutDashboard, label: 'Give Feedback', path: '/patient/feedback' },
           { icon: Settings, label: 'Profile', path: '/settings' },
-
         ];
     }
 
@@ -78,6 +80,7 @@ const Sidebar = ({ onClose }: SidebarProps = {}) => {
       return [
         ...common,
         { icon: Activity, label: 'Queue Management', path: '/receptionist/queue' },
+        { icon: LayoutDashboard, label: 'TV Queue Display', path: '/queue-display' },
         { icon: Users, label: 'Patients', path: '/patients' },
         { icon: Calendar, label: 'Appointments', path: '/appointments' },
         { icon: Settings, label: 'Settings', path: '/settings' },
@@ -99,8 +102,10 @@ const Sidebar = ({ onClose }: SidebarProps = {}) => {
     if (role === Role.ACCOUNTANT) {
       return [
         { icon: DollarSign, label: 'Finance Dashboard', path: '/finance' },
+        { icon: TrendingDown, label: 'Expense Tracking', path: '/finance/expenses' },
         { icon: FileText, label: 'Insurance Claims', path: '/finance/insurance-claims' },
         { icon: DollarSign, label: 'Payroll', path: '/admin/payroll' },
+        { icon: FileText, label: 'Records', path: '/records' },
         { icon: Settings, label: 'Settings', path: '/settings' },
       ];
     }
@@ -109,6 +114,7 @@ const Sidebar = ({ onClose }: SidebarProps = {}) => {
         return [
           { icon: Activity, label: 'Lab Dashboard', path: '/lab-tech' },
           { icon: Activity, label: 'Radiology', path: '/radiology' },
+          { icon: FileText, label: 'Records', path: '/records' },
           { icon: Settings, label: 'Profile', path: '/settings' },
         ];
     }
@@ -116,6 +122,7 @@ const Sidebar = ({ onClose }: SidebarProps = {}) => {
     if (role === Role.RADIOLOGIST) {
         return [
           { icon: Activity, label: 'Radiology Dashboard', path: '/radiology' },
+          { icon: FileText, label: 'Records', path: '/records' },
           { icon: Settings, label: 'Profile', path: '/settings' },
         ];
     }
@@ -123,6 +130,16 @@ const Sidebar = ({ onClose }: SidebarProps = {}) => {
     if (role === Role.PHARMACIST) {
         return [
           { icon: Pill, label: 'Pharmacy Dashboard', path: '/pharmacy' },
+          { icon: FileText, label: 'Records', path: '/records' },
+          { icon: Settings, label: 'Profile', path: '/settings' },
+        ];
+    }
+
+    if (role === Role.INSURANCE_OFFICER) {
+        return [
+          { icon: Shield, label: 'Insurance Verification', path: '/admin/insurance-verification' },
+          { icon: FileText, label: 'Insurance Claims', path: '/finance/insurance-claims' },
+          { icon: FileText, label: 'Records', path: '/records' },
           { icon: Settings, label: 'Profile', path: '/settings' },
         ];
     }

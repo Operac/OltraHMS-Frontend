@@ -85,7 +85,7 @@ const LeaveManagement = () => {
             </div>
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <table className="w-full">
+                <div className="overflow-x-auto"><table className="w-full min-w-[600px]">
                     <thead className="bg-gray-50 text-gray-500 text-xs uppercase font-medium">
                         <tr>
                             <th className="px-6 py-3 text-left">Staff</th>
@@ -139,6 +139,7 @@ const LeaveManagement = () => {
                         ))}
                     </tbody>
                 </table>
+                </div>
             </div>
 
             {/* Review Modal */}

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { FinanceService } from '../../services/finance.service';
 import toast from 'react-hot-toast';
 import { Plus, DollarSign, Download, FileDown } from 'lucide-react';
+import Modal from '../../components/ui/Modal';
 import { format } from 'date-fns';
 import { exportToCSV, exportToPDF } from '../../utils/export';
 
@@ -79,7 +80,8 @@ const ExpenseTracking = () => {
             </div>
 
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-                <table className="w-full text-left">
+                <div className="overflow-x-auto">
+                <table className="w-full text-left min-w-[600px]">
                     <thead className="bg-gray-50 border-b border-gray-200 text-gray-500 text-xs uppercase font-semibold">
                         <tr>
                             <th className="p-4">Date</th>
@@ -117,14 +119,12 @@ const ExpenseTracking = () => {
                         )}
                     </tbody>
                 </table>
+                </div>
             </div>
 
             {/* Modal */}
-            {isModalOpen && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 animate-in fade-in duration-200">
-                    <div className="bg-white w-full max-w-md p-6 rounded-xl shadow-xl">
-                        <h2 className="text-xl font-bold text-gray-900 mb-6">Record New Expense</h2>
-                        
+            <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)} title="Record New Expense">
+                    <div className="p-6">
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
@@ -186,8 +186,7 @@ const ExpenseTracking = () => {
                             </div>
                         </form>
                     </div>
-                </div>
-            )}
+            </Modal>
         </div>
     );
 };

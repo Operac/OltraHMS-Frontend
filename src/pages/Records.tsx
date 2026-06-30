@@ -6,8 +6,8 @@ import { Role } from '../constants/roles';
 const Records = () => {
     const { user } = useAuth();
 
-    // ADMIN and NURSE users should see the doctor's view to access all records
-    if (user?.role === Role.ADMIN || user?.role === Role.DOCTOR || user?.role === Role.NURSE) {
+    // These roles can view all medical records
+    if ([Role.ADMIN, Role.DOCTOR, Role.NURSE, Role.LAB_TECH, Role.PHARMACIST, Role.RADIOLOGIST, Role.ACCOUNTANT, Role.INSURANCE_OFFICER].includes(user?.role as any)) {
         return <DoctorMedicalRecords />;
     }
 

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { registerPatient } from '../../services/receptionist.service';
 import type { PatientRegistrationData } from '../../services/receptionist.service';
 import { ArrowLeft, Save, Mail, Key, Printer } from 'lucide-react';
+import { useEscapeKey } from '../../hooks/useEscapeKey';
 
 const Registration = () => {
     const navigate = useNavigate();
@@ -18,6 +19,8 @@ const Registration = () => {
         gender: 'MALE',
         address: ''
     });
+
+    useEscapeKey(() => { setShowCredentials(false); setCredentials(null); });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -164,8 +167,8 @@ const Registration = () => {
 
             {/* Credentials Modal */}
             {showCredentials && credentials && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-xl shadow-xl max-w-md w-full mx-4">
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={(e) => { if (e.target === e.currentTarget) { setShowCredentials(false); setCredentials(null); } }}>
+                    <div className="bg-white rounded-xl shadow-xl max-w-md w-full mx-4" onClick={(e) => e.stopPropagation()}>
                         <div className="p-6 border-b border-gray-100">
                             <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
                                 <Key className="w-5 h-5 text-sky-500" />

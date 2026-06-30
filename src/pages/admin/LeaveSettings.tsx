@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AdminService } from '../../services/admin.service';
 import { Loading } from '../../components/ui/Loading';
+import { useEscapeKey } from '../../hooks/useEscapeKey';
 const Card = ({ children }: { children: React.ReactNode }) => (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100">{children}</div>
 );
@@ -97,6 +98,8 @@ const LeaveSettings = () => {
             }
         }
     };
+
+    useEscapeKey(() => setIsAddTypeModalOpen(false));
 
     if (loading) return <Loading />;
 
@@ -203,8 +206,8 @@ const LeaveSettings = () => {
 
             {/* Add Leave Type Modal */}
             {isAddTypeModalOpen && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-xl shadow-xl p-6 w-full max-w-md">
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={(e) => { if (e.target === e.currentTarget) setIsAddTypeModalOpen(false); }}>
+                    <div className="bg-white rounded-xl shadow-xl p-6 w-full max-w-md" onClick={(e) => e.stopPropagation()}>
                         <h2 className="text-xl font-bold font-heading mb-4 text-neutral-800">Add Leave Type</h2>
                         <div className="space-y-4">
                             <div>

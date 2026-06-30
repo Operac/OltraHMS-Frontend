@@ -3,6 +3,7 @@ import { FinanceService } from '../../services/finance.service';
 import toast from 'react-hot-toast';
 import { Plus, Edit, Trash2, X, Search, DollarSign, Building2, Download, FileDown } from 'lucide-react';
 import { exportToCSV, exportToPDF } from '../../utils/export';
+import { useEscapeKey } from '../../hooks/useEscapeKey';
 
 const serviceColumns = [
     { header: 'Service Name', dataKey: 'name' },
@@ -83,6 +84,8 @@ const ServiceManagement = () => {
         });
         setIsModalOpen(true);
     };
+
+    useEscapeKey(() => setIsModalOpen(false));
 
     const filteredServices = services.filter(s => {
         const matchesSearch = String(s.name).toLowerCase().includes(String(searchTerm).toLowerCase());
@@ -194,8 +197,8 @@ const ServiceManagement = () => {
 
             {/* Modal */}
             {isModalOpen && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 animate-in fade-in duration-200">
-                    <div className="bg-white w-full max-w-md p-6 rounded-xl shadow-xl">
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 animate-in fade-in duration-200" onClick={(e) => { if (e.target === e.currentTarget) setIsModalOpen(false); }}>
+                    <div className="bg-white w-full max-w-md p-6 rounded-xl shadow-xl" onClick={(e) => e.stopPropagation()}>
                         <div className="flex justify-between items-center mb-6">
                             <h2 className="text-xl font-bold text-gray-900">{editingService ? 'Edit Service' : 'Add New Service'}</h2>
                             <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-600"><X size={24} /></button>

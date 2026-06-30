@@ -10,24 +10,24 @@ const TreatmentDashboard = () => {
     const [patientName, setPatientName] = useState('');
 
     return (
-        <div className="p-6 max-w-7xl mx-auto space-y-6">
-            <div className="flex justify-between items-center">
+        <div className="p-4 sm:p-6 max-w-7xl mx-auto space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-800">Treatment Room</h1>
                     <p className="text-gray-500">Manage outpatient injections and treatments</p>
                 </div>
                 {!selectedPatientId && (
-                    <button 
+                    <button
                         onClick={() => setShowSearch(true)}
-                        className="bg-sky-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-sky-600 transition"
+                        className="bg-sky-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-sky-600 transition self-start sm:self-auto"
                     >
                         <Search className="w-4 h-4" /> Find Patient
                     </button>
                 )}
                 {selectedPatientId && (
-                    <button 
+                    <button
                         onClick={() => { setSelectedPatientId(null); setPatientName(''); }}
-                        className="text-gray-600 hover:text-gray-900 flex items-center gap-2"
+                        className="text-gray-600 hover:text-gray-900 flex items-center gap-2 self-start sm:self-auto"
                     >
                         <ArrowLeft className="w-4 h-4" /> Back to Search
                     </button>

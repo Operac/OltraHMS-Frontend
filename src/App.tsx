@@ -44,8 +44,10 @@ import ReceptionistDashboard from './pages/receptionist/Dashboard';
 import ReceptionistRegistration from './pages/receptionist/Registration';
 import ReceptionistBooking from './pages/receptionist/Booking';
 import QueueDashboard from './pages/receptionist/QueueDashboard';
+import QueueDisplay from './pages/shared/QueueDisplay';
 import PharmacyDashboard from './pages/pharmacy/Dashboard';
 import FinanceDashboard from './pages/finance/Dashboard';
+import ExpenseTracking from './pages/finance/ExpenseTracking';
 import AdmissionDashboard from './pages/admission/Dashboard';
 import TreatmentDashboard from './pages/nurse/TreatmentDashboard';
 import RadiologyDashboard from './pages/radiology/RadiologyDashboard';
@@ -53,6 +55,8 @@ import RequestImaging from './pages/doctor/RequestImaging';
 import SurgeryDashboard from './pages/surgery/SurgeryDashboard';
 import BookSurgery from './pages/doctor/BookSurgery';
 import WellnessDashboard from './pages/patient/WellnessDashboard';
+import WaitlistRequest from './pages/patient/WaitlistRequest';
+import Feedback from './pages/patient/Feedback';
 import PatientWellnessView from './pages/doctor/PatientWellnessView';
 
 import Settings from './pages/Settings';
@@ -221,6 +225,15 @@ function App() {
              </ProtectedRoute>
            } />
            
+           {/* Expense Tracking Route */}
+           <Route path="/finance/expenses" element={
+             <ProtectedRoute allowedRoles={[Role.ACCOUNTANT, Role.ADMIN]}>
+               <MainLayout>
+                 <ExpenseTracking />
+               </MainLayout>
+             </ProtectedRoute>
+           } />
+
            {/* Insurance Claims Route */}
            <Route path="/finance/insurance-claims" element={
              <ProtectedRoute allowedRoles={[Role.ACCOUNTANT, Role.ADMIN]}>
@@ -327,6 +340,9 @@ function App() {
             </ProtectedRoute>
           } />
 
+          {/* Queue TV Display — no sidebar/layout, runs fullscreen on a TV */}
+          <Route path="/queue-display" element={<QueueDisplay />} />
+
           <Route path="/pharmacy" element={
             <ProtectedRoute allowedRoles={[Role.PHARMACIST, Role.ADMIN]}>
               <MainLayout>
@@ -395,6 +411,17 @@ function App() {
               <MainLayout>
                 <PatientWellnessView />
               </MainLayout>
+            </ProtectedRoute>
+          } />
+
+          <Route path="/patient/waitlist" element={
+            <ProtectedRoute allowedRoles={[Role.PATIENT]}>
+              <MainLayout><WaitlistRequest /></MainLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/patient/feedback" element={
+            <ProtectedRoute allowedRoles={[Role.PATIENT]}>
+              <MainLayout><Feedback /></MainLayout>
             </ProtectedRoute>
           } />
 

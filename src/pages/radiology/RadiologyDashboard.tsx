@@ -2,8 +2,10 @@
 import { useState, useEffect } from 'react';
 import { radiologyService } from '../../services/radiology.service';
 import type { RadiologyRequest } from '../../services/radiology.service';
-import { Activity, FileText, Upload, X } from 'lucide-react';
+import { Activity, Upload, X } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useEscapeKey } from '../../hooks/useEscapeKey';
+import DicomViewer from '../../components/DicomViewer';
 
 const RadiologyDashboard = () => {
     const [requests, setRequests] = useState<RadiologyRequest[]>([]);
@@ -16,6 +18,7 @@ const RadiologyDashboard = () => {
     const [impression, setImpression] = useState('');
     const [files, setFiles] = useState<FileList | null>(null);
     const [uploading, setUploading] = useState(false);
+    const [viewerRequest, setViewerRequest] = useState<RadiologyRequest | null>(null);
 
     useEffect(() => {
         loadRequests();
@@ -69,6 +72,8 @@ const RadiologyDashboard = () => {
             setUploading(false);
         }
     };
+
+    useEscapeKey(() => setSelectedRequest(null), !uploading);
 
     return (
         <div className="p-6 max-w-7xl mx-auto">
@@ -153,14 +158,12 @@ const RadiologyDashboard = () => {
                                                         <Upload size={16} /> Upload Report
                                                     </button>
                                                 ) : (
-                                                    <a 
-                                                        href={req.report?.imageUrls?.[0] || '#'} 
-                                                        target="_blank" 
-                                                        rel="noopener noreferrer"
+                                                    <button
+                                                        onClick={() => setViewerRequest(req)}
                                                         className="text-green-600 hover:text-green-800 font-medium text-sm flex items-center justify-end gap-1 ml-auto"
                                                     >
-                                                        <FileText size={16} /> View Report
-                                                    </a>
+                                                        <Activity size={16} /> View Images
+                                                    </button>
                                                 )}
                                             </td>
                                         </tr>
@@ -174,8 +177,8 @@ const RadiologyDashboard = () => {
 
             {/* Upload Modal */}
             {selectedRequest && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-                    <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col">
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm" onClick={(e) => { if (e.target === e.currentTarget && !uploading) setSelectedRequest(null); }}>
+                    <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col" onClick={(e) => e.stopPropagation()}>
                         <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50 flex-shrink-0">
                             <h3 className="font-semibold text-lg">Upload Radiology Report</h3>
                             <button onClick={() => setSelectedRequest(null)} className="text-gray-400 hover:text-gray-600">
@@ -272,6 +275,18 @@ const RadiologyDashboard = () => {
                     </div>
                 </div>
             )}
+
+        {/* DICOM / Image Viewer */}
+        {viewerRequest && (
+            <DicomViewer
+                urls={viewerRequest.report?.imageUrls || []}
+                findings={viewerRequest.report?.findings}
+                impression={viewerRequest.report?.impression}
+                patientName={`${viewerRequest.patient?.firstName || ''} ${viewerRequest.patient?.lastName || ''}`.trim()}
+                testName={viewerRequest.test?.name}
+                onClose={() => setViewerRequest(null)}
+            />
+        )}
         </div>
     );
 };

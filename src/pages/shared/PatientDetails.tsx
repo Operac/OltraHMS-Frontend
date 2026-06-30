@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { 
-  User, Phone, MapPin, Calendar, FileText, 
+import {
+  User, Phone, MapPin, Calendar, FileText,
   ChevronLeft, Edit, AlertCircle, Activity
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { format } from 'date-fns';
+import { useEscapeKey } from '../../hooks/useEscapeKey';
 
 interface PatientDetail {
   id: string;
@@ -103,6 +104,8 @@ const PatientDetails = () => {
             setSubmittingVitals(false);
         }
     };
+
+    useEscapeKey(() => setVitalsModalOpen(false), !submittingVitals);
 
     if (loading) return <div className="p-6 text-center">Loading patient profile...</div>;
     if (error || !patient) return (
@@ -323,8 +326,8 @@ const PatientDetails = () => {
 
             {/* Record Vitals Modal */}
             {vitalsModalOpen && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200">
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={(e) => { if (e.target === e.currentTarget && !submittingVitals) setVitalsModalOpen(false); }}>
+                    <div className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200" onClick={(e) => e.stopPropagation()}>
                         <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
                             <h2 className="text-xl font-bold flex items-center gap-2">
                                 <Activity className="w-5 h-5 text-emerald-600" />

@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Search, X, User } from 'lucide-react';
 import { AdmissionService } from '../../services/admission.service';
-import * as ReceptionistService from '../../services/receptionist.service'; // Re-use search
+import * as ReceptionistService from '../../services/receptionist.service';
 import toast from 'react-hot-toast';
+import { useEscapeKey } from '../../hooks/useEscapeKey';
 
 interface AdmissionModalProps {
     bed: any;
@@ -16,6 +17,7 @@ const AdmissionModal = ({ bed, onClose, onSuccess }: AdmissionModalProps) => {
     const [selectedPatient, setSelectedPatient] = useState<any>(null);
     const [reason, setReason] = useState('');
     const [loading, setLoading] = useState(false);
+    useEscapeKey(onClose, !loading);
 
     // Search Patients
     useEffect(() => {
@@ -28,7 +30,7 @@ const AdmissionModal = ({ bed, onClose, onSuccess }: AdmissionModalProps) => {
                     const results = await ReceptionistService.searchPatients(searchTerm);
                     setPatients(results);
                 } catch (error) {
-                    console.error("Search failed");
+                    toast.error('Patient search failed');
                 }
             } else {
                 setPatients([]);
@@ -60,8 +62,10 @@ const AdmissionModal = ({ bed, onClose, onSuccess }: AdmissionModalProps) => {
     };
 
     return (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-xl shadow-xl max-w-lg w-full p-6 animate-in fade-in zoom-in duration-200">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+            onClick={loading ? undefined : onClose}>
+            <div className="bg-white rounded-xl shadow-xl max-w-lg w-full p-6 animate-in fade-in zoom-in duration-200"
+                onClick={(e) => e.stopPropagation()}>
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-xl font-bold text-gray-900">Admit Patient to Bed {bed.number}</h2>
                     <button onClick={onClose} className="text-gray-400 hover:text-gray-600">

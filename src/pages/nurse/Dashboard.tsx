@@ -4,6 +4,7 @@ import { getDailyAppointments } from '../../services/receptionist.service';
 import { inpatientService } from '../../services/inpatient.service';
 import { Heart, Thermometer, Activity, Clock, User, Stethoscope, Syringe, RotateCw, BedDouble } from 'lucide-react';
 import { Loading } from '../../components/ui/Loading';
+import { useEscapeKey } from '../../hooks/useEscapeKey';
 
 const NurseDashboard = () => {
     const navigate = useNavigate();
@@ -76,6 +77,8 @@ const NurseDashboard = () => {
             height: ''
         });
     };
+
+    useEscapeKey(() => setSelectedPatient(null));
 
     if (loading) return <Loading />;
 
@@ -278,8 +281,8 @@ onClick={() => navigate('/treatments')}
 
             {/* Vitals Recording Modal */}
             {selectedPatient && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-xl shadow-xl max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={(e) => { if (e.target === e.currentTarget) setSelectedPatient(null); }}>
+                    <div className="bg-white rounded-xl shadow-xl max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
                         <div className="p-6 border-b border-gray-100">
                             <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
                                 <Heart className="w-5 h-5 text-red-500" />

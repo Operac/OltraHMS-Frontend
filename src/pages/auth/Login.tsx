@@ -6,12 +6,21 @@ import { Mail, Lock, Eye, EyeOff, Activity, ArrowRight, CheckCircle, AlertCircle
 import toast from 'react-hot-toast';
 import api from '../../services/api';
 
+const ROLE_PATHS: Record<string, string> = {
+    ADMIN: '/admin', DOCTOR: '/doctor', PATIENT: '/app',
+    RECEPTIONIST: '/receptionist', PHARMACIST: '/pharmacy',
+    LAB_TECH: '/lab-tech', NURSE: '/inpatient', RADIOLOGIST: '/radiology',
+    ACCOUNTANT: '/finance', INSURANCE_OFFICER: '/admin/insurance-verification',
+};
+
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [requiresTwoFactor, setRequiresTwoFactor] = useState(false);
+    const [twoFactorCode, setTwoFactorCode] = useState('');
     const { login } = useAuth();
     const navigate = useNavigate();
 
@@ -23,55 +32,24 @@ const Login = () => {
         const minLoadTime = new Promise(resolve => setTimeout(resolve, 800));
 
         try {
+            const payload: any = { email, password };
+            if (requiresTwoFactor && twoFactorCode) payload.twoFactorCode = twoFactorCode;
+
             const [response] = await Promise.all([
-                api.post('/auth/login', { email, password }),
+                api.post('/auth/login', payload),
                 minLoadTime
             ]);
-            
+
+            if (response.data.requiresTwoFactor) {
+                setRequiresTwoFactor(true);
+                setLoading(false);
+                return;
+            }
+
             const userData = response.data.user;
-            
-            // Await login to ensure state is set (though standard React state update is async, 
-            // the context function itself is synchronous in execution but state update effect is next render)
-            login(response.data.token, userData);
+            login(response.data.token, userData, response.data.refreshToken);
             toast.success(`Welcome back, ${userData.firstName}!`);
-            
-            
-            // Force a small delay to allow Context to update if needed (though navigating immediately is usually fine if not protected by "wait for auth")
-            // But if the target route is Protected, it checks "isAuthenticated"
-            // If "isAuthenticated" relies on "token" state which might lag by one render cycle...
-            
-            setTimeout(() => {
-                // Role-based redirect
-                switch(userData.role) {
-                    case 'ADMIN':
-                        // Force hard reload to ensure context is fresh and avoid race conditions
-                        window.location.href = '/admin';
-                        break;
-                    case 'DOCTOR':
-                        window.location.href = '/doctor';
-                        break;
-                    case 'PATIENT':
-                        navigate('/app'); 
-                        break;
-                    case 'RECEPTIONIST':
-                        window.location.href = '/receptionist';
-                        break;
-                    case 'PHARMACIST':
-                        window.location.href = '/pharmacy';
-                        break;
-                    case 'LAB_TECH':
-                        window.location.href = '/lab-tech';
-                        break;
-                    case 'NURSE':
-                        window.location.href = '/inpatient';
-                        break;
-                    case 'RADIOLOGIST':
-                        window.location.href = '/radiology';
-                        break;
-                    default:
-                        navigate('/app');
-                }
-            }, 100);
+            setTimeout(() => { window.location.href = ROLE_PATHS[userData.role] || '/app'; }, 100);
 
         } catch (err: any) {
             console.error('Login error:', err);
@@ -297,12 +275,32 @@ const Login = () => {
                             </motion.div>
                         </div>
 
-                        <motion.button 
+                        {requiresTwoFactor && (
+                            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                                className="p-4 bg-sky-50 border border-sky-200 rounded-xl space-y-3">
+                                <p className="text-sm font-medium text-sky-800 flex items-center gap-2">
+                                    <CheckCircle className="w-4 h-4" /> Two-factor authentication required
+                                </p>
+                                <p className="text-xs text-sky-600">Enter the 6-digit code from your authenticator app.</p>
+                                <input
+                                    type="text"
+                                    inputMode="numeric"
+                                    maxLength={6}
+                                    value={twoFactorCode}
+                                    onChange={e => setTwoFactorCode(e.target.value.replace(/\D/g, ''))}
+                                    className="w-full px-4 py-3 bg-white border border-sky-300 rounded-xl focus:ring-2 focus:ring-sky-400 outline-none font-mono text-xl tracking-[0.5em] text-center"
+                                    placeholder="000000"
+                                    autoFocus
+                                />
+                            </motion.div>
+                        )}
+
+                        <motion.button
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.6 }}
                             type="submit"
-                            disabled={loading}
+                            disabled={loading || (requiresTwoFactor && twoFactorCode.length !== 6)}
                             className="w-full py-4 bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 text-white rounded-xl font-bold shadow-lg shadow-sky-500/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                         >
                             {loading ? (

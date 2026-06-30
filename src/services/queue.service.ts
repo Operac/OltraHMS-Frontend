@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { submitWithOfflineFallback } from './offlineStorage';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
@@ -34,13 +35,15 @@ export const queueService = {
         return response.data;
     },
 
-    // Check in a patient
+    // Check in a patient. Offline-resilient: if the network is down (e.g. NEPA
+    // outage / poor connectivity) the action is queued locally and replayed on
+    // reconnect. Returns { queued: boolean, data? }.
     checkInPatient: async (appointmentId: string, priority?: 'normal' | 'emergency') => {
-        const response = await axios.post(`${API_URL}/queue/checkin`, 
-            { appointmentId, priority },
-            getHeaders()
-        );
-        return response.data;
+        return submitWithOfflineFallback({
+            method: 'POST',
+            url: '/api/queue/checkin',
+            body: { appointmentId, priority },
+        });
     },
 
     // Add walk-in patient
@@ -59,8 +62,12 @@ export const queueService = {
         reason?: string;
         priority?: 'normal' | 'emergency';
     }) => {
-        const response = await axios.post(`${API_URL}/queue/walkin`, data, getHeaders());
-        return response.data;
+        // Offline-resilient: queue locally and replay on reconnect if offline.
+        return submitWithOfflineFallback({
+            method: 'POST',
+            url: '/api/queue/walkin',
+            body: data,
+        });
     },
 
     // Call next patient

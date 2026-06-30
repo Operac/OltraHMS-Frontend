@@ -1,141 +1,38 @@
 // PWA Registration Service
-// Handles Service Worker registration and lifecycle management
-// Note: PWA is optional - app works without it
+// vite-plugin-pwa (configured in vite.config.ts) handles service worker
+// generation and auto-registration. This file provides utility helpers only.
 
-const SW_URL = '/sw.js';
-
-export interface PWARegistration {
-  ready: Promise<ServiceWorkerRegistration>;
-  offlineReady: boolean;
-}
-
-let registration: ServiceWorkerRegistration | null = null;
-let updateFound = false;
-
-// Check if running in browser
 const isBrowser = typeof window !== 'undefined';
 
-export async function registerPWA(): Promise<PWARegistration> {
-  if (!isBrowser || !('serviceWorker' in navigator)) {
-    // Silent - service workers not supported
-    return {
-      ready: Promise.reject(new Error('Service Workers not supported')),
-      offlineReady: false
-    };
-  }
-
-  try {
-    // Check if SW file exists before attempting registration
-    const response = await fetch(SW_URL, { method: 'HEAD' });
-    if (!response.ok) {
-      // SW file doesn't exist - skip registration silently
-      return {
-        ready: Promise.reject(new Error('Service Worker not found')),
-        offlineReady: false
-      };
-    }
-
-    // Register the service worker
-    registration = await navigator.serviceWorker.register(SW_URL, {
-      scope: '/'
-    });
-
-    console.log('Service Worker registered:', registration.scope);
-
-    // Handle updates
-    registration.addEventListener('updatefound', () => {
-      const newWorker = registration?.installing;
-      if (newWorker) {
-        newWorker.addEventListener('statechange', () => {
-          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            // New content is available
-            updateFound = true;
-            showUpdateNotification();
-          }
-        });
-      }
-    });
-
-    // Handle controller change (page refresh after update)
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (updateFound) {
-        window.location.reload();
-      }
-    });
-
-    // Check for pending updates
-    if (registration.active) {
-      console.log('Service Worker is active');
-    }
-
-    return {
-      ready: navigator.serviceWorker.ready,
-      offlineReady: true
-    };
-  } catch (error) {
-    // Silent failure - PWA is optional
-    return {
-      ready: Promise.reject(error),
-      offlineReady: false
-    };
-  }
-}
-
-// Show update notification to user
-function showUpdateNotification() {
-  // Dispatch custom event for UI to handle
-  const event = new CustomEvent('sw-update-available');
-  window.dispatchEvent(event);
-}
-
-// Request immediate update
-export async function requestUpdate(): Promise<void> {
-  if (registration?.waiting) {
-    registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-  }
+// No-op: vite-plugin-pwa with injectRegister:'auto' handles registration
+export async function registerPWA() {
+  // Registration is handled automatically by the virtual module injected
+  // by vite-plugin-pwa into index.html at build time.
+  // In development, service workers are disabled (devOptions.enabled: false).
+  return { offlineReady: 'serviceWorker' in navigator };
 }
 
 // Check if app is running offline
 export function isOnline(): boolean {
-  return navigator.onLine;
+  return isBrowser ? navigator.onLine : true;
 }
 
-// Listen for online/offline events
+// Listen for online/offline events — used by the app for UI indicators
 export function setupNetworkListeners(
   onOnline: () => void,
   onOffline: () => void
 ): () => void {
   if (!isBrowser) return () => {};
-
   window.addEventListener('online', onOnline);
   window.addEventListener('offline', onOffline);
-
   return () => {
     window.removeEventListener('online', onOnline);
     window.removeEventListener('offline', onOffline);
   };
 }
 
-// Send message to service worker
-export async function sendToSW(message: any): Promise<void> {
-  if (registration?.active) {
-    await registration.active.postMessage(message);
-  }
+export function isOnlineSync(): boolean {
+  return isBrowser ? navigator.onLine : true;
 }
 
-// Get current service worker state
-export function getSWState(): 'unknown' | 'activated' | 'redundant' | 'installed' | 'installing' | 'activating' {
-  if (!registration?.active) return 'unknown';
-  
-  // @ts-ignore - state is available on SW
-  return registration.active.state || 'unknown';
-}
-
-export default {
-  registerPWA,
-  requestUpdate,
-  isOnline,
-  setupNetworkListeners,
-  sendToSW,
-  getSWState
-};
+export default { registerPWA, isOnline, setupNetworkListeners };

@@ -7,6 +7,7 @@ import ServiceManagement from './ServiceManagement';
 import ExpenseTracking from './ExpenseTracking';
 import { exportToCSV, exportToPDF } from '../../utils/export';
 import { Download, FileDown } from 'lucide-react';
+import { useEscapeKey } from '../../hooks/useEscapeKey';
 
 const invoiceColumns = [
     { header: 'Invoice #', dataKey: 'invoiceNumber' },
@@ -73,6 +74,8 @@ const FinanceDashboard = () => {
         }
     };
 
+    useEscapeKey(() => { setPaymentModalOpen(false); setRefundModalOpen(false); });
+
     const handleProcessPayment = (invoice: any) => {
         setSelectedInvoice(invoice);
         setPaymentModalOpen(true);
@@ -128,7 +131,7 @@ const FinanceDashboard = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:justify-between">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">Finance Dashboard</h1>
                     <p className="text-gray-500">Manage invoices, payments, and expenses</p>
@@ -136,7 +139,7 @@ const FinanceDashboard = () => {
             </div>
 
             {/* Stats Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                     <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
                         <div>
                             <p className="text-sm font-medium text-gray-500">Total Revenue</p>
@@ -235,7 +238,7 @@ const FinanceDashboard = () => {
                 <div className="bg-white rounded-b-xl shadow-sm border border-t-0 border-gray-100 p-6">
                     {activeTab === 'INVOICES' && (
                         <div>
-                            <div className="flex justify-between items-center mb-6">
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between mb-6">
                                 <h2 className="text-lg font-bold text-gray-800">Pending Invoices</h2>
                                 <div className="flex items-center gap-3">
                                     <button onClick={() => exportToCSV(invoices, 'pending_invoices', invoiceColumns)} className="flex items-center gap-1 text-sm bg-white border border-gray-200 text-gray-600 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors">
@@ -259,7 +262,7 @@ const FinanceDashboard = () => {
                                 </div>
                             ) : (
                                 <div className="overflow-x-auto">
-                                    <table className="w-full text-left">
+                                    <table className="w-full text-left min-w-[700px]">
                                         <thead className="bg-gray-50 text-gray-600 text-xs uppercase">
                                             <tr>
                                                 <th className="px-6 py-3">Invoice #</th>
@@ -308,7 +311,7 @@ const FinanceDashboard = () => {
 
                     {activeTab === 'REFUNDS' && (
                         <div>
-                            <div className="flex justify-between items-center mb-6">
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between mb-6">
                                 <h2 className="text-lg font-bold text-gray-800">Paid Invoices</h2>
                                 <div className="flex items-center gap-3">
                                     <button onClick={() => exportToCSV(paidInvoices, 'paid_invoices', invoiceColumns)} className="flex items-center gap-1 text-sm bg-white border border-gray-200 text-gray-600 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors">
@@ -332,7 +335,7 @@ const FinanceDashboard = () => {
                                 </div>
                             ) : (
                                 <div className="overflow-x-auto">
-                                    <table className="w-full text-left">
+                                    <table className="w-full text-left min-w-[700px]">
                                         <thead className="bg-gray-50 text-gray-600 text-xs uppercase">
                                             <tr>
                                                 <th className="px-6 py-3">Invoice #</th>
@@ -386,8 +389,8 @@ const FinanceDashboard = () => {
 
             {/* Payment Modal */}
             {paymentModalOpen && selectedInvoice && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-xl w-full max-w-md p-6">
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={(e) => { if (e.target === e.currentTarget) setPaymentModalOpen(false); }}>
+                    <div className="bg-white rounded-xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
                         <h2 className="text-xl font-bold mb-4">Process Payment</h2>
                         
                         <div className="bg-gray-50 p-4 rounded-lg mb-6 space-y-2">
@@ -442,8 +445,8 @@ const FinanceDashboard = () => {
 
             {/* Refund Modal */}
             {refundModalOpen && selectedInvoice && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-xl w-full max-w-md p-6">
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={(e) => { if (e.target === e.currentTarget) setRefundModalOpen(false); }}>
+                    <div className="bg-white rounded-xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
                         <h2 className="text-xl font-bold mb-4 text-orange-600">Process Refund</h2>
                         
                         <div className="bg-gray-50 p-4 rounded-lg mb-6 space-y-2">

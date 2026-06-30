@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 // import { useAuth } from '../../context/AuthContext';
 import PatientSearchModal from '../receptionist/PatientSearchModal';
 import DepositModal from '../../components/finance/DepositModal';
+import { useEscapeKey } from '../../hooks/useEscapeKey';
 
 const AdmissionDashboard = () => {
     // const { user } = useAuth(); // Removed unused user
@@ -61,6 +62,8 @@ const AdmissionDashboard = () => {
             toast.error('Discharge failed');
         }
     };
+
+    useEscapeKey(() => { setShowAdmitModal(false); setSelectedBed(null); });
 
     // Helper to get status color
     const getStatusColor = (status: string) => {
@@ -171,8 +174,8 @@ const AdmissionDashboard = () => {
 
             {/* Admission Modal */}
             {showAdmitModal && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-xl w-full max-w-2xl p-6 relative">
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={(e) => { if (e.target === e.currentTarget) { setShowAdmitModal(false); setSelectedBed(null); } }}>
+                    <div className="bg-white rounded-xl w-full max-w-2xl p-6 relative" onClick={(e) => e.stopPropagation()}>
                         <button 
                             onClick={() => { setShowAdmitModal(false); setSelectedBed(null); }}
                             className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"

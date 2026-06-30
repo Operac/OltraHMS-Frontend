@@ -5,21 +5,25 @@ import api from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { getPatientHistory, saveConsultation, updateAppointmentStatus } from '../../services/doctor.service';
 import { FinanceService } from '../../services/finance.service';
-import { 
-  User, Activity, Pill, FlaskConical, CheckCircle, Video, History, Building2, Sparkles, AlertTriangle 
+import Modal from '../../components/ui/Modal';
+import {
+  User, Activity, Pill, FlaskConical, CheckCircle, Video, History, Building2, Sparkles, AlertTriangle
 } from 'lucide-react';
 
 const Consultation = () => {
     const { appointmentId } = useParams();
     const navigate = useNavigate();
     const { token, user } = useAuth();
-    
+
     const [appointment, setAppointment] = useState<any>(null);
     const [patient, setPatient] = useState<any>(null);
     const [history, setHistory] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
-    
+    const [fetchingAI, setFetchingAI] = useState(false);
+    const [aiAvailable, setAiAvailable] = useState<boolean | null>(null); // null = checking
+    const [mobileTab, setMobileTab] = useState<'history' | 'soap' | 'actions'>('soap');
+
     // Services List
     const [availableTests, setAvailableTests] = useState<any[]>([]);
 
@@ -46,6 +50,11 @@ const Consultation = () => {
     const [newRx, setNewRx] = useState({ name: '', dosage: '', frequency: '', duration: '' });
     const [newLab, setNewLab] = useState({ test: '', priority: 'ROUTINE', isExternal: false });
     const [aiSuggestions, setAiSuggestions] = useState<any>(null);
+
+    useEffect(() => {
+        // Check AI availability once on mount
+        api.get('/doctor/ai-status').then(r => setAiAvailable(r.data.available)).catch(() => setAiAvailable(false));
+    }, []);
 
     useEffect(() => {
         const fetchContext = async () => {
@@ -126,6 +135,28 @@ const Consultation = () => {
         }
     };
 
+    const fetchAISuggestions = async () => {
+        if (!soap.subjective && !soap.assessment) {
+            toast.error('Fill in Subjective or Assessment first for AI suggestions');
+            return;
+        }
+        setFetchingAI(true);
+        try {
+            const res = await api.post('/doctor/ai-suggestions', {
+                patientId: patient?.id,
+                soap,
+                vitals,
+                history: history.slice(0, 5)
+            });
+            setAiSuggestions(res.data);
+            toast.success('AI suggestions loaded');
+        } catch {
+            toast.error('AI suggestions unavailable');
+        } finally {
+            setFetchingAI(false);
+        }
+    };
+
     const calculateAge = (dob: string) => {
         if (!dob) return '--';
         const birthDate = new Date(dob);
@@ -137,11 +168,11 @@ const Consultation = () => {
     if (loading) return <div className="p-12 text-center text-gray-500">Loading patient data...</div>;
 
     return (
-        <div className="p-6 max-w-[1600px] mx-auto space-y-6 flex flex-col h-[calc(100vh-80px)]">
+        <div className="p-4 sm:p-6 max-w-[1600px] mx-auto space-y-4 sm:space-y-6 flex flex-col h-[calc(100vh-80px)]">
             {/* Header */}
-            <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between shrink-0">
+            <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between shrink-0">
                 <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-sky-100 rounded-full flex items-center justify-center text-sky-500 font-bold text-xl">
+                    <div className="w-12 h-12 bg-sky-100 rounded-full flex items-center justify-center text-sky-500 font-bold text-xl shrink-0">
                         {patient?.firstName?.[0]}{patient?.lastName?.[0]}
                     </div>
                     <div>
@@ -152,16 +183,16 @@ const Consultation = () => {
                         </div>
                     </div>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-wrap">
                     {appointment?.type === 'TELEMEDICINE' && (
-                        <button 
+                        <button
                             onClick={() => navigate(`/consultation/video/${appointmentId}`)}
                             className="px-3 py-2 text-sky-600 bg-sky-50 rounded-lg hover:bg-sky-100 font-medium flex items-center gap-2 text-sm"
                         >
                             <Video className="w-4 h-4" /> Video Call
                         </button>
                     )}
-                    <button 
+                    <button
                         onClick={() => handleSave('COMPLETED')}
                         disabled={saving}
                         className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium flex items-center gap-2 text-sm shadow-sm"
@@ -171,9 +202,26 @@ const Consultation = () => {
                 </div>
             </div>
 
-            <div className="grid grid-cols-12 gap-6 flex-1 min-h-0">
+            {/* Mobile tab bar — hidden on lg+ */}
+            <div className="flex lg:hidden border-b border-gray-200 bg-white rounded-xl overflow-hidden shrink-0">
+                {(['history', 'soap', 'actions'] as const).map(tab => (
+                    <button
+                        key={tab}
+                        onClick={() => setMobileTab(tab)}
+                        className={`flex-1 py-2.5 text-sm font-medium capitalize transition-colors ${
+                            mobileTab === tab
+                                ? 'bg-sky-500 text-white'
+                                : 'text-gray-500 hover:bg-gray-50'
+                        }`}
+                    >
+                        {tab === 'history' ? 'History' : tab === 'soap' ? 'SOAP' : 'Actions'}
+                    </button>
+                ))}
+            </div>
+
+            <div className="flex-1 min-h-0 lg:grid lg:grid-cols-12 lg:gap-6">
                 {/* Left Sidebar: Patient History */}
-                <div className="col-span-3 bg-white rounded-xl border border-gray-200 shadow-sm flex flex-col overflow-hidden">
+                <div className={`lg:col-span-3 bg-white rounded-xl border border-gray-200 shadow-sm flex flex-col overflow-hidden ${mobileTab !== 'history' ? 'hidden lg:flex' : 'flex'}`}>
                     <div className="p-4 border-b bg-gray-50 font-bold text-gray-700 flex items-center gap-2">
                         <History className="w-4 h-4" /> Patient History
                     </div>
@@ -193,10 +241,10 @@ const Consultation = () => {
                 </div>
 
                 {/* Main: SOAP Editor */}
-                <div className="col-span-6 space-y-4 overflow-y-auto pr-2 pb-4">
+                <div className={`lg:col-span-6 space-y-4 overflow-y-auto lg:pr-2 pb-4 ${mobileTab !== 'soap' ? 'hidden lg:block' : 'block'}`}>
                      <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
                         <h2 className="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wide text-sky-500">Subjective</h2>
-                        <textarea 
+                        <textarea
                             className="w-full p-3 border border-gray-200 rounded-lg h-24 focus:ring-2 focus:ring-sky-400 outline-none text-sm resize-none bg-gray-50 focus:bg-white transition-colors"
                             placeholder="Chief Complaint, HPI..."
                             value={soap.subjective}
@@ -206,13 +254,13 @@ const Consultation = () => {
 
                     <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
                         <h2 className="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wide text-sky-500">Objective</h2>
-                        <div className="grid grid-cols-4 gap-3 mb-4">
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
                             <div><label className="text-[10px] text-gray-500 font-bold uppercase">BP (Sys)</label><input type="number" className="w-full p-2 border rounded text-sm bg-gray-50" value={vitals.bpSystolic} onChange={(e) => setVitals({...vitals, bpSystolic: e.target.value})} /></div>
                             <div><label className="text-[10px] text-gray-500 font-bold uppercase">BP (Dia)</label><input type="number" className="w-full p-2 border rounded text-sm bg-gray-50" value={vitals.bpDiastolic} onChange={(e) => setVitals({...vitals, bpDiastolic: e.target.value})} /></div>
                             <div><label className="text-[10px] text-gray-500 font-bold uppercase">Temp (°C)</label><input type="number" className="w-full p-2 border rounded text-sm bg-gray-50" value={vitals.temperature} onChange={(e) => setVitals({...vitals, temperature: e.target.value})} /></div>
                             <div><label className="text-[10px] text-gray-500 font-bold uppercase">HR (bpm)</label><input type="number" className="w-full p-2 border rounded text-sm bg-gray-50" value={vitals.heartRate} onChange={(e) => setVitals({...vitals, heartRate: e.target.value})} /></div>
                         </div>
-                        <textarea 
+                        <textarea
                              className="w-full p-3 border border-gray-200 rounded-lg h-24 focus:ring-2 focus:ring-sky-400 outline-none text-sm resize-none bg-gray-50 focus:bg-white transition-colors"
                              placeholder="Physical Exam Findings..."
                              value={soap.objective}
@@ -222,7 +270,7 @@ const Consultation = () => {
 
                     <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
                         <h2 className="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wide text-sky-500">Assessment</h2>
-                        <textarea 
+                        <textarea
                              className="w-full p-3 border border-gray-200 rounded-lg h-24 focus:ring-2 focus:ring-sky-400 outline-none text-sm resize-none bg-gray-50 focus:bg-white transition-colors"
                              placeholder="Diagnosis & Clinical Impressions..."
                              value={soap.assessment}
@@ -232,7 +280,7 @@ const Consultation = () => {
 
                      <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
                         <h2 className="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wide text-sky-500">Plan</h2>
-                        <textarea 
+                        <textarea
                              className="w-full p-3 border border-gray-200 rounded-lg h-24 focus:ring-2 focus:ring-sky-400 outline-none text-sm resize-none bg-gray-50 focus:bg-white transition-colors"
                              placeholder="Treatment Plan, Education, Follow-up..."
                              value={soap.plan}
@@ -242,7 +290,7 @@ const Consultation = () => {
                 </div>
 
                 {/* Right Sidebar: Actions */}
-                <div className="col-span-3 space-y-4">
+                <div className={`lg:col-span-3 space-y-4 overflow-y-auto pb-4 ${mobileTab !== 'actions' ? 'hidden lg:block' : 'block'}`}>
                     <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
                         <div className="flex items-center justify-between mb-4">
                             <h3 className="font-bold text-gray-900 flex items-center gap-2"><Pill className="w-4 h-4 text-teal-600" /> Prescriptions</h3>
@@ -283,6 +331,22 @@ const Consultation = () => {
                             </ul>
                         )}
                     </div>
+
+                    {aiAvailable === false ? (
+                        <div className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-50 border border-gray-200 text-gray-400 rounded-xl text-sm cursor-not-allowed" title="AI is not configured on this server. Set MISTRAL_API_KEY to enable.">
+                            <Sparkles className="w-4 h-4" />
+                            AI Suggestions (Not configured)
+                        </div>
+                    ) : (
+                        <button
+                            onClick={fetchAISuggestions}
+                            disabled={fetchingAI || aiAvailable === null}
+                            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-purple-50 border border-purple-200 text-purple-700 rounded-xl hover:bg-purple-100 font-medium text-sm transition-colors disabled:opacity-50"
+                        >
+                            <Sparkles className="w-4 h-4" />
+                            {aiAvailable === null ? 'Checking AI...' : fetchingAI ? 'Getting AI Suggestions...' : 'Get AI Suggestions'}
+                        </button>
+                    )}
 
                     {aiSuggestions && (
                         <div className="bg-white p-5 rounded-xl border border-purple-200 shadow-sm">
@@ -349,29 +413,22 @@ const Consultation = () => {
             </div>
 
             {/* Prescription Modal */}
-            {showRxModal && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                    <div className="bg-white w-full max-w-md p-6 rounded-xl shadow-xl">
-                        <h3 className="text-xl font-bold mb-4">Add Prescription</h3>
-                        <div className="space-y-4">
-                            <input className="w-full p-2 border rounded" placeholder="Medication Name" value={newRx.name} onChange={e=>setNewRx({...newRx, name: e.target.value})} />
-                            <input className="w-full p-2 border rounded" placeholder="Dosage (e.g., 500mg)" value={newRx.dosage} onChange={e=>setNewRx({...newRx, dosage: e.target.value})} />
-                            <input className="w-full p-2 border rounded" placeholder="Frequency (e.g., 2x daily)" value={newRx.frequency} onChange={e=>setNewRx({...newRx, frequency: e.target.value})} />
-                            <input className="w-full p-2 border rounded" placeholder="Duration (e.g., 5 days)" value={newRx.duration} onChange={e=>setNewRx({...newRx, duration: e.target.value})} />
-                            <div className="flex justify-end gap-2 mt-4">
-                                <button onClick={()=>setShowRxModal(false)} className="px-4 py-2 text-gray-600">Cancel</button>
-                                <button onClick={addPrescription} className="px-4 py-2 bg-sky-500 text-white rounded">Add</button>
-                            </div>
-                        </div>
+            <Modal open={showRxModal} onClose={() => setShowRxModal(false)} title="Add Prescription">
+                <div className="p-4 sm:p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+                    <input className="w-full p-2 border rounded" placeholder="Medication Name" value={newRx.name} onChange={e=>setNewRx({...newRx, name: e.target.value})} />
+                    <input className="w-full p-2 border rounded" placeholder="Dosage (e.g., 500mg)" value={newRx.dosage} onChange={e=>setNewRx({...newRx, dosage: e.target.value})} />
+                    <input className="w-full p-2 border rounded" placeholder="Frequency (e.g., 2x daily)" value={newRx.frequency} onChange={e=>setNewRx({...newRx, frequency: e.target.value})} />
+                    <input className="w-full p-2 border rounded" placeholder="Duration (e.g., 5 days)" value={newRx.duration} onChange={e=>setNewRx({...newRx, duration: e.target.value})} />
+                    <div className="flex justify-end gap-2">
+                        <button onClick={()=>setShowRxModal(false)} className="px-4 py-2 text-gray-600">Cancel</button>
+                        <button onClick={addPrescription} className="px-4 py-2 bg-sky-500 text-white rounded">Add</button>
                     </div>
                 </div>
-            )}
+            </Modal>
 
             {/* Lab Modal */}
-            {showLabModal && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                    <div className="bg-white w-full max-w-md p-6 rounded-xl shadow-xl">
-                        <h3 className="text-xl font-bold mb-4">Order Lab Test</h3>
+            <Modal open={showLabModal} onClose={() => setShowLabModal(false)} title="Order Lab Test">
+                <div className="p-4 sm:p-6 space-y-4 max-h-[90vh] overflow-y-auto">
                         <div className="space-y-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Select Test</label>
@@ -420,9 +477,8 @@ const Consultation = () => {
                                 <button onClick={addLabOrder} className="px-4 py-2 bg-teal-600 text-white rounded">Order</button>
                             </div>
                         </div>
-                    </div>
                 </div>
-            )}
+            </Modal>
         </div>
     );
 };
